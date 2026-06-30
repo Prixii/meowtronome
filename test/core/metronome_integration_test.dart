@@ -7,10 +7,10 @@
 /// 并输出可视化格线来展示音符播放序列。
 library;
 
-import 'package:catrowome/core/enums.dart';
-import 'package:catrowome/core/rhythm_pattern.dart';
-import 'package:catrowome/core/scheduler/scheduler.dart';
-import 'package:catrowome/core/metronome.dart';
+import 'package:meowtronome/core/enums.dart';
+import 'package:meowtronome/core/rhythm_pattern.dart';
+import 'package:meowtronome/core/scheduler/scheduler.dart';
+import 'package:meowtronome/core/metronome.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // ─────────────────────────────────────────────────────────────
@@ -28,8 +28,7 @@ String visualize(RhythmPattern pattern, int beatIndex, int noteIndex) {
   if (maxNoteCount == 0) return '(empty)';
 
   // 构建二维字符矩阵 [beat][subdivision]
-  final grid =
-      List.generate(beatCount, (_) => List.filled(maxNoteCount, '-'));
+  final grid = List.generate(beatCount, (_) => List.filled(maxNoteCount, '-'));
   for (var i = 0; i < beatCount; i++) {
     for (var j = 0; j < pattern.beats[i].notes.length; j++) {
       grid[i][j] = pattern.beats[i].notes[j].soundType.index.toString();
@@ -69,23 +68,29 @@ void main() {
       name: '测试节奏',
       beats: [
         // beat 0: 2 个音符 (type1, type2)
-        Beat(notes: [
-          const Note(soundType: SoundType.type1),
-          const Note(soundType: SoundType.type2),
-        ]),
+        Beat(
+          notes: [
+            const Note(soundType: SoundType.type1),
+            const Note(soundType: SoundType.type2),
+          ],
+        ),
         // beat 1: 3 个音符 (type3, type1, type2)
-        Beat(notes: [
-          const Note(soundType: SoundType.type3),
-          const Note(soundType: SoundType.type1),
-          const Note(soundType: SoundType.type2),
-        ]),
+        Beat(
+          notes: [
+            const Note(soundType: SoundType.type3),
+            const Note(soundType: SoundType.type1),
+            const Note(soundType: SoundType.type2),
+          ],
+        ),
         // beat 2: 1 个音符 (none → 静音)
         Beat(notes: [const Note(soundType: SoundType.none)]),
         // beat 3: 2 个音符 (type3, type3)
-        Beat(notes: [
-          const Note(soundType: SoundType.type3),
-          const Note(soundType: SoundType.type3),
-        ]),
+        Beat(
+          notes: [
+            const Note(soundType: SoundType.type3),
+            const Note(soundType: SoundType.type3),
+          ],
+        ),
       ],
     );
 
@@ -103,8 +108,10 @@ void main() {
       final queue = scheduler.state.noteQueue;
       final note = queue[beatIndex][noteIndex];
 
-      print('  [${stopwatch.elapsedMilliseconds}ms] '
-          'beat[$beatIndex][$noteIndex] = ${note.soundType.name}');
+      print(
+        '  [${stopwatch.elapsedMilliseconds}ms] '
+        'beat[$beatIndex][$noteIndex] = ${note.soundType.name}',
+      );
       print(visualize(pattern, beatIndex, noteIndex));
       print('');
     });
@@ -133,8 +140,10 @@ void main() {
     for (var i = 0; i < pattern.beats.length; i++) {
       final beat = pattern.beats[i];
       final noteTime = (60_000 / metronome.bpm) / beat.notes.length;
-      print('  beat[$i]: ${beat.notes.length} 个音符, '
-          '每个 ${_fmtMs(noteTime)}');
+      print(
+        '  beat[$i]: ${beat.notes.length} 个音符, '
+        '每个 ${_fmtMs(noteTime)}',
+      );
     }
     print('═══════════════════════════════════════════════');
     print('\n播放序列:\n');
@@ -160,10 +169,12 @@ void main() {
       name: 'BPM 测试',
       beats: List.generate(
         4,
-        (_) => Beat(notes: [
-          const Note(soundType: SoundType.type1),
-          const Note(soundType: SoundType.type2),
-        ]),
+        (_) => Beat(
+          notes: [
+            const Note(soundType: SoundType.type1),
+            const Note(soundType: SoundType.type2),
+          ],
+        ),
       ),
     );
 
@@ -173,8 +184,10 @@ void main() {
       final noteIndex = scheduler.runtimeState.currentNoteIndex;
       final queue = scheduler.state.noteQueue;
       final note = queue[beatIndex][noteIndex];
-      print('  [${_fmtMs(note.timeValueMs)}] '
-          'beat[$beatIndex][$noteIndex] = ${note.soundType.name}');
+      print(
+        '  [${_fmtMs(note.timeValueMs)}] '
+        'beat[$beatIndex][$noteIndex] = ${note.soundType.name}',
+      );
     });
 
     print('\n══════════ 运行时修改 BPM ══════════');
@@ -219,10 +232,12 @@ void main() {
       name: '节奏 B',
       beats: List.generate(
         3,
-        (_) => Beat(notes: [
-          const Note(soundType: SoundType.type3),
-          const Note(soundType: SoundType.none),
-        ]),
+        (_) => Beat(
+          notes: [
+            const Note(soundType: SoundType.type3),
+            const Note(soundType: SoundType.none),
+          ],
+        ),
       ),
     );
 

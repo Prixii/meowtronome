@@ -1,4 +1,4 @@
-import 'package:catrowome/core/enums.dart';
+import 'package:meowtronome/core/enums.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'rhythm_pattern.freezed.dart';

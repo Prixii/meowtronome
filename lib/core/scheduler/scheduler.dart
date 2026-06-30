@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:catrowome/core/rhythm_pattern.dart';
-import 'package:catrowome/core/scheduler/model.dart';
+import 'package:meowtronome/core/rhythm_pattern.dart';
+import 'package:meowtronome/core/scheduler/model.dart';
 
 class Scheduler {
   SchedulerState _state;

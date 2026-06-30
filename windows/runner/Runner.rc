@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "catrowome" "\0"
+            VALUE "FileDescription", "meowtronome" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "catrowome" "\0"
+            VALUE "InternalName", "meowtronome" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "catrowome.exe" "\0"
-            VALUE "ProductName", "catrowome" "\0"
+            VALUE "OriginalFilename", "meowtronome.exe" "\0"
+            VALUE "ProductName", "meowtronome" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

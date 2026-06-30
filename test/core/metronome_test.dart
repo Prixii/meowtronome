@@ -1,6 +1,6 @@
-import 'package:catrowome/core/enums.dart';
-import 'package:catrowome/core/rhythm_pattern.dart';
-import 'package:catrowome/core/metronome.dart';
+import 'package:meowtronome/core/enums.dart';
+import 'package:meowtronome/core/rhythm_pattern.dart';
+import 'package:meowtronome/core/metronome.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -42,14 +42,8 @@ void main() {
       });
 
       test('throws for invalid beat index', () {
-        expect(
-          () => metronome.addNoteForBeatAt(-1),
-          throwsArgumentError,
-        );
-        expect(
-          () => metronome.addNoteForBeatAt(100),
-          throwsArgumentError,
-        );
+        expect(() => metronome.addNoteForBeatAt(-1), throwsArgumentError);
+        expect(() => metronome.addNoteForBeatAt(100), throwsArgumentError);
       });
     });
 
@@ -77,14 +71,8 @@ void main() {
       });
 
       test('throws for invalid beat index', () {
-        expect(
-          () => metronome.removeNoteForBeatAt(-1),
-          throwsArgumentError,
-        );
-        expect(
-          () => metronome.removeNoteForBeatAt(100),
-          throwsArgumentError,
-        );
+        expect(() => metronome.removeNoteForBeatAt(-1), throwsArgumentError);
+        expect(() => metronome.removeNoteForBeatAt(100), throwsArgumentError);
       });
     });
 
@@ -145,10 +133,7 @@ void main() {
 
         expect(metronome.state.pattern.beats.length, initialCount + 1);
         // New beat has the default 4 notes
-        expect(
-          metronome.state.pattern.beats.last.notes.length,
-          4,
-        );
+        expect(metronome.state.pattern.beats.last.notes.length, 4);
       });
     });
 

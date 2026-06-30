@@ -1,7 +1,7 @@
-import 'package:catrowome/core/enums.dart';
-import 'package:catrowome/core/rhythm_pattern.dart';
-import 'package:catrowome/core/scheduler/scheduler.dart';
-import 'package:catrowome/core/scheduler/model.dart';
+import 'package:meowtronome/core/enums.dart';
+import 'package:meowtronome/core/rhythm_pattern.dart';
+import 'package:meowtronome/core/scheduler/scheduler.dart';
+import 'package:meowtronome/core/scheduler/model.dart';
 
 class Metronome {
   MetronomeState _state;
