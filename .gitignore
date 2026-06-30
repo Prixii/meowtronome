@@ -45,3 +45,11 @@ app.*.map.json
 /android/app/release
 
 .vscode/settings.json
+
+# FVM Version Cache
+.fvm/
+.fvmrc
+
+# code gen
+*.g.dart
+*.freezed.dart
