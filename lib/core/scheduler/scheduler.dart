@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:catrowome/core/rhythm_pattern.dart';
 import 'package:catrowome/core/scheduler/model.dart';
-import 'package:flutter/foundation.dart';
 
 class Scheduler {
   SchedulerState _state;
   SchedulerRuntimeState _runtimeState;
   final Stopwatch _stopwatch;
+  void Function(Scheduler)? _onPlayNote;
 
   Timer? _timer;
 
@@ -41,6 +41,20 @@ class Scheduler {
     stop();
   }
 
+  void _restart() {
+    _timer?.cancel();
+    _timer = null;
+    _runtimeState = SchedulerRuntimeState.initial();
+    _stopwatch
+      ..reset()
+      ..start();
+    _schedule();
+  }
+
+  void setOnPlayNote(void Function(Scheduler) onPlayNote) {
+    _onPlayNote = onPlayNote;
+  }
+
   /// Exposed for inspection in tests / debugging.
   SchedulerState get state => _state;
 
@@ -53,10 +67,13 @@ class Scheduler {
     }
     if (bpm != _state.bpm) {
       _state = _state.copyWith(bpm: bpm);
-      if (_state.isRunning) {
-        _runtimeState = SchedulerRuntimeState.initial();
-      }
       _generateNoteQueue();
+      if (_state.isRunning) {
+        _stopwatch
+          ..reset()
+          ..start();
+        _runtimeState = _runtimeState.copyWith(expectedCumulativeTimeMs: 0);
+      }
     }
   }
 
@@ -64,10 +81,10 @@ class Scheduler {
 
   void setPattern(RhythmPattern pattern) {
     _state = _state.copyWith(pattern: pattern);
-    if (_state.isRunning) {
-      _runtimeState = SchedulerRuntimeState.initial();
-    }
     _generateNoteQueue();
+    if (_state.isRunning) {
+      _restart();
+    }
   }
 
   void _generateNoteQueue() {
@@ -109,7 +126,7 @@ class Scheduler {
         return;
       }
       // TODO: play sound
-      debugPrint(note.soundType.name);
+      _onPlayNote?.call(this);
 
       _schedule();
     });

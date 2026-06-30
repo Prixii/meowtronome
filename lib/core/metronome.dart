@@ -18,6 +18,15 @@ class Metronome {
     _scheduler.dispose();
   }
 
+  void setPattern(RhythmPattern pattern) {
+    _state = _state.copyWith(pattern: pattern);
+    _scheduler.setPattern(_state.pattern);
+  }
+
+  void setOnPlayNote(void Function(Scheduler) onPlayNote) {
+    _scheduler.setOnPlayNote(onPlayNote);
+  }
+
   // bpm
   void setBpm(int bpm) {
     _scheduler.setBpm(bpm);

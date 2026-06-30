@@ -288,9 +288,11 @@ void main() {
         ),
       );
 
-      // Runtime state should be reset
+      // Runtime state and scheduling should restart from the beginning.
+      // _restart() resets to (0, -1), then _schedule() immediately fetches
+      // the first note, advancing to (0, 0).
       expect(scheduler.runtimeState.currentBeatIndex, 0);
-      expect(scheduler.runtimeState.currentNoteIndex, -1);
+      expect(scheduler.runtimeState.currentNoteIndex, 0);
       scheduler.dispose();
     });
   });
