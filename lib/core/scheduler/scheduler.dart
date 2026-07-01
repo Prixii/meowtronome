@@ -121,13 +121,14 @@ class Scheduler {
     );
 
     _timer?.cancel();
+
+    // TODO: play sound
+    _onPlayNote?.call(this);
+
     _timer = Timer(Duration(milliseconds: remainingTime.toInt()), () {
       if (!_state.isRunning) {
         return;
       }
-      // TODO: play sound
-      _onPlayNote?.call(this);
-
       _schedule();
     });
   }
