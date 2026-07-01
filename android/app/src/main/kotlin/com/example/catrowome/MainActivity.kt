@@ -1,4 +1,4 @@
-package com.example.meowtronome
+package com.prixii.meowtronome
 
 import io.flutter.embedding.android.FlutterActivity
 
