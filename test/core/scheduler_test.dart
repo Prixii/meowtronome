@@ -2,6 +2,7 @@ import 'package:meowtronome/core/enums.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
 import 'package:meowtronome/core/scheduler/model.dart';
 import 'package:meowtronome/core/scheduler/scheduler.dart';
+import 'package:meowtronome/utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -40,7 +41,8 @@ void main() {
       expect(state.bpm, 120);
       expect(state.isRunning, false);
       expect(state.noteQueue, isEmpty);
-      expect(state.pattern, RhythmPattern.initial());
+      expect(state.pattern.name, 'Default Pattern');
+      expect(state.pattern.beats.length, 4);
     });
   });
 
@@ -114,15 +116,17 @@ void main() {
             name: 'test',
             beats: [
               Beat(
+                id: newUuid(),
                 notes: List.generate(
                   4,
-                  (_) => const Note(soundType: SoundType.type1),
+                  (_) => Note.initial(soundType: SoundType.type1),
                 ),
               ),
               Beat(
+                id: newUuid(),
                 notes: List.generate(
                   2,
-                  (_) => const Note(soundType: SoundType.type2),
+                  (_) => Note.initial(soundType: SoundType.type2),
                 ),
               ),
             ],
@@ -159,15 +163,17 @@ void main() {
           name: 'test',
           beats: [
             Beat(
+              id: newUuid(),
               notes: [
-                const Note(soundType: SoundType.type1),
-                const Note(soundType: SoundType.type2),
+                Note.initial(soundType: SoundType.type1),
+                Note.initial(soundType: SoundType.type2),
               ],
             ),
             Beat(
+              id: newUuid(),
               notes: [
-                const Note(soundType: SoundType.type3),
-                const Note(soundType: SoundType.none),
+                Note.initial(soundType: SoundType.type3),
+                Note.initial(soundType: SoundType.none),
               ],
             ),
           ],
@@ -283,7 +289,10 @@ void main() {
         RhythmPattern(
           name: 'small',
           beats: [
-            Beat(notes: [const Note(soundType: SoundType.type1)]),
+            Beat(
+              id: newUuid(),
+              notes: [Note.initial(soundType: SoundType.type1)],
+            ),
           ],
         ),
       );

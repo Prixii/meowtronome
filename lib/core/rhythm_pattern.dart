@@ -1,26 +1,43 @@
 import 'package:meowtronome/core/enums.dart';
+import 'package:meowtronome/utils.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'rhythm_pattern.freezed.dart';
 part 'rhythm_pattern.g.dart';
 
+String _entityIdFromJson(Object? json) {
+  final id = json as String?;
+  return (id == null || id.isEmpty) ? newUuid() : id;
+}
+
 @freezed
 sealed class Note with _$Note {
-  const factory Note({required SoundType soundType}) = _Note;
+  const factory Note({
+    @JsonKey(fromJson: _entityIdFromJson) required String id,
+    required SoundType soundType,
+  }) = _Note;
 
   factory Note.fromJson(Map<String, dynamic> json) => _$NoteFromJson(json);
 
-  factory Note.initial() => const Note(soundType: SoundType.type1);
+  factory Note.initial({SoundType soundType = SoundType.type1}) => Note(
+        id: newUuid(),
+        soundType: soundType,
+      );
 }
 
 @freezed
 sealed class Beat with _$Beat {
-  const factory Beat({required List<Note> notes}) = _Beat;
+  const factory Beat({
+    @JsonKey(fromJson: _entityIdFromJson) required String id,
+    required List<Note> notes,
+  }) = _Beat;
 
   factory Beat.fromJson(Map<String, dynamic> json) => _$BeatFromJson(json);
 
-  factory Beat.initial() =>
-      Beat(notes: List.generate(4, (_) => Note.initial()));
+  factory Beat.initial({int noteCount = 4}) => Beat(
+        id: newUuid(),
+        notes: List.generate(noteCount, (_) => Note.initial()),
+      );
 }
 
 @freezed
@@ -34,12 +51,9 @@ sealed class RhythmPattern with _$RhythmPattern {
       _$RhythmPatternFromJson(json);
 
   factory RhythmPattern.initial() => RhythmPattern(
-    name: 'Default Pattern',
-    beats: List.generate(
-      4,
-      (_) => Beat(notes: List.generate(4, (_) => Note.initial())),
-    ),
-  );
+        name: 'Default Pattern',
+        beats: List.generate(4, (_) => Beat.initial()),
+      );
 }
 
 @freezed

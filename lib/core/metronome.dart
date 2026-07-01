@@ -105,9 +105,10 @@ class Metronome {
 
   // beat management methods
   void addBeat() {
+    final newBeat = _state.pattern.beats.last;
     _state = _state.copyWith(
       pattern: _state.pattern.copyWith(
-        beats: [..._state.pattern.beats, Beat.initial()],
+        beats: [..._state.pattern.beats, newBeat],
       ),
     );
     _scheduler.setPattern(_state.pattern);
@@ -139,7 +140,8 @@ class Metronome {
     }
 
     final updatedNotes = [...beat.notes];
-    updatedNotes[noteIndex] = Note(soundType: soundType);
+    updatedNotes[noteIndex] =
+        beat.notes[noteIndex].copyWith(soundType: soundType);
 
     final updatedBeat = beat.copyWith(notes: updatedNotes);
     final beats = [..._state.pattern.beats];
