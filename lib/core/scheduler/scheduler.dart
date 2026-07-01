@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:meowtronome/core/soloud/soloud_helper.dart';
-import 'package:meowtronome/global.dart';
-import 'package:meowtronome/core/enums.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
 import 'package:meowtronome/core/scheduler/model.dart';
 
@@ -44,24 +42,11 @@ class Scheduler {
     stop();
   }
 
-  void _restart() {
-    _timer?.cancel();
-    _timer = null;
-    _runtimeState = SchedulerRuntimeState.initial();
-    _stopwatch
-      ..reset()
-      ..start();
-    _schedule();
-  }
-
   void setOnPlayNote(void Function(Scheduler) onPlayNote) {
     _onPlayNote = onPlayNote;
   }
 
-  /// Exposed for inspection in tests / debugging.
   SchedulerState get state => _state;
-
-  /// Exposed for inspection in tests / debugging.
   SchedulerRuntimeState get runtimeState => _runtimeState;
 
   void setBpm(int bpm) {
@@ -85,9 +70,6 @@ class Scheduler {
   void setPattern(RhythmPattern pattern) {
     _state = _state.copyWith(pattern: pattern);
     _generateNoteQueue();
-    if (_state.isRunning) {
-      _restart();
-    }
   }
 
   void _generateNoteQueue() {

@@ -6,6 +6,8 @@ import 'package:meowtronome/core/rhythm_pattern.dart';
 class MetronomeNotifier extends ChangeNotifier {
   final Metronome _metronome = Metronome();
 
+  void Function(int beatIndex, int noteIndex)? onPlayNote;
+
   int currentBeatIndex = 0;
   int currentNoteIndex = 0;
 
@@ -19,8 +21,19 @@ class MetronomeNotifier extends ChangeNotifier {
       final rt = scheduler.runtimeState;
       currentBeatIndex = rt.currentBeatIndex;
       currentNoteIndex = rt.currentNoteIndex;
+      onPlayNote?.call(currentBeatIndex, currentNoteIndex);
       notifyListeners();
     });
+  }
+
+  void setOnPlayNoteCallback(
+    void Function(int beatIndex, int noteIndex) callback,
+  ) {
+    onPlayNote = callback;
+  }
+
+  bool isCurrentNote(int beatIndex, int noteIndex) {
+    return currentBeatIndex == beatIndex && currentNoteIndex == noteIndex;
   }
 
   void setBpm(int value) {
