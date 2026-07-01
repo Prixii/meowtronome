@@ -4,8 +4,8 @@ enum SoundType {
   type2,
   type3;
 
-  SoundType getNext(SoundType old) {
-    switch (old) {
+  SoundType getNext() {
+    switch (this) {
       case SoundType.none:
         return SoundType.type1;
       case SoundType.type1:

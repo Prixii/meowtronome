@@ -11,7 +11,6 @@ import 'package:meowtronome/core/enums.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
 import 'package:meowtronome/core/scheduler/scheduler.dart';
 import 'package:meowtronome/core/metronome.dart';
-import 'package:meowtronome/utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // ─────────────────────────────────────────────────────────────
@@ -70,7 +69,6 @@ void main() {
       beats: [
         // beat 0: 2 个音符 (type1, type2)
         Beat(
-          id: newUuid(),
           notes: [
             Note.initial(soundType: SoundType.type1),
             Note.initial(soundType: SoundType.type2),
@@ -78,7 +76,6 @@ void main() {
         ),
         // beat 1: 3 个音符 (type3, type1, type2)
         Beat(
-          id: newUuid(),
           notes: [
             Note.initial(soundType: SoundType.type3),
             Note.initial(soundType: SoundType.type1),
@@ -86,13 +83,9 @@ void main() {
           ],
         ),
         // beat 2: 1 个音符 (none → 静音)
-        Beat(
-          id: newUuid(),
-          notes: [Note.initial(soundType: SoundType.none)],
-        ),
+        Beat(notes: [Note.initial(soundType: SoundType.none)]),
         // beat 3: 2 个音符 (type3, type3)
         Beat(
-          id: newUuid(),
           notes: [
             Note.initial(soundType: SoundType.type3),
             Note.initial(soundType: SoundType.type3),
@@ -177,7 +170,6 @@ void main() {
       beats: List.generate(
         4,
         (_) => Beat(
-          id: newUuid(),
           notes: [
             Note.initial(soundType: SoundType.type1),
             Note.initial(soundType: SoundType.type2),
@@ -227,7 +219,6 @@ void main() {
       beats: List.generate(
         2,
         (_) => Beat(
-          id: newUuid(),
           notes: List.generate(
             4,
             (i) => Note.initial(
@@ -243,7 +234,6 @@ void main() {
       beats: List.generate(
         3,
         (_) => Beat(
-          id: newUuid(),
           notes: [
             Note.initial(soundType: SoundType.type3),
             Note.initial(soundType: SoundType.none),

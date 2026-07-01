@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:meowtronome/core/soloud/soloud_helper.dart';
+import 'package:meowtronome/global.dart';
+import 'package:meowtronome/core/enums.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
 import 'package:meowtronome/core/scheduler/model.dart';
 
@@ -122,7 +125,7 @@ class Scheduler {
 
     _timer?.cancel();
 
-    // TODO: play sound
+    soloudHelper.playSource(note.soundType);
     _onPlayNote?.call(this);
 
     _timer = Timer(Duration(milliseconds: remainingTime.toInt()), () {

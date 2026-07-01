@@ -41,8 +41,8 @@ class Metronome {
     }
 
     final beat = _state.pattern.beats[beatIndex];
-
-    final updatedBeat = beat.copyWith(notes: [...beat.notes, Note.initial()]);
+    final newNote = beat.notes.last;
+    final updatedBeat = beat.copyWith(notes: [...beat.notes, newNote]);
 
     final beats = [..._state.pattern.beats];
 
@@ -140,8 +140,9 @@ class Metronome {
     }
 
     final updatedNotes = [...beat.notes];
-    updatedNotes[noteIndex] =
-        beat.notes[noteIndex].copyWith(soundType: soundType);
+    updatedNotes[noteIndex] = beat.notes[noteIndex].copyWith(
+      soundType: soundType,
+    );
 
     final updatedBeat = beat.copyWith(notes: updatedNotes);
     final beats = [..._state.pattern.beats];

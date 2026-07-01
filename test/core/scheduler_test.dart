@@ -2,7 +2,6 @@ import 'package:meowtronome/core/enums.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
 import 'package:meowtronome/core/scheduler/model.dart';
 import 'package:meowtronome/core/scheduler/scheduler.dart';
-import 'package:meowtronome/utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -116,14 +115,12 @@ void main() {
             name: 'test',
             beats: [
               Beat(
-                id: newUuid(),
                 notes: List.generate(
                   4,
                   (_) => Note.initial(soundType: SoundType.type1),
                 ),
               ),
               Beat(
-                id: newUuid(),
                 notes: List.generate(
                   2,
                   (_) => Note.initial(soundType: SoundType.type2),
@@ -163,14 +160,12 @@ void main() {
           name: 'test',
           beats: [
             Beat(
-              id: newUuid(),
               notes: [
                 Note.initial(soundType: SoundType.type1),
                 Note.initial(soundType: SoundType.type2),
               ],
             ),
             Beat(
-              id: newUuid(),
               notes: [
                 Note.initial(soundType: SoundType.type3),
                 Note.initial(soundType: SoundType.none),
@@ -289,10 +284,7 @@ void main() {
         RhythmPattern(
           name: 'small',
           beats: [
-            Beat(
-              id: newUuid(),
-              notes: [Note.initial(soundType: SoundType.type1)],
-            ),
+            Beat(notes: [Note.initial(soundType: SoundType.type1)]),
           ],
         ),
       );

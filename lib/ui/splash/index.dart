@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meowtronome/core/soloud/soloud_helper.dart';
 import 'package:meowtronome/provider/metronome_notifier.dart';
 import 'package:meowtronome/ui/metronome/index.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +14,11 @@ class SplashPage extends StatelessWidget {
   }
 
   Future<void> init(BuildContext context) async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.wait([
+      soloudHelper.initialize(),
+      Future.delayed(const Duration(seconds: 1)),
+    ]);
+
     if (context.mounted) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute<void>(

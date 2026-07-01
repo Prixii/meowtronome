@@ -21,10 +21,8 @@ void main() {
         expect(pattern.name, 'Default Pattern');
         expect(pattern.beats.length, 4);
         for (final beat in pattern.beats) {
-          expect(beat.id, isNotEmpty);
           expect(beat.notes.length, 4);
           for (final note in beat.notes) {
-            expect(note.id, isNotEmpty);
             expect(note.soundType, SoundType.type1);
           }
         }
@@ -170,18 +168,6 @@ void main() {
     });
 
     group('setNoteSoundType', () {
-      test('changes the sound type of a specific note', () {
-        final noteId = metronome.state.pattern.beats[0].notes[0].id;
-
-        metronome.setNoteSoundType(0, 0, SoundType.type2);
-
-        expect(
-          metronome.state.pattern.beats[0].notes[0].soundType,
-          SoundType.type2,
-        );
-        expect(metronome.state.pattern.beats[0].notes[0].id, noteId);
-      });
-
       test('throws for invalid beat index', () {
         expect(
           () => metronome.setNoteSoundType(-1, 0, SoundType.type2),

@@ -1,7 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_soloud/flutter_soloud.dart';
 import 'package:meowtronome/core/enums.dart';
+import 'package:meowtronome/gen/assets.gen.dart';
 import 'package:meowtronome/ui/metronome/model.dart';
 
 SDF circleSDF(double r) {

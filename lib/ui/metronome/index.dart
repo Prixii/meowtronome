@@ -116,7 +116,10 @@ class MetronomePage extends StatelessWidget {
   //=======================
   Widget _buildPatternPanel(MetronomeNotifier notifier) {
     final pattern = notifier.state.pattern;
-    final beats = [for (final beat in pattern.beats) _buildBeat(beat)];
+    final beats = [
+      for (int i = 0; i < pattern.beats.length; i++)
+        _buildBeat(pattern.beats[i], i, notifier),
+    ];
     return Column(
       children: [
         CustomIconButton(
@@ -164,9 +167,19 @@ class MetronomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildBeat(Beat beat) {
+  Widget _buildBeat(Beat beat, int beatIndex, MetronomeNotifier notifier) {
     final noteWidgets = [
-      for (final note in beat.notes) AnimatedNote(soundType: note.soundType),
+      for (int i = 0; i < beat.notes.length; i++)
+        GestureDetector(
+          child: AnimatedNote(soundType: beat.notes[i].soundType),
+          onTap: () => {
+            notifier.setNoteSoundType(
+              beatIndex,
+              i,
+              beat.notes[i].soundType.getNext(),
+            ),
+          },
+        ),
     ];
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -178,7 +191,7 @@ class MetronomePage extends StatelessWidget {
           activeColor: Colors.grey,
           color: Colors.black,
           padding: const EdgeInsets.all(0),
-          onTap: () => {},
+          onTap: () => {notifier.removeNoteForBeatAt(beatIndex)},
         ),
         ...noteWidgets,
         CustomIconButton(
@@ -187,7 +200,7 @@ class MetronomePage extends StatelessWidget {
           activeColor: Colors.grey,
           color: Colors.black,
           padding: const EdgeInsets.all(0),
-          onTap: () => {},
+          onTap: () => {notifier.addNoteForBeatAt(beatIndex)},
         ),
       ],
     );

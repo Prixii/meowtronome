@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meowtronome/constants.dart';
+import 'package:meowtronome/global.dart';
 import 'package:meowtronome/core/enums.dart';
 
 class AnimatedNote extends StatelessWidget {
