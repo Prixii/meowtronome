@@ -72,3 +72,15 @@ final noteStyles = [
 ];
 
 final noteStyleMap = {for (final style in noteStyles) style.soundType: style};
+
+final titleTextStyle = const TextStyle(
+  fontSize: 32,
+  fontWeight: FontWeight.bold,
+);
+
+final subtitleTextStyle = const TextStyle(
+  fontSize: 24,
+  fontWeight: FontWeight.bold,
+);
+
+final bodyTextStyle = const TextStyle(fontSize: 20);

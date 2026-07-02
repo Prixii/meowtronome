@@ -11,6 +11,8 @@ class MetronomeNotifier extends ChangeNotifier {
   int currentBeatIndex = 0;
   int currentNoteIndex = 0;
 
+  bool _isConfigPageOpen = false;
+
   MetronomeState get state => _metronome.state;
   RhythmPattern get pattern => _metronome.state.pattern;
   int get bpm => _metronome.bpm;
@@ -88,6 +90,18 @@ class MetronomeNotifier extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  void openConfigPage() {
+    _isConfigPageOpen = true;
+    notifyListeners();
+  }
+
+  void closeConfigPage() {
+    _isConfigPageOpen = false;
+    notifyListeners();
+  }
+
+  bool get isConfigPageOpen => _isConfigPageOpen;
 
   @override
   void dispose() {

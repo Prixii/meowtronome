@@ -3,7 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
 import 'package:meowtronome/global.dart';
-import 'package:meowtronome/provider/metronome_notifier.dart';
+import 'package:meowtronome/ui/config/index.dart';
+import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
 import 'package:meowtronome/ui/metronome/components/animated_note.dart';
 import 'package:provider/provider.dart';
@@ -16,15 +17,22 @@ class MetronomePage extends StatelessWidget {
     final notifier = context.watch<MetronomeNotifier>();
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-
+    final isWide = screenWidth > screenHeight;
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: screenWidth > screenHeight
-              ? _buildBodyWide(notifier)
-              : _buildBody(notifier),
-        ),
+      body: Stack(
+        children: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: isWide ? _buildBodyWide(notifier) : _buildBody(notifier),
+            ),
+          ),
+          ConfigPage(
+            onClose: () => notifier.closeConfigPage(),
+            show: notifier.isConfigPageOpen,
+            isWide: isWide,
+          ),
+        ],
       ),
     );
   }
@@ -32,7 +40,7 @@ class MetronomePage extends StatelessWidget {
   Widget _buildBody(MetronomeNotifier notifier) {
     return Column(
       children: [
-        _buildTopButtonGroup(),
+        _buildTopButtonGroup(notifier),
         _buildBpmPanel(notifier),
         const SizedBox(height: 32),
         Expanded(child: _buildPatternPanel(notifier)),
@@ -58,7 +66,7 @@ class MetronomePage extends StatelessWidget {
         Expanded(
           child: Column(
             children: [
-              _buildTopButtonGroup(),
+              _buildTopButtonGroup(notifier),
               const SizedBox(height: 32),
               Expanded(child: _buildPatternPanel(notifier)),
             ],
@@ -69,7 +77,7 @@ class MetronomePage extends StatelessWidget {
   }
 
   //=======================
-  Widget _buildTopButtonGroup() {
+  Widget _buildTopButtonGroup(MetronomeNotifier notifier) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -88,7 +96,7 @@ class MetronomePage extends StatelessWidget {
           color: Colors.black,
         ),
         CustomIconButton(
-          onTap: () => {},
+          onTap: () => notifier.openConfigPage(),
           icon: Icons.settings,
           size: 24,
           activeColor: Colors.grey,

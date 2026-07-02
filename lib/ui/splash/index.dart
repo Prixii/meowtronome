@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meowtronome/core/soloud/soloud_helper.dart';
 import 'package:meowtronome/gen/assets.gen.dart';
-import 'package:meowtronome/provider/metronome_notifier.dart';
+import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
 import 'package:meowtronome/ui/metronome/index.dart';
 import 'package:provider/provider.dart';
 

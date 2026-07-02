@@ -49,7 +49,7 @@ class _AnimatedNoteState extends State<AnimatedNote>
   }
 
   @override
-  dispose() {
+  void dispose() {
     _controller.dispose();
     super.dispose();
   }
