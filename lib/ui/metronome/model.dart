@@ -9,13 +9,13 @@ class NoteStyle {
     required this.pressedColor,
     required this.size,
     this.filled = false,
-    this.strokeWidth = 2,
+    this.strokeWidth = 4,
     required this.soundType,
   });
   final Color color;
   final Color pressedColor;
   final double size;
   final bool filled;
-  final int strokeWidth;
+  final double strokeWidth;
   final SoundType soundType;
 }

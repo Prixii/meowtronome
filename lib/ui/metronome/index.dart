@@ -277,15 +277,9 @@ class MetronomePage extends StatelessWidget {
     final noteWidgets = [
       for (int i = 0; i < beat.notes.length; i++)
         GestureDetector(
-          child: Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: notifier.isCurrentNote(beatIndex, i)
-                  ? Colors.blue
-                  : Colors.transparent,
-              shape: BoxShape.circle,
-            ),
-            child: AnimatedNote(soundType: beat.notes[i].soundType),
+          child: AnimatedNote(
+            soundType: beat.notes[i].soundType,
+            isPlaying: notifier.isCurrentNote(beatIndex, i),
           ),
           onTap: () => {
             notifier.setNoteSoundType(
