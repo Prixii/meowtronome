@@ -168,7 +168,7 @@ void main() {
             Beat(
               notes: [
                 Note.initial(soundType: SoundType.type3),
-                Note.initial(soundType: SoundType.none),
+                Note.initial(soundType: SoundType.type4),
               ],
             ),
           ],
@@ -204,7 +204,7 @@ void main() {
 
       // Beat 1, note 1
       final note4 = scheduler.fetchNextNote();
-      expect(note4.soundType, SoundType.none);
+      expect(note4.soundType, SoundType.type4);
       expect(scheduler.runtimeState.currentBeatIndex, 1);
       expect(scheduler.runtimeState.currentNoteIndex, 1);
 

@@ -1,5 +1,6 @@
 import 'package:meowtronome/core/enums.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:meowtronome/gen/assets.gen.dart';
 
 part 'rhythm_pattern.freezed.dart';
 part 'rhythm_pattern.g.dart';
@@ -42,12 +43,21 @@ sealed class RhythmPattern with _$RhythmPattern {
 
 @freezed
 sealed class MetronomeState with _$MetronomeState {
-  const factory MetronomeState({required RhythmPattern pattern}) =
-      _MetronomeState;
+  const factory MetronomeState({
+    required RhythmPattern pattern,
+    required Map<SoundType, String> soundTypeMap,
+  }) = _MetronomeState;
 
   factory MetronomeState.fromJson(Map<String, dynamic> json) =>
       _$MetronomeStateFromJson(json);
 
-  factory MetronomeState.initial() =>
-      MetronomeState(pattern: RhythmPattern.initial());
+  factory MetronomeState.initial() => MetronomeState(
+    pattern: RhythmPattern.initial(),
+    soundTypeMap: {
+      SoundType.type1: Assets.audio.drum0,
+      SoundType.type2: Assets.audio.drum1,
+      SoundType.type3: Assets.audio.drum2,
+      SoundType.type4: Assets.audio.drum3,
+    },
+  );
 }

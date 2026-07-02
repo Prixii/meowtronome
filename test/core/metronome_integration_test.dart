@@ -83,7 +83,7 @@ void main() {
           ],
         ),
         // beat 2: 1 个音符 (none → 静音)
-        Beat(notes: [Note.initial(soundType: SoundType.none)]),
+        Beat(notes: [Note.initial(soundType: SoundType.type4)]),
         // beat 3: 2 个音符 (type3, type3)
         Beat(
           notes: [
@@ -236,7 +236,7 @@ void main() {
         (_) => Beat(
           notes: [
             Note.initial(soundType: SoundType.type3),
-            Note.initial(soundType: SoundType.none),
+            Note.initial(soundType: SoundType.type4),
           ],
         ),
       ),

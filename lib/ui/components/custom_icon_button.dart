@@ -42,6 +42,7 @@ class _CustomIconButtonState extends State<CustomIconButton> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () => widget.onTap?.call(),
       onTapDown: (_) => setState(() => _isTapping = true),
       onTapCancel: () => setState(() => _isTapping = false),

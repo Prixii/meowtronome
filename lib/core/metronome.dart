@@ -2,6 +2,7 @@ import 'package:meowtronome/core/enums.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
 import 'package:meowtronome/core/scheduler/scheduler.dart';
 import 'package:meowtronome/core/scheduler/model.dart';
+import 'package:meowtronome/core/soloud/soloud_helper.dart';
 
 class Metronome {
   MetronomeState _state;
@@ -10,6 +11,7 @@ class Metronome {
   Metronome() : _state = MetronomeState.initial(), _scheduler = Scheduler() {
     // Push the initial pattern to the scheduler so its queue is populated.
     _scheduler.setPattern(_state.pattern);
+    soloudHelper.setSoundTypeMap(_state.soundTypeMap);
   }
 
   MetronomeState get state => _state;

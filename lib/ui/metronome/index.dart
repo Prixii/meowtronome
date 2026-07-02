@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
+import 'package:meowtronome/global.dart';
 import 'package:meowtronome/provider/metronome_notifier.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
 import 'package:meowtronome/ui/metronome/components/animated_note.dart';
@@ -11,24 +14,57 @@ class MetronomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final notifier = context.watch<MetronomeNotifier>();
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(32.0),
+          child: screenWidth > screenHeight
+              ? _buildBodyWide(notifier)
+              : _buildBody(notifier),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBody(MetronomeNotifier notifier) {
+    return Column(
+      children: [
+        _buildTopButtonGroup(),
+        _buildBpmPanel(notifier),
+        const SizedBox(height: 32),
+        Expanded(child: _buildPatternPanel(notifier)),
+        const SizedBox(height: 64),
+        _buildPlayButton(notifier),
+      ],
+    );
+  }
+
+  Widget _buildBodyWide(MetronomeNotifier notifier) {
+    return Row(
+      children: [
+        Expanded(
           child: Column(
             children: [
-              _buildTopButtonGroup(),
-              const SizedBox(height: 32),
-              _buildBpmPanel(notifier),
-              const SizedBox(height: 32),
-              Expanded(child: _buildPatternPanel(notifier)),
+              Expanded(child: _buildBpmPanel(notifier)),
               const SizedBox(height: 64),
               _buildPlayButton(notifier),
             ],
           ),
         ),
-      ),
+        const SizedBox(width: 32),
+        Expanded(
+          child: Column(
+            children: [
+              _buildTopButtonGroup(),
+              const SizedBox(height: 32),
+              Expanded(child: _buildPatternPanel(notifier)),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -70,7 +106,7 @@ class MetronomePage extends StatelessWidget {
       children: [
         Text(
           notifier.bpm.toString(),
-          style: const TextStyle(fontSize: 68, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 98, fontWeight: FontWeight.bold),
         ),
         SizedBox(
           height: 64,
@@ -89,8 +125,12 @@ class MetronomePage extends StatelessWidget {
               Expanded(
                 child: Slider(
                   value: notifier.bpm.toDouble(),
-                  max: 360,
+                  max: 300,
                   min: 10,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 0,
+                  ),
                   onChanged: (newValue) => {
                     notifier.setBpm((newValue).toInt()),
                   },
@@ -115,53 +155,119 @@ class MetronomePage extends StatelessWidget {
 
   //=======================
   Widget _buildPatternPanel(MetronomeNotifier notifier) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(16)),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          CustomIconButton(
+            icon: Icons.remove,
+            size: noteSize,
+            activeColor: Colors.grey,
+            color: Colors.black,
+            padding: const EdgeInsets.all(0),
+            onTap: () => {notifier.removeNoteForAllBeats()},
+          ),
+          Expanded(
+            child: LayoutBuilder(
+              builder: (_, constraints) => Container(
+                constraints: BoxConstraints(
+                  minWidth: constraints.maxWidth * 0.6,
+                ),
+                child: LayoutBuilder(
+                  builder: (_, constraints) =>
+                      _buildBeatPanel(notifier, constraints),
+                ),
+              ),
+            ),
+          ),
+          CustomIconButton(
+            icon: Icons.add,
+            size: noteSize,
+            activeColor: Colors.grey,
+            color: Colors.black,
+            padding: const EdgeInsets.all(0),
+            onTap: () => {notifier.addNoteForAllBeats()},
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBeatPanel(
+    MetronomeNotifier notifier,
+    BoxConstraints constraints,
+  ) {
     final pattern = notifier.state.pattern;
-    final beats = [
-      for (int i = 0; i < pattern.beats.length; i++)
-        _buildBeat(pattern.beats[i], i, notifier),
-    ];
-    return Column(
+    var maxNoteCount = 0;
+
+    final maxHeight = constraints.maxHeight;
+    var preferredMinHeight = maxHeight * 0.6;
+
+    for (int i = 0; i < pattern.beats.length; i++) {
+      maxNoteCount = max(maxNoteCount, pattern.beats[i].notes.length);
+    }
+    final noteHeight = maxNoteCount * (2 * noteSize);
+
+    final double preferredMaxHeight = min(
+      0.9 * maxHeight,
+      max(noteHeight, maxHeight),
+    );
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         CustomIconButton(
           icon: Icons.remove,
-          size: 24,
+          size: noteSize,
           activeColor: Colors.grey,
           color: Colors.black,
           padding: const EdgeInsets.all(0),
-          onTap: () => {notifier.removeNoteForAllBeats()},
+          onTap: () => {notifier.removeBeat()},
         ),
-        Expanded(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CustomIconButton(
-                icon: Icons.remove,
-                size: 24,
-                activeColor: Colors.grey,
-                color: Colors.black,
-                padding: const EdgeInsets.all(0),
-                onTap: () => {notifier.removeBeat()},
-              ),
-              ...beats,
-              CustomIconButton(
-                icon: Icons.add,
-                size: 24,
-                activeColor: Colors.grey,
-                color: Colors.black,
-                padding: const EdgeInsets.all(0),
-                onTap: () => {notifier.addBeat()},
-              ),
-            ],
-          ),
-        ),
+        ...[
+          for (int i = 0; i < pattern.beats.length; i++)
+            Column(
+              children: [
+                CustomIconButton(
+                  icon: Icons.remove,
+                  size: noteSize,
+                  activeColor: Colors.grey,
+                  color: Colors.black,
+                  padding: const EdgeInsets.all(0),
+                  onTap: () => {notifier.removeNoteForBeatAt(i)},
+                ),
+                Expanded(
+                  child: Container(
+                    constraints: BoxConstraints(
+                      minHeight: preferredMinHeight,
+                      maxHeight: preferredMaxHeight,
+                    ),
+                    child: _buildBeat(pattern.beats[i], i, notifier),
+                  ),
+                ),
+                CustomIconButton(
+                  icon: Icons.add,
+                  size: noteSize,
+                  activeColor: Colors.grey,
+                  color: Colors.black,
+                  padding: const EdgeInsets.all(0),
+                  onTap: () => {notifier.addNoteForBeatAt(i)},
+                ),
+              ],
+            ),
+        ],
         CustomIconButton(
           icon: Icons.add,
-          size: 24,
+          size: noteSize,
           activeColor: Colors.grey,
           color: Colors.black,
           padding: const EdgeInsets.all(0),
-          onTap: () => {notifier.addNoteForAllBeats()},
+          onTap: () => {notifier.addBeat()},
         ),
       ],
     );
@@ -172,6 +278,7 @@ class MetronomePage extends StatelessWidget {
       for (int i = 0; i < beat.notes.length; i++)
         GestureDetector(
           child: Container(
+            padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: notifier.isCurrentNote(beatIndex, i)
                   ? Colors.blue
@@ -192,25 +299,7 @@ class MetronomePage extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        CustomIconButton(
-          icon: Icons.remove,
-          size: 24,
-          activeColor: Colors.grey,
-          color: Colors.black,
-          padding: const EdgeInsets.all(0),
-          onTap: () => {notifier.removeNoteForBeatAt(beatIndex)},
-        ),
-        ...noteWidgets,
-        CustomIconButton(
-          icon: Icons.add,
-          size: 24,
-          activeColor: Colors.grey,
-          color: Colors.black,
-          padding: const EdgeInsets.all(0),
-          onTap: () => {notifier.addNoteForBeatAt(beatIndex)},
-        ),
-      ],
+      children: [...noteWidgets],
     );
   }
 

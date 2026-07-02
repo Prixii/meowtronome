@@ -14,7 +14,7 @@ class NoteStyle {
   });
   final Color color;
   final Color pressedColor;
-  final int size;
+  final double size;
   final bool filled;
   final int strokeWidth;
   final SoundType soundType;
