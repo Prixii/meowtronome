@@ -1,20 +1,30 @@
+import 'dart:convert';
+
 import 'package:meowtronome/core/enums.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
 import 'package:meowtronome/core/scheduler/scheduler.dart';
 import 'package:meowtronome/core/scheduler/model.dart';
 import 'package:meowtronome/core/soloud/soloud_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Metronome {
   MetronomeState _state;
   final Scheduler _scheduler;
+  late final SharedPreferences prefs;
 
-  Metronome() : _state = MetronomeState.initial(), _scheduler = Scheduler() {
-    // Push the initial pattern to the scheduler so its queue is populated.
+  Metronome() : _state = MetronomeState.initial(), _scheduler = Scheduler();
+
+  Future<void> init() async {
+    prefs = await SharedPreferences.getInstance();
+
+    final metronomeState = prefs.getString('metronomeState');
+    if (metronomeState != null) {
+      _state = MetronomeState.fromJson(jsonDecode(metronomeState));
+    }
+
     _scheduler.setPattern(_state.pattern);
     soloudHelper.setSoundTypeMap(_state.soundTypeMap);
   }
-
-  MetronomeState get state => _state;
 
   void dispose() {
     _scheduler.dispose();
@@ -23,6 +33,7 @@ class Metronome {
   void setPattern(RhythmPattern pattern) {
     _state = _state.copyWith(pattern: pattern);
     _scheduler.setPattern(_state.pattern);
+    saveState();
   }
 
   void setOnPlayNote(void Function(Scheduler) onPlayNote) {
@@ -32,9 +43,8 @@ class Metronome {
   // bpm
   void setBpm(int bpm) {
     _scheduler.setBpm(bpm);
+    saveState();
   }
-
-  int get bpm => _scheduler.bpm;
 
   // note management methods
   void addNoteForBeatAt(int beatIndex) {
@@ -52,6 +62,7 @@ class Metronome {
 
     _state = _state.copyWith(pattern: _state.pattern.copyWith(beats: beats));
     _scheduler.setPattern(_state.pattern);
+    saveState();
   }
 
   void removeNoteForBeatAt(int beatIndex) {
@@ -75,6 +86,7 @@ class Metronome {
 
     _state = _state.copyWith(pattern: _state.pattern.copyWith(beats: beats));
     _scheduler.setPattern(_state.pattern);
+    saveState();
   }
 
   void addNoteForAllBeats() {
@@ -86,6 +98,7 @@ class Metronome {
       pattern: _state.pattern.copyWith(beats: updatedBeats),
     );
     _scheduler.setPattern(_state.pattern);
+    saveState();
   }
 
   void removeNoteForAllBeats() {
@@ -103,6 +116,7 @@ class Metronome {
       pattern: _state.pattern.copyWith(beats: updatedBeats),
     );
     _scheduler.setPattern(_state.pattern);
+    saveState();
   }
 
   // beat management methods
@@ -114,6 +128,7 @@ class Metronome {
       ),
     );
     _scheduler.setPattern(_state.pattern);
+    saveState();
   }
 
   void removeBeat() {
@@ -129,6 +144,7 @@ class Metronome {
       ),
     );
     _scheduler.setPattern(_state.pattern);
+    saveState();
   }
 
   // note sound type modification
@@ -152,6 +168,8 @@ class Metronome {
 
     _state = _state.copyWith(pattern: _state.pattern.copyWith(beats: beats));
     _scheduler.setPattern(_state.pattern);
+
+    saveState();
   }
 
   // player methods
@@ -162,6 +180,13 @@ class Metronome {
   void stop() {
     _scheduler.stop();
   }
+
+  void saveState() {
+    prefs.setString('metronomeState', jsonEncode(_state.toJson()));
+  }
+
+  MetronomeState get state => _state;
+  int get bpm => _scheduler.bpm;
 
   bool get isRunning => _scheduler.state.isRunning;
 

@@ -16,7 +16,11 @@ class MetronomeNotifier extends ChangeNotifier {
   int get bpm => _metronome.bpm;
   bool get isRunning => _metronome.isRunning;
 
-  MetronomeNotifier() {
+  MetronomeNotifier();
+
+  Future<void> init() async {
+    await _metronome.init();
+
     _metronome.setOnPlayNote((scheduler) {
       final rt = scheduler.runtimeState;
       currentBeatIndex = rt.currentBeatIndex;

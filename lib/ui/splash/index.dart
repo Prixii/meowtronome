@@ -22,16 +22,18 @@ class SplashPage extends StatelessWidget {
   }
 
   Future<void> init(BuildContext context) async {
+    final provider = MetronomeNotifier();
     await Future.wait([
       soloudHelper.initialize(),
+      provider.init(),
       Future.delayed(const Duration(seconds: 1)),
     ]);
 
     if (context.mounted) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute<void>(
-          builder: (_) => ChangeNotifierProvider(
-            create: (_) => MetronomeNotifier(),
+          builder: (_) => ChangeNotifierProvider.value(
+            value: provider,
             child: const MetronomePage(),
           ),
         ),

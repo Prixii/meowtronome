@@ -1,5 +1,4 @@
 import 'package:meowtronome/core/enums.dart';
-import 'package:meowtronome/core/rhythm_pattern.dart';
 import 'package:meowtronome/core/metronome.dart';
 import 'package:flutter_test/flutter_test.dart';
 
