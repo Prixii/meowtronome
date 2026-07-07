@@ -70,25 +70,25 @@ void main() {
         // beat 0: 2 个音符 (type1, type2)
         Beat(
           notes: [
-            Note.initial(soundType: SoundType.type1),
-            Note.initial(soundType: SoundType.type2),
+            Note(soundType: SoundType.type1),
+            Note(soundType: SoundType.type2),
           ],
         ),
         // beat 1: 3 个音符 (type3, type1, type2)
         Beat(
           notes: [
-            Note.initial(soundType: SoundType.type3),
-            Note.initial(soundType: SoundType.type1),
-            Note.initial(soundType: SoundType.type2),
+            Note(soundType: SoundType.type3),
+            Note(soundType: SoundType.type1),
+            Note(soundType: SoundType.type2),
           ],
         ),
         // beat 2: 1 个音符 (none → 静音)
-        Beat(notes: [Note.initial(soundType: SoundType.type4)]),
+        Beat(notes: [Note(soundType: SoundType.type4)]),
         // beat 3: 2 个音符 (type3, type3)
         Beat(
           notes: [
-            Note.initial(soundType: SoundType.type3),
-            Note.initial(soundType: SoundType.type3),
+            Note(soundType: SoundType.type3),
+            Note(soundType: SoundType.type3),
           ],
         ),
       ],
@@ -171,8 +171,8 @@ void main() {
         4,
         (_) => Beat(
           notes: [
-            Note.initial(soundType: SoundType.type1),
-            Note.initial(soundType: SoundType.type2),
+            Note(soundType: SoundType.type1),
+            Note(soundType: SoundType.type2),
           ],
         ),
       ),
@@ -221,9 +221,8 @@ void main() {
         (_) => Beat(
           notes: List.generate(
             4,
-            (i) => Note.initial(
-              soundType: i.isEven ? SoundType.type1 : SoundType.type2,
-            ),
+            (i) =>
+                Note(soundType: i.isEven ? SoundType.type1 : SoundType.type2),
           ),
         ),
       ),
@@ -235,8 +234,8 @@ void main() {
         3,
         (_) => Beat(
           notes: [
-            Note.initial(soundType: SoundType.type3),
-            Note.initial(soundType: SoundType.type4),
+            Note(soundType: SoundType.type3),
+            Note(soundType: SoundType.type4),
           ],
         ),
       ),

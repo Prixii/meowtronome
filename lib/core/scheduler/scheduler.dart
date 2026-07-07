@@ -13,8 +13,8 @@ class Scheduler {
   Timer? _timer;
 
   Scheduler()
-    : _state = SchedulerState.initial(),
-      _runtimeState = SchedulerRuntimeState.initial(),
+    : _state = SchedulerState(),
+      _runtimeState = SchedulerRuntimeState(),
       _stopwatch = Stopwatch();
 
   void start() {
@@ -23,7 +23,7 @@ class Scheduler {
       _generateNoteQueue();
     }
     _state = _state.copyWith(isRunning: true);
-    _runtimeState = SchedulerRuntimeState.initial();
+    _runtimeState = SchedulerRuntimeState();
     _stopwatch.start();
 
     _schedule();

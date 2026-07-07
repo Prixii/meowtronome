@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:meowtronome/core/enums.dart';
 import 'package:meowtronome/ui/metronome/model.dart';
 
-const noteSize = 20.0;
+const noteSize = 10.0;
 
 SDF circleSDF(double r) {
   return (Offset p) {

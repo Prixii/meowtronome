@@ -12,7 +12,7 @@ class Metronome {
   final Scheduler _scheduler;
   late final SharedPreferences prefs;
 
-  Metronome() : _state = MetronomeState.initial(), _scheduler = Scheduler();
+  Metronome() : _state = MetronomeState(), _scheduler = Scheduler();
 
   Future<void> init() async {
     prefs = await SharedPreferences.getInstance();
@@ -23,6 +23,7 @@ class Metronome {
     }
 
     _scheduler.setPattern(_state.pattern);
+    _scheduler.setBpm(_state.bpm);
     soloudHelper.setSoundTypeMap(_state.soundTypeMap);
   }
 
@@ -42,6 +43,7 @@ class Metronome {
 
   // bpm
   void setBpm(int bpm) {
+    _state = _state.copyWith(bpm: bpm);
     _scheduler.setBpm(bpm);
     saveState();
   }
@@ -91,7 +93,7 @@ class Metronome {
 
   void addNoteForAllBeats() {
     final updatedBeats = _state.pattern.beats.map((beat) {
-      return beat.copyWith(notes: [...beat.notes, Note.initial()]);
+      return beat.copyWith(notes: [...beat.notes, Note()]);
     }).toList();
 
     _state = _state.copyWith(
@@ -186,7 +188,7 @@ class Metronome {
   }
 
   MetronomeState get state => _state;
-  int get bpm => _scheduler.bpm;
+  int get bpm => _state.bpm;
 
   bool get isRunning => _scheduler.state.isRunning;
 

@@ -13,6 +13,8 @@ class AnimatedNote extends StatefulWidget {
   final bool isPlaying;
 
   static const double paddingSize = 4;
+  static const maxSizeScale = 1.4;
+  static const minSizeScale = 0.9;
 
   @override
   State<AnimatedNote> createState() => _AnimatedNoteState();
@@ -33,9 +35,21 @@ class _AnimatedNoteState extends State<AnimatedNote>
     );
 
     _scaleAnimation = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 1, end: 0.9), weight: 2),
-      TweenSequenceItem(tween: Tween(begin: 0.9, end: 1.2), weight: 3),
-      TweenSequenceItem(tween: Tween(begin: 1.2, end: 1), weight: 5),
+      TweenSequenceItem(
+        tween: Tween(begin: 1, end: AnimatedNote.minSizeScale),
+        weight: 2,
+      ),
+      TweenSequenceItem(
+        tween: Tween(
+          begin: AnimatedNote.minSizeScale,
+          end: AnimatedNote.maxSizeScale,
+        ),
+        weight: 3,
+      ),
+      TweenSequenceItem(
+        tween: Tween(begin: AnimatedNote.maxSizeScale, end: 1),
+        weight: 5,
+      ),
     ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
   }
 

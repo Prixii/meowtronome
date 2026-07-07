@@ -7,13 +7,13 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('SchedulerNote', () {
     test('initial() creates a SchedulerNote with defaults', () {
-      final note = SchedulerNote.initial();
+      final note = SchedulerNote();
       expect(note.soundType, SoundType.type1);
       expect(note.timeValueMs, 1000);
     });
 
     test('copyWith replaces fields', () {
-      final note = SchedulerNote.initial();
+      final note = SchedulerNote();
       final updated = note.copyWith(
         soundType: SoundType.type2,
         timeValueMs: 500,
@@ -36,7 +36,7 @@ void main() {
 
   group('SchedulerState', () {
     test('initial() has empty noteQueue, bpm=120, not running', () {
-      final state = SchedulerState.initial();
+      final state = SchedulerState();
       expect(state.bpm, 120);
       expect(state.isRunning, false);
       expect(state.noteQueue, isEmpty);
@@ -47,7 +47,7 @@ void main() {
 
   group('SchedulerRuntimeState', () {
     test('initial() has beatIndex 0, noteIndex -1, cumulativeTime 0', () {
-      final state = SchedulerRuntimeState.initial();
+      final state = SchedulerRuntimeState();
       expect(state.currentBeatIndex, 0);
       expect(state.currentNoteIndex, -1);
       expect(state.expectedCumulativeTimeMs, 0);
@@ -68,7 +68,7 @@ void main() {
     test('initial pattern produces correct queue after setPattern', () {
       // By default the scheduler is constructed with an empty queue.
       // The pattern needs to be set explicitly (like Metronome does).
-      scheduler.setPattern(RhythmPattern.initial());
+      scheduler.setPattern(RhythmPattern.defaultPattern());
 
       final queue = scheduler.state.noteQueue;
       // 4 beats, each with 4 notes
@@ -80,7 +80,7 @@ void main() {
 
     test('queue notes have correct time values at 120 BPM', () {
       // 120 BPM → 500ms per beat → 4 notes per beat → 125ms per note
-      scheduler.setPattern(RhythmPattern.initial());
+      scheduler.setPattern(RhythmPattern.defaultPattern());
 
       final queue = scheduler.state.noteQueue;
       for (final beat in queue) {
@@ -93,7 +93,7 @@ void main() {
     test('queue notes have correct time values at 60 BPM', () {
       // 60 BPM → 1000ms per beat → 4 notes per beat → 250ms per note
       scheduler.setBpm(60);
-      scheduler.setPattern(RhythmPattern.initial());
+      scheduler.setPattern(RhythmPattern.defaultPattern());
 
       final queue = scheduler.state.noteQueue;
       for (final beat in queue) {
@@ -117,13 +117,13 @@ void main() {
               Beat(
                 notes: List.generate(
                   4,
-                  (_) => Note.initial(soundType: SoundType.type1),
+                  (_) => Note(soundType: SoundType.type1),
                 ),
               ),
               Beat(
                 notes: List.generate(
                   2,
-                  (_) => Note.initial(soundType: SoundType.type2),
+                  (_) => Note(soundType: SoundType.type2),
                 ),
               ),
             ],
@@ -137,7 +137,7 @@ void main() {
     );
 
     test('regenerating queue after BPM change uses new BPM', () {
-      scheduler.setPattern(RhythmPattern.initial());
+      scheduler.setPattern(RhythmPattern.defaultPattern());
       scheduler.setBpm(60);
 
       final queue = scheduler.state.noteQueue;
@@ -161,14 +161,14 @@ void main() {
           beats: [
             Beat(
               notes: [
-                Note.initial(soundType: SoundType.type1),
-                Note.initial(soundType: SoundType.type2),
+                Note(soundType: SoundType.type1),
+                Note(soundType: SoundType.type2),
               ],
             ),
             Beat(
               notes: [
-                Note.initial(soundType: SoundType.type3),
-                Note.initial(soundType: SoundType.type4),
+                Note(soundType: SoundType.type3),
+                Note(soundType: SoundType.type4),
               ],
             ),
           ],
@@ -236,7 +236,7 @@ void main() {
 
     test('start and stop transition state correctly', () {
       final scheduler = Scheduler();
-      scheduler.setPattern(RhythmPattern.initial());
+      scheduler.setPattern(RhythmPattern.defaultPattern());
 
       scheduler.start();
       expect(scheduler.state.isRunning, isTrue);
@@ -266,7 +266,7 @@ void main() {
   group('pattern change during playback', () {
     test('setPattern resets runtime state when running', () {
       final scheduler = Scheduler();
-      scheduler.setPattern(RhythmPattern.initial());
+      scheduler.setPattern(RhythmPattern.defaultPattern());
 
       // Advance to beat 1
       scheduler.fetchNextNote();
@@ -284,7 +284,7 @@ void main() {
         RhythmPattern(
           name: 'small',
           beats: [
-            Beat(notes: [Note.initial(soundType: SoundType.type1)]),
+            Beat(notes: [Note(soundType: SoundType.type1)]),
           ],
         ),
       );

@@ -42,9 +42,8 @@ class MetronomePage extends StatelessWidget {
       children: [
         _buildTopButtonGroup(notifier),
         _buildBpmPanel(notifier),
-        const SizedBox(height: 32),
         Expanded(child: _buildPatternPanel(notifier)),
-        const SizedBox(height: 64),
+        const SizedBox(height: 32),
         _buildPlayButton(notifier),
       ],
     );
