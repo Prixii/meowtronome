@@ -1,33 +1,75 @@
 import 'package:flutter/material.dart';
+import 'package:meowtronome/ui/components/custom_icon_button.dart';
 import 'package:meowtronome/ui/metronome/components/bpm_panel.dart';
 import 'package:meowtronome/ui/metronome/components/pattern_panel.dart';
 import 'package:meowtronome/ui/metronome/components/play_button.dart';
 import 'package:meowtronome/ui/metronome/components/top_button_group.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
 
-class MetronomeLayoutSquare extends StatelessWidget {
+class MetronomeLayoutSquare extends StatefulWidget {
   const MetronomeLayoutSquare({super.key, required this.notifier});
   final MetronomeNotifier notifier;
 
   @override
+  State<MetronomeLayoutSquare> createState() => _MetronomeLayoutSquareState();
+}
+
+class _MetronomeLayoutSquareState extends State<MetronomeLayoutSquare> {
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: 0);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        children: [
-          TopButtonGroup(notifier: notifier),
-          const SizedBox(height: 16),
-          Expanded(
-            child: PageView(
-              children: [
-                BpmPanel(notifier: notifier),
-                PatternPanel(notifier: notifier),
-              ],
-            ),
+    return Column(
+      children: [
+        TopButtonGroup(notifier: widget.notifier),
+        const SizedBox(height: 16),
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CustomIconButton(
+                icon: Icons.arrow_left,
+                onTap: () {
+                  final target = _pageController.page == 0 ? 1 : 0;
+                  _pageController.animateToPage(
+                    target,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
+              ),
+              Expanded(
+                child: PageView(
+                  controller: _pageController,
+                  children: [
+                    BpmPanel(notifier: widget.notifier),
+                    PatternPanel(notifier: widget.notifier),
+                  ],
+                ),
+              ),
+              CustomIconButton(
+                icon: Icons.arrow_right,
+                onTap: () {
+                  final target = _pageController.page == 0 ? 1 : 0;
+                  _pageController.animateToPage(
+                    target,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          PlayButton(notifier: notifier),
-        ],
-      ),
+        ),
+        const SizedBox(height: 16),
+        PlayButton(notifier: widget.notifier),
+      ],
     );
   }
 }
