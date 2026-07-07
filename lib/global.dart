@@ -5,6 +5,7 @@ import 'package:meowtronome/core/enums.dart';
 import 'package:meowtronome/ui/metronome/model.dart';
 
 const noteSize = 10.0;
+const iconButtonSize = 24.0;
 
 SDF circleSDF(double r) {
   return (Offset p) {
