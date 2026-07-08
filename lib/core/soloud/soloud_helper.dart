@@ -10,6 +10,8 @@ class SoloudHelper {
   final _soundTypeMap = <SoundType, String>{};
   final _soloudAudioSourceMap = <String, AudioSource>{};
 
+  bool get isInitialized => _initialized;
+
   Future<void> initialize() async {
     if (_initialized) return;
 
@@ -22,20 +24,32 @@ class SoloudHelper {
     _initialized = true;
   }
 
-  void setSoundTypeMap(Map<SoundType, String> soundTypeMap) =>
-      _soundTypeMap.addAll(soundTypeMap);
+  void setSoundTypeMap(Map<SoundType, String> soundTypeMap) {
+    _soundTypeMap
+      ..clear()
+      ..addAll(soundTypeMap);
+  }
 
   Future<void> playSource(SoundType type) async {
+    if (!_initialized) return;
+
     final audioAsset = _soundTypeMap[type]!;
     _soloud.play(_soloudAudioSourceMap[audioAsset]!);
   }
 
+  Future<void> dispose() async {
+    if (!_initialized) return;
+
+    await _soloud.disposeAllSources();
+    _soloud.deinit();
+    _soundTypeMap.clear();
+    _soloudAudioSourceMap.clear();
+    _initialized = false;
+  }
+
   Future<void> _loadAudioSource(String asset) async {
     if (_soloudAudioSourceMap.containsKey(asset)) return;
-    await Future.wait([
-      _soloud
-          .loadAsset(asset)
-          .then((audioSource) => _soloudAudioSourceMap[asset] = audioSource),
-    ]);
+    final audioSource = await _soloud.loadAsset(asset);
+    _soloudAudioSourceMap[asset] = audioSource;
   }
 }

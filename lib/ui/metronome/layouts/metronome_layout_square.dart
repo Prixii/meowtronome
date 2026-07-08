@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
+import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/metronome/components/bpm_panel.dart';
 import 'package:meowtronome/ui/metronome/components/pattern_panel.dart';
 import 'package:meowtronome/ui/metronome/components/play_button.dart';
@@ -29,8 +30,6 @@ class _MetronomeLayoutSquareState extends State<MetronomeLayoutSquare> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TopButtonGroup(notifier: widget.notifier),
-        const SizedBox(height: 16),
         Expanded(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -38,12 +37,13 @@ class _MetronomeLayoutSquareState extends State<MetronomeLayoutSquare> {
               if (Platform.isWindows)
                 CustomIconButton(
                   icon: Icons.arrow_left,
+                  padding: EdgeInsets.zero,
                   onTap: () {
                     final target = _pageController.page == 0 ? 1 : 0;
                     _pageController.animateToPage(
                       target,
                       duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
+                      curve: Curves.easeOut,
                     );
                   },
                 ),
@@ -51,7 +51,15 @@ class _MetronomeLayoutSquareState extends State<MetronomeLayoutSquare> {
                 child: PageView(
                   controller: _pageController,
                   children: [
-                    BpmPanel(notifier: widget.notifier),
+                    Column(
+                      children: [
+                        TopButtonGroup(notifier: widget.notifier),
+                        SizedBox(
+                          height: LayoutHelper.getCommonWidgetGap(context),
+                        ),
+                        BpmPanel(notifier: widget.notifier),
+                      ],
+                    ),
                     PatternPanel(notifier: widget.notifier),
                   ],
                 ),
@@ -59,12 +67,13 @@ class _MetronomeLayoutSquareState extends State<MetronomeLayoutSquare> {
               if (Platform.isWindows)
                 CustomIconButton(
                   icon: Icons.arrow_right,
+                  padding: EdgeInsets.zero,
                   onTap: () {
                     final target = _pageController.page == 0 ? 1 : 0;
                     _pageController.animateToPage(
                       target,
                       duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
+                      curve: Curves.easeOut,
                     );
                   },
                 ),

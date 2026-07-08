@@ -1,13 +1,22 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:meowtronome/ui/splash/index.dart';
+import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  if (Platform.isWindows) await initializeDesktop();
   runApp(kDebugMode ? const StatefulMainApp() : const MainApp());
+}
+
+Future<void> initializeDesktop() async {
+  await windowManager.ensureInitialized();
+  await windowManager.waitUntilReadyToShow(const WindowOptions(), () async {
+    await windowManager.setMinimumSize(const Size(400, 400));
+  });
 }
 
 class MainApp extends StatelessWidget {
@@ -27,22 +36,35 @@ class StatefulMainApp extends StatefulWidget {
 }
 
 class _StatefulMainAppState extends State<StatefulMainApp> {
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(home: SplashPage());
-  }
+  Timer? _windowSizeTimer;
 
   @override
   void initState() {
     super.initState();
-    startPrintWindowSize(context);
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _startPrintWindowSize(),
+    );
   }
 
-  Future<void> startPrintWindowSize(BuildContext context) async {
-    Timer.periodic(const Duration(seconds: 1), (timer) async {
-      final size = MediaQuery.of(context).size;
+  void _startPrintWindowSize() {
+    if (!mounted || _windowSizeTimer != null) return;
+
+    _windowSizeTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
+      final view = View.of(context);
+      final size = view.physicalSize / view.devicePixelRatio;
       debugPrint('Window size: (${size.width} * ${size.height})');
-      startPrintWindowSize(context);
     });
+  }
+
+  @override
+  void dispose() {
+    _windowSizeTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(home: SplashPage());
   }
 }

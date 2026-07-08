@@ -85,4 +85,10 @@ class _CustomIconButtonState extends State<CustomIconButton> {
     _timer = null;
     _startTime = null;
   }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 }
