@@ -80,3 +80,10 @@ final subtitleTextStyle = const TextStyle(
 );
 
 final bodyTextStyle = const TextStyle(fontSize: 20);
+
+const defaultSoundMap = {
+  SoundType.type1: 'assets/audio/drum_0.wav',
+  SoundType.type2: 'assets/audio/drum_1.wav',
+  SoundType.type3: 'assets/audio/drum_2.wav',
+  SoundType.type4: 'assets/audio/drum_3.wav',
+};

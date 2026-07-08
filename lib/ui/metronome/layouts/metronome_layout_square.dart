@@ -52,6 +52,7 @@ class _MetronomeLayoutSquareState extends State<MetronomeLayoutSquare> {
                   controller: _pageController,
                   children: [
                     Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         TopButtonGroup(notifier: widget.notifier),
                         SizedBox(
