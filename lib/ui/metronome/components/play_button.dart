@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
 
 class PlayButton extends StatelessWidget {
@@ -7,7 +8,7 @@ class PlayButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 60,
+      height: LayoutHelper.getPlayButtonHeight(context),
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.pink,

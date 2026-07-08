@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:meowtronome/core/enums.dart';
 import 'package:meowtronome/ui/metronome/model.dart';
 
-const noteSize = 10.0;
 const iconButtonSize = 24.0;
 
 SDF circleSDF(double r) {
@@ -50,25 +49,21 @@ final noteStyles = [
     color: Colors.white,
     pressedColor: Colors.grey,
     soundType: SoundType.type4,
-    size: noteSize,
   ),
   NoteStyle(
     color: Colors.red,
     pressedColor: Colors.pink,
     soundType: SoundType.type1,
-    size: noteSize,
   ),
   NoteStyle(
     color: Colors.green,
     pressedColor: Colors.lightGreen,
     soundType: SoundType.type2,
-    size: noteSize,
   ),
   NoteStyle(
     color: Colors.blue,
     pressedColor: Colors.lightBlue,
     soundType: SoundType.type3,
-    size: noteSize,
   ),
 ];
 

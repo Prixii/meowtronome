@@ -7,15 +7,11 @@ class NoteStyle {
   const NoteStyle({
     required this.color,
     required this.pressedColor,
-    required this.size,
     this.filled = false,
-    this.strokeWidth = 4,
     required this.soundType,
   });
   final Color color;
   final Color pressedColor;
-  final double size;
   final bool filled;
-  final double strokeWidth;
   final SoundType soundType;
 }

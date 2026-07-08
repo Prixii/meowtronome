@@ -2,10 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:meowtronome/ui/config/index.dart';
-import 'package:meowtronome/ui/metronome/components/bpm_panel.dart';
-import 'package:meowtronome/ui/metronome/components/pattern_panel.dart';
-import 'package:meowtronome/ui/metronome/components/play_button.dart';
-import 'package:meowtronome/ui/metronome/components/top_button_group.dart';
+import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/metronome/layouts/metronome_layout_horizontal.dart';
 import 'package:meowtronome/ui/metronome/layouts/metronome_layout_square.dart';
 import 'package:meowtronome/ui/metronome/layouts/metronome_layout_vertical.dart';
@@ -29,7 +26,7 @@ class MetronomePage extends StatelessWidget {
         children: [
           Center(
             child: Padding(
-              padding: const EdgeInsets.all(32.0),
+              padding: LayoutHelper.getAppPadding(context),
               child: shouldSquare
                   ? MetronomeLayoutSquare(notifier: notifier)
                   : (isWide

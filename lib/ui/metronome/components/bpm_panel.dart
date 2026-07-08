@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
+import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
 
 class BpmPanel extends StatelessWidget {
@@ -13,7 +14,10 @@ class BpmPanel extends StatelessWidget {
       children: [
         Text(
           notifier.bpm.toString(),
-          style: const TextStyle(fontSize: 98, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: LayoutHelper.getBpmTextSize(context),
+            fontWeight: FontWeight.bold,
+          ),
         ),
         SizedBox(
           height: 64,

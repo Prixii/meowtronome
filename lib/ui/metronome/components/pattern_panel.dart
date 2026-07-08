@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
-import 'package:meowtronome/global.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
+import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/metronome/components/animated_note.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
 
@@ -35,7 +35,7 @@ class PatternPanel extends StatelessWidget {
                 ),
                 child: LayoutBuilder(
                   builder: (_, constraints) =>
-                      _buildBeatPanel(notifier, constraints),
+                      _buildBeatPanel(notifier, constraints, context),
                 ),
               ),
             ),
@@ -55,6 +55,7 @@ class PatternPanel extends StatelessWidget {
   Widget _buildBeatPanel(
     MetronomeNotifier notifier,
     BoxConstraints constraints,
+    BuildContext context,
   ) {
     final pattern = notifier.state.pattern;
     var maxNoteCount = 0;
@@ -65,7 +66,7 @@ class PatternPanel extends StatelessWidget {
     for (int i = 0; i < pattern.beats.length; i++) {
       maxNoteCount = max(maxNoteCount, pattern.beats[i].notes.length);
     }
-    final noteHeight = maxNoteCount * (2 * noteSize);
+    final noteHeight = maxNoteCount * (2 * LayoutHelper.getNoteSize(context));
 
     final double preferredMaxHeight = min(
       0.9 * maxHeight,

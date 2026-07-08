@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
 import 'package:meowtronome/ui/metronome/components/bpm_panel.dart';
@@ -33,17 +35,18 @@ class _MetronomeLayoutSquareState extends State<MetronomeLayoutSquare> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CustomIconButton(
-                icon: Icons.arrow_left,
-                onTap: () {
-                  final target = _pageController.page == 0 ? 1 : 0;
-                  _pageController.animateToPage(
-                    target,
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
-                },
-              ),
+              if (Platform.isWindows)
+                CustomIconButton(
+                  icon: Icons.arrow_left,
+                  onTap: () {
+                    final target = _pageController.page == 0 ? 1 : 0;
+                    _pageController.animateToPage(
+                      target,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  },
+                ),
               Expanded(
                 child: PageView(
                   controller: _pageController,
@@ -53,20 +56,22 @@ class _MetronomeLayoutSquareState extends State<MetronomeLayoutSquare> {
                   ],
                 ),
               ),
-              CustomIconButton(
-                icon: Icons.arrow_right,
-                onTap: () {
-                  final target = _pageController.page == 0 ? 1 : 0;
-                  _pageController.animateToPage(
-                    target,
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
-                },
-              ),
+              if (Platform.isWindows)
+                CustomIconButton(
+                  icon: Icons.arrow_right,
+                  onTap: () {
+                    final target = _pageController.page == 0 ? 1 : 0;
+                    _pageController.animateToPage(
+                      target,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  },
+                ),
             ],
           ),
         ),
+
         const SizedBox(height: 16),
         PlayButton(notifier: widget.notifier),
       ],

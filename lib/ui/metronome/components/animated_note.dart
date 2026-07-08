@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meowtronome/global.dart';
 import 'package:meowtronome/core/enums.dart';
+import 'package:meowtronome/ui/layout_helper.dart';
 
 class AnimatedNote extends StatefulWidget {
   const AnimatedNote({
@@ -73,17 +74,20 @@ class _AnimatedNoteState extends State<AnimatedNote>
     final style = noteStyleMap[widget.soundType]!;
 
     return SizedBox(
-      width: style.size + AnimatedNote.paddingSize * 2,
-      height: style.size + AnimatedNote.paddingSize * 2,
+      width: LayoutHelper.getNoteSize(context) + AnimatedNote.paddingSize * 2,
+      height: LayoutHelper.getNoteSize(context) + AnimatedNote.paddingSize * 2,
       child: ScaleTransition(
         scale: _scaleAnimation,
         child: Container(
-          width: style.size,
-          height: style.size,
+          width: LayoutHelper.getNoteSize(context),
+          height: LayoutHelper.getNoteSize(context),
           decoration: BoxDecoration(
             color: style.filled ? style.color : Colors.transparent,
             shape: BoxShape.circle,
-            border: Border.all(color: style.color, width: style.strokeWidth),
+            border: Border.all(
+              color: style.color,
+              width: LayoutHelper.getNoteStrokeWidth(context),
+            ),
           ),
         ),
       ),
