@@ -8,46 +8,60 @@ class BpmPanel extends StatelessWidget {
   final MetronomeNotifier notifier;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.pink,
-        borderRadius: BorderRadius.all(Radius.circular(16)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          CustomIconButton(
-            icon: Icons.remove,
-            size: LayoutHelper.getBpmTextSize(context),
-            padding: const EdgeInsets.all(4),
-            activeColor: Colors.grey,
-            color: Colors.white,
-            onTap: () => notifier.setBpm(notifier.bpm - 1),
-            alwaysShowBackground: false,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          notifier.bpm.toString(),
+          style: TextStyle(
+            fontSize: LayoutHelper.getBpmTextSize(context),
+            fontWeight: FontWeight.bold,
+            height: 1,
           ),
-          Expanded(
-            child: Text(
-              notifier.bpm.toString(),
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: LayoutHelper.getBpmTextSize(context),
-                fontWeight: FontWeight.bold,
+        ),
+        SizedBox(
+          height: 64,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CustomIconButton(
+                icon: Icons.remove,
+                size: 24,
+                padding: const EdgeInsets.all(0),
+                activeColor: Colors.grey,
+                color: Colors.black,
+                onTap: () => notifier.setBpm(notifier.bpm - 1),
               ),
-              textAlign: TextAlign.center,
-            ),
+              Expanded(
+                child: Slider(
+                  value: notifier.bpm.toDouble(),
+                  max: 300,
+                  min: 10,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 0,
+                  ),
+                  onChanged: (newValue) => {
+                    notifier.setBpm((newValue).toInt()),
+                  },
+                  // ignore: deprecated_member_use
+                  year2023: false,
+                ),
+              ),
+              CustomIconButton(
+                icon: Icons.add,
+                size: 24,
+                activeColor: Colors.grey,
+                color: Colors.black,
+                padding: const EdgeInsets.all(0),
+                onTap: () => notifier.setBpm(notifier.bpm + 1),
+              ),
+            ],
           ),
-          CustomIconButton(
-            icon: Icons.add,
-            size: LayoutHelper.getBpmTextSize(context),
-            activeColor: Colors.grey,
-            color: Colors.white,
-            padding: const EdgeInsets.all(4),
-            onTap: () => notifier.setBpm(notifier.bpm + 1),
-            alwaysShowBackground: false,
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

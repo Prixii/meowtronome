@@ -16,7 +16,7 @@ class MetronomeLayoutHorizontal extends StatelessWidget {
           child: Column(
             children: [
               TopButtonGroup(notifier: notifier),
-              const SizedBox(height: 16),
+              const SizedBox(height: 32),
               Expanded(child: BpmPanel(notifier: notifier)),
               const SizedBox(height: 16),
               PlayButton(notifier: notifier),

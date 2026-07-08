@@ -32,12 +32,12 @@ class _MetronomeLayoutSquareState extends State<MetronomeLayoutSquare> {
       children: [
         Expanded(
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: .center,
             children: [
               if (Platform.isWindows)
                 CustomIconButton(
                   icon: Icons.arrow_left,
-                  padding: EdgeInsets.zero,
+                  padding: .zero,
                   onTap: () {
                     final target = _pageController.page == 0 ? 1 : 0;
                     _pageController.animateToPage(
@@ -52,12 +52,10 @@ class _MetronomeLayoutSquareState extends State<MetronomeLayoutSquare> {
                   controller: _pageController,
                   children: [
                     Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: .center,
                       children: [
                         TopButtonGroup(notifier: widget.notifier),
-                        SizedBox(
-                          height: LayoutHelper.getCommonWidgetGap(context),
-                        ),
+                        SizedBox(height: 32),
                         BpmPanel(notifier: widget.notifier),
                       ],
                     ),

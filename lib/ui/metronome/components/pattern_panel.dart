@@ -20,15 +20,6 @@ class PatternPanel extends StatelessWidget {
     const beatButtonPadding = 4.0;
     return Column(
       children: [
-        CustomIconButton(
-          icon: Icons.remove,
-          activeColor: Colors.grey,
-          color: iconColor,
-          padding: const EdgeInsets.all(beatButtonPadding),
-          size: noteSize * 2,
-          onTap: () => {notifier.removeNoteForAllBeats()},
-        ),
-        SizedBox(height: noteSize),
         Expanded(
           child: LayoutBuilder(
             builder: (_, constraints) => Container(
@@ -39,15 +30,6 @@ class PatternPanel extends StatelessWidget {
               ),
             ),
           ),
-        ),
-        SizedBox(height: noteSize),
-        CustomIconButton(
-          icon: Icons.add,
-          activeColor: Colors.grey,
-          color: iconColor,
-          padding: const EdgeInsets.all(beatButtonPadding),
-          size: noteSize * 2,
-          onTap: () => {notifier.addNoteForAllBeats()},
         ),
       ],
     );

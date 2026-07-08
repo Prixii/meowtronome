@@ -16,7 +16,7 @@ class LayoutHelper {
       isSmallHeight(context) ? 3.0 : 4.0;
 
   static double getBpmTextSize(BuildContext context) =>
-      isSmallHeight(context) ? 24.0 : 48.0;
+      isSmallHeight(context) ? 68.0 : 98.0;
 
   static double getPlayButtonHeight(BuildContext context) =>
       isSmallHeight(context) ? 40.0 : 60.0;
