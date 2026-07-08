@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meowtronome/ui/color_helper.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
 import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
@@ -17,6 +18,7 @@ class BpmPanel extends StatelessWidget {
           style: TextStyle(
             fontSize: LayoutHelper.getBpmTextSize(context),
             fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.secondary,
             height: 1,
           ),
         ),
@@ -31,7 +33,7 @@ class BpmPanel extends StatelessWidget {
                 size: 24,
                 padding: const EdgeInsets.all(0),
                 activeColor: Colors.grey,
-                color: Colors.black,
+                color: iconColor,
                 onTap: () => notifier.setBpm(notifier.bpm - 1),
               ),
               Expanded(
@@ -46,6 +48,8 @@ class BpmPanel extends StatelessWidget {
                   onChanged: (newValue) => {
                     notifier.setBpm((newValue).toInt()),
                   },
+                  activeColor: Theme.of(context).colorScheme.secondary,
+                  inactiveColor: Theme.of(context).colorScheme.surface,
                   // ignore: deprecated_member_use
                   year2023: false,
                 ),
@@ -54,7 +58,7 @@ class BpmPanel extends StatelessWidget {
                 icon: Icons.add,
                 size: 24,
                 activeColor: Colors.grey,
-                color: Colors.black,
+                color: iconColor,
                 padding: const EdgeInsets.all(0),
                 onTap: () => notifier.setBpm(notifier.bpm + 1),
               ),

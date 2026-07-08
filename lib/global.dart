@@ -1,68 +1,24 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:meowtronome/core/enums.dart';
 import 'package:meowtronome/ui/metronome/model.dart';
 
 const iconButtonSize = 24.0;
 
-SDF circleSDF(double r) {
-  return (Offset p) {
-    return p.distance - r;
-  };
-}
-
-SDF squareSDF(double r) {
-  return (Offset p) {
-    final q = Offset(p.dx.abs() - r, p.dy.abs() - r);
-
-    final outside = Offset(max(q.dx, 0), max(q.dy, 0));
-
-    return outside.distance + min(max(q.dx, q.dy), 0);
-  };
-}
-
-// here r is half of the diagonal
-SDF diamondSDF(double r) {
-  return (Offset p) {
-    final dist = (p.dx.abs() + p.dy.abs() - r) / sqrt(2);
-
-    return dist;
-  };
-}
-
-// here r is the outer radius
-SDF triangleSDF(double r) {
-  return (Offset p) {
-    final y = -p.dy;
-
-    final d1 = y - r / 2;
-    final d2 = (sqrt(3) * p.dx + y - r) / 2;
-    final d3 = (-sqrt(3) * p.dx + y - r) / 2;
-
-    return max(d1, max(d2, d3));
-  };
-}
-
 final noteStyles = [
   NoteStyle(
-    color: Colors.white,
-    pressedColor: Colors.grey,
+    color: const Color.fromARGB(255, 255, 255, 255),
     soundType: SoundType.type4,
   ),
   NoteStyle(
-    color: Colors.red,
-    pressedColor: Colors.pink,
+    color: const Color.fromARGB(255, 201, 48, 191),
     soundType: SoundType.type1,
   ),
   NoteStyle(
-    color: Colors.green,
-    pressedColor: Colors.lightGreen,
+    color: const Color.fromARGB(255, 45, 101, 186),
     soundType: SoundType.type2,
   ),
   NoteStyle(
-    color: Colors.blue,
-    pressedColor: Colors.lightBlue,
+    color: const Color.fromARGB(255, 255, 191, 0),
     soundType: SoundType.type3,
   ),
 ];
@@ -87,6 +43,3 @@ const defaultSoundMap = {
   SoundType.type3: 'assets/audio/drum_2.wav',
   SoundType.type4: 'assets/audio/drum_3.wav',
 };
-
-final iconColor = Colors.grey;
-final iconActiveColor = Colors.pink;

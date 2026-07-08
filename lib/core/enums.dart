@@ -16,4 +16,17 @@ enum SoundType {
         return SoundType.type4;
     }
   }
+
+  SoundType getPrevious() {
+    switch (this) {
+      case SoundType.type4:
+        return SoundType.type3;
+      case SoundType.type1:
+        return SoundType.type4;
+      case SoundType.type2:
+        return SoundType.type1;
+      case SoundType.type3:
+        return SoundType.type2;
+    }
+  }
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:meowtronome/ui/color_helper.dart';
 import 'package:meowtronome/ui/splash/index.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -24,7 +25,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: SplashPage());
+    return MaterialApp(home: SplashPage(), theme: lightTheme);
   }
 }
 
@@ -65,6 +66,6 @@ class _StatefulMainAppState extends State<StatefulMainApp> {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: SplashPage());
+    return MaterialApp(home: SplashPage(), theme: lightTheme);
   }
 }

@@ -12,7 +12,7 @@ class CustomIconButton extends StatefulWidget {
     this.activeColor = Colors.red,
     required this.icon,
     this.padding = const EdgeInsets.all(16),
-    this.alwaysShowBackground = true,
+    this.alwaysShowBackground = false,
   });
 
   final void Function()? onTap;

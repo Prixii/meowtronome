@@ -22,6 +22,7 @@ class MetronomePage extends StatelessWidget {
         min(screenHeight, screenWidth) / max(screenHeight, screenWidth);
     final shouldSquare = ratio > 0.6;
     return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
       body: SafeArea(
         child: Stack(
           children: [

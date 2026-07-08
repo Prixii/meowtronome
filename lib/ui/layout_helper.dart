@@ -26,8 +26,6 @@ class LayoutHelper {
 
   static double _windowHeight(BuildContext context) =>
       MediaQuery.of(context).size.height;
-  static double _windowWidth(BuildContext context) =>
-      MediaQuery.of(context).size.width;
 
   static bool isSmallHeight(BuildContext context) =>
       (_windowHeight(context) < smallSizeHeight);

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meowtronome/global.dart';
+import 'package:meowtronome/ui/color_helper.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
 
