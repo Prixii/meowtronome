@@ -22,6 +22,17 @@ class CustomIconButton extends StatefulWidget {
   final EdgeInsetsGeometry padding;
   final bool alwaysShowBackground;
 
+  static Size layoutSize({
+    required double iconSize,
+    EdgeInsetsGeometry padding = const EdgeInsets.all(16),
+  }) {
+    final resolved = padding.resolve(TextDirection.ltr);
+    return Size(
+      iconSize + resolved.horizontal,
+      iconSize + resolved.vertical,
+    );
+  }
+
   @override
   State<CustomIconButton> createState() => _CustomIconButtonState();
 }

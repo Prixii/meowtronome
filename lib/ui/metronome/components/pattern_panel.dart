@@ -40,26 +40,7 @@ class PatternPanel extends StatelessWidget {
     BuildContext context,
   ) {
     final pattern = notifier.state.pattern;
-    final beatCount = pattern.beats.length;
-    const beatButtonPadding = 4.0;
-    final noteSize = LayoutHelper.getNoteSize(context);
-    final iconSize = noteSize * 2;
-    final noteHeight = noteSize + AnimatedNote.paddingSize * 2;
-    final beatColumnWidth = iconSize + beatButtonPadding * 2;
-    final beatButtonHeight = iconSize + beatButtonPadding * 2;
-
-    var maxNoteCount = 0;
-    for (final beat in pattern.beats) {
-      maxNoteCount = max(maxNoteCount, beat.notes.length);
-    }
-
-    final notesMinHeight = maxNoteCount > 0
-        ? maxNoteCount * noteHeight + (maxNoteCount - 1) * minSpacing
-        : 0.0;
-
-    final beatsMinWidth = beatCount > 0
-        ? beatCount * beatColumnWidth + (beatCount - 1) * minSpacing
-        : 0.0;
+    final metrics = _PatternMetrics(context);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -69,8 +50,8 @@ class PatternPanel extends StatelessWidget {
           icon: Icons.remove,
           activeColor: Colors.grey,
           color: iconColor,
-          padding: const EdgeInsets.all(4),
-          size: iconSize,
+          padding: metrics.beatButtonPadding,
+          size: metrics.iconSize,
           onTap: () => {notifier.removeBeat()},
         ),
         Expanded(
@@ -80,13 +61,16 @@ class PatternPanel extends StatelessWidget {
               final viewportHeight = viewportConstraints.maxHeight;
 
               final noteAreaHeight = max(
-                viewportHeight - 2 * beatButtonHeight,
-                notesMinHeight,
+                viewportHeight - metrics.beatColumnChromeHeight,
+                metrics.notesMinHeight(pattern),
               );
-              final scrollContentWidth = max(viewportWidth, beatsMinWidth);
+              final scrollContentWidth = max(
+                viewportWidth,
+                metrics.beatsMinWidth(pattern),
+              );
               final scrollContentHeight = max(
                 viewportHeight,
-                2 * beatButtonHeight + noteAreaHeight,
+                metrics.beatColumnChromeHeight + noteAreaHeight,
               );
               final canScroll =
                   scrollContentWidth > viewportWidth ||
@@ -105,20 +89,19 @@ class PatternPanel extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      for (int i = 0; i < beatCount; i++)
+                      for (int i = 0; i < pattern.beats.length; i++)
                         SizedBox(
-                          width: beatColumnWidth,
+                          width: metrics.beatColumnWidth,
                           child: Column(
                             children: [
                               CustomIconButton(
                                 icon: Icons.remove,
                                 activeColor: Colors.grey,
                                 color: iconColor,
-                                padding: const EdgeInsets.all(
-                                  beatButtonPadding,
-                                ),
-                                size: iconSize,
-                                onTap: () => {notifier.removeNoteForBeatAt(i)},
+                                padding: metrics.beatButtonPadding,
+                                size: metrics.iconSize,
+                                onTap: () =>
+                                    {notifier.removeNoteForBeatAt(i)},
                               ),
                               SizedBox(
                                 height: noteAreaHeight,
@@ -132,10 +115,8 @@ class PatternPanel extends StatelessWidget {
                                 icon: Icons.add,
                                 activeColor: Colors.grey,
                                 color: iconColor,
-                                padding: const EdgeInsets.all(
-                                  beatButtonPadding,
-                                ),
-                                size: iconSize,
+                                padding: metrics.beatButtonPadding,
+                                size: metrics.iconSize,
                                 onTap: () => {notifier.addNoteForBeatAt(i)},
                               ),
                             ],
@@ -152,8 +133,8 @@ class PatternPanel extends StatelessWidget {
           icon: Icons.add,
           activeColor: Colors.grey,
           color: iconColor,
-          padding: const EdgeInsets.all(4),
-          size: iconSize,
+          padding: metrics.beatButtonPadding,
+          size: metrics.iconSize,
           onTap: () => {notifier.addBeat()},
         ),
       ],
@@ -197,6 +178,61 @@ class PatternPanel extends StatelessWidget {
       children: noteWidgets,
     );
   }
+}
+
+class _PatternMetrics {
+  factory _PatternMetrics(BuildContext context) {
+    final iconSize = LayoutHelper.getNoteSize(context) * 2;
+    const beatButtonPadding = EdgeInsets.all(4);
+    return _PatternMetrics._(
+      iconSize: iconSize,
+      beatButtonPadding: beatButtonPadding,
+      noteSize: AnimatedNote.layoutSize(context),
+      beatButtonSize: CustomIconButton.layoutSize(
+        iconSize: iconSize,
+        padding: beatButtonPadding,
+      ),
+    );
+  }
+
+  const _PatternMetrics._({
+    required this.iconSize,
+    required this.beatButtonPadding,
+    required this.noteSize,
+    required this.beatButtonSize,
+  });
+
+  static const double itemSpacing = PatternPanel.minSpacing;
+
+  final double iconSize;
+  final EdgeInsets beatButtonPadding;
+  final Size noteSize;
+  final Size beatButtonSize;
+
+  double get beatColumnWidth => beatButtonSize.width;
+  double get beatButtonHeight => beatButtonSize.height;
+  double get beatColumnChromeHeight => beatButtonHeight * 2;
+
+  int _maxNoteCount(RhythmPattern pattern) {
+    var count = 0;
+    for (final beat in pattern.beats) {
+      count = max(count, beat.notes.length);
+    }
+    return count;
+  }
+
+  double _stackedExtent(int count, double itemExtent) {
+    if (count <= 0) {
+      return 0;
+    }
+    return count * itemExtent + (count - 1) * itemSpacing;
+  }
+
+  double notesMinHeight(RhythmPattern pattern) =>
+      _stackedExtent(_maxNoteCount(pattern), noteSize.height);
+
+  double beatsMinWidth(RhythmPattern pattern) =>
+      _stackedExtent(pattern.beats.length, beatColumnWidth);
 }
 
 class _PatternScrollArea extends StatefulWidget {

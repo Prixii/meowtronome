@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:meowtronome/global.dart';
 import 'package:meowtronome/core/enums.dart';
-import 'package:meowtronome/ui/color_helper.dart';
 import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/metronome/model.dart';
 
@@ -20,6 +19,12 @@ class AnimatedNote extends StatefulWidget {
   static const double paddingSize = 4;
   static const maxSizeScale = 1.4;
   static const minSizeScale = 0.9;
+
+  static Size layoutSize(BuildContext context) {
+    final size = LayoutHelper.getNoteSize(context);
+    final dimension = size + paddingSize * 2;
+    return Size(dimension, dimension);
+  }
 
   @override
   State<AnimatedNote> createState() => _AnimatedNoteState();
@@ -76,12 +81,13 @@ class _AnimatedNoteState extends State<AnimatedNote>
   @override
   Widget build(BuildContext context) {
     final style = noteStyleMap[widget.soundType]!;
+    final layoutSize = AnimatedNote.layoutSize(context);
     final size = LayoutHelper.getNoteSize(context);
     final strokeWidth = LayoutHelper.getNoteStrokeWidth(context);
 
     return SizedBox(
-      width: size + AnimatedNote.paddingSize * 2,
-      height: size + AnimatedNote.paddingSize * 2,
+      width: layoutSize.width,
+      height: layoutSize.height,
       child: ScaleTransition(
         scale: _scaleAnimation,
         child: CustomPaint(
