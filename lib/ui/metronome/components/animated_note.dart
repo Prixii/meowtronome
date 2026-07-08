@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:meowtronome/global.dart';
 import 'package:meowtronome/core/enums.dart';
+import 'package:meowtronome/ui/color_helper.dart';
 import 'package:meowtronome/ui/layout_helper.dart';
+import 'package:meowtronome/ui/metronome/model.dart';
 
 class AnimatedNote extends StatefulWidget {
   const AnimatedNote({
@@ -72,25 +76,96 @@ class _AnimatedNoteState extends State<AnimatedNote>
   @override
   Widget build(BuildContext context) {
     final style = noteStyleMap[widget.soundType]!;
+    final size = LayoutHelper.getNoteSize(context);
+    final strokeWidth = LayoutHelper.getNoteStrokeWidth(context);
 
     return SizedBox(
-      width: LayoutHelper.getNoteSize(context) + AnimatedNote.paddingSize * 2,
-      height: LayoutHelper.getNoteSize(context) + AnimatedNote.paddingSize * 2,
+      width: size + AnimatedNote.paddingSize * 2,
+      height: size + AnimatedNote.paddingSize * 2,
       child: ScaleTransition(
         scale: _scaleAnimation,
-        child: Container(
-          width: LayoutHelper.getNoteSize(context),
-          height: LayoutHelper.getNoteSize(context),
-          decoration: BoxDecoration(
-            color: style.filled ? style.color : Colors.transparent,
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: style.color,
-              width: LayoutHelper.getNoteStrokeWidth(context),
-            ),
+        child: CustomPaint(
+          size: Size(size, size),
+          painter: _NoteShapePainter(
+            shape: style.shape,
+            color: Theme.of(context).colorScheme.secondary,
+            strokeWidth: strokeWidth,
+            filled: style.filled,
           ),
         ),
       ),
     );
+  }
+}
+
+class _NoteShapePainter extends CustomPainter {
+  const _NoteShapePainter({
+    required this.shape,
+    required this.color,
+    required this.strokeWidth,
+    required this.filled,
+  });
+
+  final NoteShape shape;
+  final Color color;
+  final double strokeWidth;
+  final bool filled;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = filled ? PaintingStyle.fill : PaintingStyle.stroke
+      ..strokeWidth = strokeWidth;
+
+    final inset = strokeWidth / 2;
+    final drawRect = Rect.fromLTWH(
+      inset,
+      inset,
+      size.width - strokeWidth,
+      size.height - strokeWidth,
+    );
+
+    switch (shape) {
+      case NoteShape.square:
+        canvas.drawRect(drawRect, paint);
+      case NoteShape.circle:
+        canvas.drawCircle(drawRect.center, drawRect.shortestSide / 2, paint);
+      case NoteShape.diamond:
+        canvas.drawPath(_diamondPath(drawRect), paint);
+      case NoteShape.triangle:
+        canvas.drawPath(_trianglePath(drawRect), paint);
+    }
+  }
+
+  Path _diamondPath(Rect rect) {
+    final center = rect.center;
+    return Path()
+      ..moveTo(center.dx, rect.top)
+      ..lineTo(rect.right, center.dy)
+      ..lineTo(center.dx, rect.bottom)
+      ..lineTo(rect.left, center.dy)
+      ..close();
+  }
+
+  Path _trianglePath(Rect rect) {
+    final side = rect.shortestSide;
+    final height = side * sqrt(3) / 2;
+    final left = rect.left + (rect.width - side) / 2;
+    final top = rect.top + (rect.height - height) / 2;
+
+    return Path()
+      ..moveTo(left + side / 2, top)
+      ..lineTo(left + side, top + height)
+      ..lineTo(left, top + height)
+      ..close();
+  }
+
+  @override
+  bool shouldRepaint(covariant _NoteShapePainter oldDelegate) {
+    return shape != oldDelegate.shape ||
+        color != oldDelegate.color ||
+        strokeWidth != oldDelegate.strokeWidth ||
+        filled != oldDelegate.filled;
   }
 }

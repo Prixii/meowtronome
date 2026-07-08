@@ -11,9 +11,9 @@ class LayoutHelper {
       : const EdgeInsets.all(32.0);
 
   static double getNoteSize(BuildContext context) =>
-      isSmallHeight(context) ? 8.0 : 10.0;
+      isSmallHeight(context) ? 10.0 : 12.0;
   static double getNoteStrokeWidth(BuildContext context) =>
-      isSmallHeight(context) ? 3.0 : 4.0;
+      isSmallHeight(context) ? 2.0 : 3.0;
 
   static double getBpmTextSize(BuildContext context) =>
       isSmallHeight(context) ? 68.0 : 98.0;

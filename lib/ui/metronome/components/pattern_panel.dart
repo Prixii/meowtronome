@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
-import 'package:meowtronome/global.dart';
 import 'package:meowtronome/ui/color_helper.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
 import 'package:meowtronome/ui/layout_helper.dart';
@@ -42,9 +41,12 @@ class PatternPanel extends StatelessWidget {
   ) {
     final pattern = notifier.state.pattern;
     final beatCount = pattern.beats.length;
-    final noteWidgetSize = LayoutHelper.getNoteSize(context) * 2;
     const beatButtonPadding = 4.0;
-    final beatButtonHeight = iconButtonSize + beatButtonPadding * 2;
+    final noteSize = LayoutHelper.getNoteSize(context);
+    final iconSize = noteSize * 2;
+    final noteHeight = noteSize + AnimatedNote.paddingSize * 2;
+    final beatColumnWidth = iconSize + beatButtonPadding * 2;
+    final beatButtonHeight = iconSize + beatButtonPadding * 2;
 
     var maxNoteCount = 0;
     for (final beat in pattern.beats) {
@@ -52,11 +54,11 @@ class PatternPanel extends StatelessWidget {
     }
 
     final notesMinHeight = maxNoteCount > 0
-        ? maxNoteCount * noteWidgetSize + (maxNoteCount - 1) * minSpacing
+        ? maxNoteCount * noteHeight + (maxNoteCount - 1) * minSpacing
         : 0.0;
 
     final beatsMinWidth = beatCount > 0
-        ? beatCount * noteWidgetSize + (beatCount - 1) * minSpacing
+        ? beatCount * beatColumnWidth + (beatCount - 1) * minSpacing
         : 0.0;
 
     return Row(
@@ -68,7 +70,7 @@ class PatternPanel extends StatelessWidget {
           activeColor: Colors.grey,
           color: iconColor,
           padding: const EdgeInsets.all(4),
-          size: LayoutHelper.getNoteSize(context) * 2,
+          size: iconSize,
           onTap: () => {notifier.removeBeat()},
         ),
         Expanded(
@@ -105,7 +107,7 @@ class PatternPanel extends StatelessWidget {
                     children: [
                       for (int i = 0; i < beatCount; i++)
                         SizedBox(
-                          width: noteWidgetSize * 1.5,
+                          width: beatColumnWidth,
                           child: Column(
                             children: [
                               CustomIconButton(
@@ -115,7 +117,7 @@ class PatternPanel extends StatelessWidget {
                                 padding: const EdgeInsets.all(
                                   beatButtonPadding,
                                 ),
-                                size: noteWidgetSize,
+                                size: iconSize,
                                 onTap: () => {notifier.removeNoteForBeatAt(i)},
                               ),
                               SizedBox(
@@ -133,7 +135,7 @@ class PatternPanel extends StatelessWidget {
                                 padding: const EdgeInsets.all(
                                   beatButtonPadding,
                                 ),
-                                size: noteWidgetSize,
+                                size: iconSize,
                                 onTap: () => {notifier.addNoteForBeatAt(i)},
                               ),
                             ],
@@ -151,7 +153,7 @@ class PatternPanel extends StatelessWidget {
           activeColor: Colors.grey,
           color: iconColor,
           padding: const EdgeInsets.all(4),
-          size: LayoutHelper.getNoteSize(context) * 2,
+          size: iconSize,
           onTap: () => {notifier.addBeat()},
         ),
       ],
@@ -171,6 +173,20 @@ class PatternPanel extends StatelessWidget {
               beatIndex,
               i,
               beat.notes[i].soundType.getNext(),
+            ),
+          },
+          onSecondaryTap: () => {
+            notifier.setNoteSoundType(
+              beatIndex,
+              i,
+              beat.notes[i].soundType.getPrevious(),
+            ),
+          },
+          onLongPress: () => {
+            notifier.setNoteSoundType(
+              beatIndex,
+              i,
+              beat.notes[i].soundType.getPrevious(),
             ),
           },
         ),

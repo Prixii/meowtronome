@@ -16,7 +16,7 @@ class MetronomeLayoutVertical extends StatelessWidget {
         TopButtonGroup(notifier: notifier),
         const SizedBox(height: 32),
         BpmPanel(notifier: notifier),
-        const SizedBox(height: 64),
+        const SizedBox(height: 48),
         Expanded(child: PatternPanel(notifier: notifier)),
         const SizedBox(height: 64),
         PlayButton(notifier: notifier),

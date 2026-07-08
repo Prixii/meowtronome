@@ -1,13 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:meowtronome/global.dart';
 
 class CustomIconButton extends StatefulWidget {
   const CustomIconButton({
     super.key,
     this.onTap,
-    this.size = iconButtonSize,
+    this.size = 24.0,
     this.color = Colors.black,
     this.activeColor = Colors.red,
     required this.icon,

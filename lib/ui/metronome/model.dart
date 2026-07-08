@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:meowtronome/core/enums.dart';
 
+enum NoteShape {
+  square,
+  circle,
+  diamond,
+  triangle,
+}
+
 class NoteStyle {
   const NoteStyle({
-    required this.color,
+    required this.shape,
     this.filled = false,
     required this.soundType,
   });
-  final Color color;
+  final NoteShape shape;
   final bool filled;
   final SoundType soundType;
 }
