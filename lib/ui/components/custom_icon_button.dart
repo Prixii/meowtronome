@@ -12,6 +12,7 @@ class CustomIconButton extends StatefulWidget {
     this.activeColor = Colors.red,
     required this.icon,
     this.padding = const EdgeInsets.all(16),
+    this.alwaysShowBackground = true,
   });
 
   final void Function()? onTap;
@@ -20,6 +21,7 @@ class CustomIconButton extends StatefulWidget {
   final Color activeColor;
   final IconData icon;
   final EdgeInsetsGeometry padding;
+  final bool alwaysShowBackground;
 
   @override
   State<CustomIconButton> createState() => _CustomIconButtonState();
@@ -50,14 +52,24 @@ class _CustomIconButtonState extends State<CustomIconButton> {
       onTapUp: (_) => setState(() => _isTapping = false),
       onLongPress: () => _startRepeat(),
       onLongPressUp: () => _stopRepeat(),
-      child: Padding(
-        padding: widget.padding,
-        child: Icon(
-          widget.icon,
-          size: widget.size,
-          color: (_isTapping || _isLongPressing)
-              ? widget.activeColor
-              : widget.color,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(widget.padding.horizontal),
+          color: widget.alwaysShowBackground
+              ? ((_isTapping || _isLongPressing)
+                    ? widget.activeColor
+                    : Colors.grey[100])
+              : Colors.transparent,
+        ),
+        child: Padding(
+          padding: widget.padding,
+          child: Icon(
+            widget.icon,
+            size: widget.size,
+            color: (_isTapping || _isLongPressing)
+                ? widget.activeColor
+                : widget.color,
+          ),
         ),
       ),
     );

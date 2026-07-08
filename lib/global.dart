@@ -87,3 +87,6 @@ const defaultSoundMap = {
   SoundType.type3: 'assets/audio/drum_2.wav',
   SoundType.type4: 'assets/audio/drum_3.wav',
 };
+
+final iconColor = Colors.grey;
+final iconActiveColor = Colors.pink;

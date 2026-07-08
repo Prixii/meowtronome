@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meowtronome/global.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
 
@@ -15,21 +16,28 @@ class TopButtonGroup extends StatelessWidget {
           icon: Icons.list,
           size: 24,
           activeColor: Colors.grey,
-          color: Colors.black,
+          color: iconColor,
+          padding: const EdgeInsets.all(8),
+
+          alwaysShowBackground: false,
         ),
         CustomIconButton(
           onTap: () => {},
           icon: Icons.music_note,
           size: 24,
           activeColor: Colors.grey,
-          color: Colors.black,
+          padding: const EdgeInsets.all(8),
+          color: iconColor,
+          alwaysShowBackground: false,
         ),
         CustomIconButton(
           onTap: () => notifier.openConfigPage(),
           icon: Icons.settings,
           size: 24,
+          padding: const EdgeInsets.all(8),
           activeColor: Colors.grey,
-          color: Colors.black,
+          color: iconColor,
+          alwaysShowBackground: false,
         ),
       ],
     );

@@ -16,43 +16,40 @@ class PatternPanel extends StatelessWidget {
   final MetronomeNotifier notifier;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(16)),
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          CustomIconButton(
-            icon: Icons.remove,
-            activeColor: Colors.grey,
-            color: Colors.black,
-            padding: const EdgeInsets.all(0),
-            onTap: () => {notifier.removeNoteForAllBeats()},
-          ),
-          Expanded(
-            child: LayoutBuilder(
-              builder: (_, constraints) => Container(
-                constraints: BoxConstraints(
-                  minWidth: constraints.maxWidth * 0.6,
-                ),
-                child: LayoutBuilder(
-                  builder: (_, constraints) =>
-                      _buildBeatPanel(notifier, constraints, context),
-                ),
+    final noteSize = LayoutHelper.getNoteSize(context);
+    const beatButtonPadding = 4.0;
+    return Column(
+      children: [
+        CustomIconButton(
+          icon: Icons.remove,
+          activeColor: Colors.grey,
+          color: iconColor,
+          padding: const EdgeInsets.all(beatButtonPadding),
+          size: noteSize * 2,
+          onTap: () => {notifier.removeNoteForAllBeats()},
+        ),
+        SizedBox(height: noteSize),
+        Expanded(
+          child: LayoutBuilder(
+            builder: (_, constraints) => Container(
+              constraints: BoxConstraints(minWidth: constraints.maxWidth * 0.6),
+              child: LayoutBuilder(
+                builder: (_, constraints) =>
+                    _buildBeatPanel(notifier, constraints, context),
               ),
             ),
           ),
-          CustomIconButton(
-            icon: Icons.add,
-            activeColor: Colors.grey,
-            color: Colors.black,
-            padding: const EdgeInsets.all(0),
-            onTap: () => {notifier.addNoteForAllBeats()},
-          ),
-        ],
-      ),
+        ),
+        SizedBox(height: noteSize),
+        CustomIconButton(
+          icon: Icons.add,
+          activeColor: Colors.grey,
+          color: iconColor,
+          padding: const EdgeInsets.all(beatButtonPadding),
+          size: noteSize * 2,
+          onTap: () => {notifier.addNoteForAllBeats()},
+        ),
+      ],
     );
   }
 
@@ -63,8 +60,7 @@ class PatternPanel extends StatelessWidget {
   ) {
     final pattern = notifier.state.pattern;
     final beatCount = pattern.beats.length;
-    final noteWidgetSize =
-        LayoutHelper.getNoteSize(context) + AnimatedNote.paddingSize * 2;
+    final noteWidgetSize = LayoutHelper.getNoteSize(context) * 2;
     const beatButtonPadding = 4.0;
     final beatButtonHeight = iconButtonSize + beatButtonPadding * 2;
 
@@ -88,8 +84,9 @@ class PatternPanel extends StatelessWidget {
         CustomIconButton(
           icon: Icons.remove,
           activeColor: Colors.grey,
-          color: Colors.black,
+          color: iconColor,
           padding: const EdgeInsets.all(4),
+          size: LayoutHelper.getNoteSize(context) * 2,
           onTap: () => {notifier.removeBeat()},
         ),
         Expanded(
@@ -114,6 +111,8 @@ class PatternPanel extends StatelessWidget {
               return _PatternScrollArea(
                 scrollContentWidth: scrollContentWidth,
                 scrollContentHeight: scrollContentHeight,
+                viewportWidth: viewportWidth,
+                viewportHeight: viewportHeight,
                 canScroll: canScroll,
                 child: SizedBox(
                   width: scrollContentWidth,
@@ -124,16 +123,17 @@ class PatternPanel extends StatelessWidget {
                     children: [
                       for (int i = 0; i < beatCount; i++)
                         SizedBox(
-                          width: noteWidgetSize,
+                          width: noteWidgetSize * 1.5,
                           child: Column(
                             children: [
                               CustomIconButton(
                                 icon: Icons.remove,
                                 activeColor: Colors.grey,
-                                color: Colors.black,
+                                color: iconColor,
                                 padding: const EdgeInsets.all(
                                   beatButtonPadding,
                                 ),
+                                size: noteWidgetSize,
                                 onTap: () => {notifier.removeNoteForBeatAt(i)},
                               ),
                               SizedBox(
@@ -147,10 +147,11 @@ class PatternPanel extends StatelessWidget {
                               CustomIconButton(
                                 icon: Icons.add,
                                 activeColor: Colors.grey,
-                                color: Colors.black,
+                                color: iconColor,
                                 padding: const EdgeInsets.all(
                                   beatButtonPadding,
                                 ),
+                                size: noteWidgetSize,
                                 onTap: () => {notifier.addNoteForBeatAt(i)},
                               ),
                             ],
@@ -166,8 +167,9 @@ class PatternPanel extends StatelessWidget {
         CustomIconButton(
           icon: Icons.add,
           activeColor: Colors.grey,
-          color: Colors.black,
+          color: iconColor,
           padding: const EdgeInsets.all(4),
+          size: LayoutHelper.getNoteSize(context) * 2,
           onTap: () => {notifier.addBeat()},
         ),
       ],
@@ -203,12 +205,16 @@ class _PatternScrollArea extends StatefulWidget {
   const _PatternScrollArea({
     required this.scrollContentWidth,
     required this.scrollContentHeight,
+    required this.viewportWidth,
+    required this.viewportHeight,
     required this.canScroll,
     required this.child,
   });
 
   final double scrollContentWidth;
   final double scrollContentHeight;
+  final double viewportWidth;
+  final double viewportHeight;
   final bool canScroll;
   final Widget child;
 
@@ -219,29 +225,83 @@ class _PatternScrollArea extends StatefulWidget {
 class _PatternScrollAreaState extends State<_PatternScrollArea> {
   final TransformationController _transformController =
       TransformationController();
-  Size? _lastContentSize;
-
-  @override
-  void initState() {
-    super.initState();
-    _lastContentSize = Size(
-      widget.scrollContentWidth,
-      widget.scrollContentHeight,
-    );
-  }
 
   @override
   void didUpdateWidget(covariant _PatternScrollArea oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final newSize = Size(widget.scrollContentWidth, widget.scrollContentHeight);
-    final lastSize = _lastContentSize;
-    if (lastSize != null &&
-        (newSize.width < lastSize.width ||
-            newSize.height < lastSize.height ||
-            (oldWidget.canScroll && !widget.canScroll))) {
-      _transformController.value = Matrix4.identity();
+    final widthIncreased =
+        widget.scrollContentWidth > oldWidget.scrollContentWidth;
+    final heightIncreased =
+        widget.scrollContentHeight > oldWidget.scrollContentHeight;
+    final sizeChanged =
+        oldWidget.scrollContentWidth != widget.scrollContentWidth ||
+        oldWidget.scrollContentHeight != widget.scrollContentHeight;
+    final viewportChanged =
+        oldWidget.viewportWidth != widget.viewportWidth ||
+        oldWidget.viewportHeight != widget.viewportHeight;
+
+    if (!sizeChanged && !viewportChanged) {
+      return;
     }
-    _lastContentSize = newSize;
+
+    _updateTransform(
+      scrollToEndX: widthIncreased,
+      scrollToEndY: heightIncreased,
+    );
+  }
+
+  void _updateTransform({
+    required bool scrollToEndX,
+    required bool scrollToEndY,
+  }) {
+    final matrix = _transformController.value;
+    final translation = matrix.getTranslation();
+    final x = _resolveTranslationAxis(
+      translation.x,
+      widget.viewportWidth,
+      widget.scrollContentWidth,
+      scrollToEnd: scrollToEndX,
+    );
+    final y = _resolveTranslationAxis(
+      translation.y,
+      widget.viewportHeight,
+      widget.scrollContentHeight,
+      scrollToEnd: scrollToEndY,
+    );
+
+    if (x == translation.x && y == translation.y) {
+      return;
+    }
+
+    _transformController.value = matrix.clone()..setTranslationRaw(x, y, 0);
+  }
+
+  double _resolveTranslationAxis(
+    double translation,
+    double viewportSize,
+    double contentSize, {
+    required bool scrollToEnd,
+  }) {
+    if (scrollToEnd) {
+      return _endTranslationAxis(viewportSize, contentSize);
+    }
+    if (_isTranslationWithinBounds(translation, viewportSize, contentSize)) {
+      return translation;
+    }
+    return _endTranslationAxis(viewportSize, contentSize);
+  }
+
+  bool _isTranslationWithinBounds(
+    double translation,
+    double viewportSize,
+    double contentSize,
+  ) {
+    final edge = viewportSize - contentSize;
+    return translation >= min(edge, 0.0) && translation <= max(edge, 0.0);
+  }
+
+  double _endTranslationAxis(double viewportSize, double contentSize) {
+    return viewportSize - contentSize;
   }
 
   @override

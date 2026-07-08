@@ -22,24 +22,26 @@ class MetronomePage extends StatelessWidget {
         min(screenHeight, screenWidth) / max(screenHeight, screenWidth);
     final shouldSquare = ratio > 0.6;
     return Scaffold(
-      body: Stack(
-        children: [
-          Center(
-            child: Padding(
-              padding: LayoutHelper.getAppPadding(context),
-              child: shouldSquare
-                  ? MetronomeLayoutSquare(notifier: notifier)
-                  : (isWide
-                        ? MetronomeLayoutHorizontal(notifier: notifier)
-                        : MetronomeLayoutVertical(notifier: notifier)),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Center(
+              child: Padding(
+                padding: LayoutHelper.getAppPadding(context),
+                child: shouldSquare
+                    ? MetronomeLayoutSquare(notifier: notifier)
+                    : (isWide
+                          ? MetronomeLayoutHorizontal(notifier: notifier)
+                          : MetronomeLayoutVertical(notifier: notifier)),
+              ),
             ),
-          ),
-          ConfigPage(
-            onClose: () => notifier.closeConfigPage(),
-            show: notifier.isConfigPageOpen,
-            isWide: isWide,
-          ),
-        ],
+            ConfigPage(
+              onClose: () => notifier.closeConfigPage(),
+              show: notifier.isConfigPageOpen,
+              isWide: isWide,
+            ),
+          ],
+        ),
       ),
     );
   }
