@@ -34,6 +34,10 @@ class _PlayButtonState extends State<PlayButton>
       curve: Curves.easeOut,
       reverseCurve: Curves.easeOut,
     );
+
+    if (widget.isRunning) {
+      _controller.forward(from: 1.0);
+    }
   }
 
   @override
