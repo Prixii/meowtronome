@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meowtronome/ui/components/custom_divider.dart';
 import 'package:meowtronome/ui/metronome/components/bpm_panel.dart';
 import 'package:meowtronome/ui/metronome/components/pattern_panel.dart';
 import 'package:meowtronome/ui/metronome/components/play_button.dart';
@@ -14,11 +15,11 @@ class MetronomeLayoutVertical extends StatelessWidget {
     return Column(
       children: [
         TopButtonGroup(notifier: notifier),
-        const SizedBox(height: 32),
+        CustomDivider(),
         BpmPanel(notifier: notifier),
-        const SizedBox(height: 48),
+        CustomDivider(),
         Expanded(child: PatternPanel(notifier: notifier)),
-        const SizedBox(height: 64),
+        CustomDivider(),
         PlayButton(notifier: notifier),
       ],
     );

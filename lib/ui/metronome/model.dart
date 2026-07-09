@@ -1,12 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:meowtronome/core/enums.dart';
 
-enum NoteShape {
-  square,
-  circle,
-  diamond,
-  triangle,
-}
+enum NoteShape { square, circle, diamond, triangle }
 
 class NoteStyle {
   const NoteStyle({

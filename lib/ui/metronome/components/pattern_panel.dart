@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
-import 'package:meowtronome/ui/color_helper.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
 import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/metronome/components/animated_note.dart';
@@ -17,20 +16,25 @@ class PatternPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     LayoutHelper.getNoteSize(context);
-    return Column(
-      children: [
-        Expanded(
-          child: LayoutBuilder(
-            builder: (_, constraints) => Container(
-              constraints: BoxConstraints(minWidth: constraints.maxWidth * 0.6),
-              child: LayoutBuilder(
-                builder: (_, constraints) =>
-                    _buildBeatPanel(notifier, constraints, context),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          Expanded(
+            child: LayoutBuilder(
+              builder: (_, constraints) => Container(
+                constraints: BoxConstraints(
+                  minWidth: constraints.maxWidth * 0.6,
+                ),
+                child: LayoutBuilder(
+                  builder: (_, constraints) =>
+                      _buildBeatPanel(notifier, constraints, context),
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -49,8 +53,7 @@ class PatternPanel extends StatelessWidget {
         CustomIconButton(
           icon: Icons.remove,
           activeColor: Colors.grey,
-          color: iconColor,
-          padding: metrics.beatButtonPadding,
+          color: Theme.of(context).colorScheme.primary,
           size: metrics.iconSize,
           onTap: () => {notifier.removeBeat()},
         ),
@@ -97,11 +100,9 @@ class PatternPanel extends StatelessWidget {
                               CustomIconButton(
                                 icon: Icons.remove,
                                 activeColor: Colors.grey,
-                                color: iconColor,
-                                padding: metrics.beatButtonPadding,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: metrics.iconSize,
-                                onTap: () =>
-                                    {notifier.removeNoteForBeatAt(i)},
+                                onTap: () => {notifier.removeNoteForBeatAt(i)},
                               ),
                               SizedBox(
                                 height: noteAreaHeight,
@@ -114,8 +115,7 @@ class PatternPanel extends StatelessWidget {
                               CustomIconButton(
                                 icon: Icons.add,
                                 activeColor: Colors.grey,
-                                color: iconColor,
-                                padding: metrics.beatButtonPadding,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: metrics.iconSize,
                                 onTap: () => {notifier.addNoteForBeatAt(i)},
                               ),
@@ -132,8 +132,7 @@ class PatternPanel extends StatelessWidget {
         CustomIconButton(
           icon: Icons.add,
           activeColor: Colors.grey,
-          color: iconColor,
-          padding: metrics.beatButtonPadding,
+          color: Theme.of(context).colorScheme.primary,
           size: metrics.iconSize,
           onTap: () => {notifier.addBeat()},
         ),

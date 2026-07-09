@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:meowtronome/ui/components/custom_divider.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
 import 'package:meowtronome/ui/metronome/components/bpm_panel.dart';
 import 'package:meowtronome/ui/metronome/components/pattern_panel.dart';
@@ -36,7 +37,6 @@ class _MetronomeLayoutSquareState extends State<MetronomeLayoutSquare> {
               if (Platform.isWindows)
                 CustomIconButton(
                   icon: Icons.arrow_left,
-                  padding: .zero,
                   onTap: () {
                     final target = _pageController.page == 0 ? 1 : 0;
                     _pageController.animateToPage(
@@ -51,11 +51,11 @@ class _MetronomeLayoutSquareState extends State<MetronomeLayoutSquare> {
                   controller: _pageController,
                   children: [
                     Column(
-                      mainAxisAlignment: .center,
                       children: [
                         TopButtonGroup(notifier: widget.notifier),
-                        SizedBox(height: 32),
-                        BpmPanel(notifier: widget.notifier),
+                        CustomDivider(),
+
+                        Expanded(child: BpmPanel(notifier: widget.notifier)),
                       ],
                     ),
                     PatternPanel(notifier: widget.notifier),
@@ -65,7 +65,6 @@ class _MetronomeLayoutSquareState extends State<MetronomeLayoutSquare> {
               if (Platform.isWindows)
                 CustomIconButton(
                   icon: Icons.arrow_right,
-                  padding: EdgeInsets.zero,
                   onTap: () {
                     final target = _pageController.page == 0 ? 1 : 0;
                     _pageController.animateToPage(
@@ -79,7 +78,7 @@ class _MetronomeLayoutSquareState extends State<MetronomeLayoutSquare> {
           ),
         ),
 
-        const SizedBox(height: 16),
+        CustomDivider(),
         PlayButton(notifier: widget.notifier),
       ],
     );

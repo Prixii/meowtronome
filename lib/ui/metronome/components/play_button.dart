@@ -14,12 +14,11 @@ class PlayButton extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.secondary,
-          borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
         child: Icon(
           Icons.play_arrow,
           size: LayoutHelper.getPlayButtonHeight(context) * 0.8,
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.primary,
         ),
       ),
     );

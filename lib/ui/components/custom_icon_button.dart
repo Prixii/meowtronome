@@ -10,7 +10,6 @@ class CustomIconButton extends StatefulWidget {
     this.color = Colors.black,
     this.activeColor = Colors.red,
     required this.icon,
-    this.padding = const EdgeInsets.all(16),
     this.alwaysShowBackground = false,
   });
 
@@ -19,7 +18,6 @@ class CustomIconButton extends StatefulWidget {
   final Color color;
   final Color activeColor;
   final IconData icon;
-  final EdgeInsetsGeometry padding;
   final bool alwaysShowBackground;
 
   static Size layoutSize({
@@ -27,10 +25,7 @@ class CustomIconButton extends StatefulWidget {
     EdgeInsetsGeometry padding = const EdgeInsets.all(16),
   }) {
     final resolved = padding.resolve(TextDirection.ltr);
-    return Size(
-      iconSize + resolved.horizontal,
-      iconSize + resolved.vertical,
-    );
+    return Size(iconSize + resolved.horizontal, iconSize + resolved.vertical);
   }
 
   @override
@@ -64,15 +59,11 @@ class _CustomIconButtonState extends State<CustomIconButton> {
       onLongPressUp: () => _stopRepeat(),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(widget.padding.horizontal),
-          color: widget.alwaysShowBackground
-              ? ((_isTapping || _isLongPressing)
-                    ? widget.activeColor
-                    : Colors.grey[100])
-              : Colors.transparent,
+          color: (_isTapping || _isLongPressing)
+              ? Colors.grey[100]
+              : Theme.of(context).colorScheme.secondary,
         ),
-        child: Padding(
-          padding: widget.padding,
+        child: Center(
           child: Icon(
             widget.icon,
             size: widget.size,

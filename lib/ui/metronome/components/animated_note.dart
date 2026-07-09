@@ -94,7 +94,7 @@ class _AnimatedNoteState extends State<AnimatedNote>
           size: Size(size, size),
           painter: _NoteShapePainter(
             shape: style.shape,
-            color: Theme.of(context).colorScheme.secondary,
+            color: Theme.of(context).colorScheme.primary,
             strokeWidth: strokeWidth,
             filled: style.filled,
           ),

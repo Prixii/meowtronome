@@ -1,8 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:meowtronome/ui/config/index.dart';
-import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/metronome/layouts/metronome_layout_horizontal.dart';
 import 'package:meowtronome/ui/metronome/layouts/metronome_layout_square.dart';
 import 'package:meowtronome/ui/metronome/layouts/metronome_layout_vertical.dart';
@@ -22,26 +20,14 @@ class MetronomePage extends StatelessWidget {
         min(screenHeight, screenWidth) / max(screenHeight, screenWidth);
     final shouldSquare = ratio > 0.6;
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).colorScheme.secondary,
       body: SafeArea(
-        child: Stack(
-          children: [
-            Center(
-              child: Padding(
-                padding: LayoutHelper.getAppPadding(context),
-                child: shouldSquare
-                    ? MetronomeLayoutSquare(notifier: notifier)
-                    : (isWide
-                          ? MetronomeLayoutHorizontal(notifier: notifier)
-                          : MetronomeLayoutVertical(notifier: notifier)),
-              ),
-            ),
-            ConfigPage(
-              onClose: () => notifier.closeConfigPage(),
-              show: notifier.isConfigPageOpen,
-              isWide: isWide,
-            ),
-          ],
+        child: Center(
+          child: shouldSquare
+              ? MetronomeLayoutSquare(notifier: notifier)
+              : (isWide
+                    ? MetronomeLayoutHorizontal(notifier: notifier)
+                    : MetronomeLayoutVertical(notifier: notifier)),
         ),
       ),
     );
