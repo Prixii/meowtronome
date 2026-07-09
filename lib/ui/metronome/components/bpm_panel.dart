@@ -21,8 +21,6 @@ class BpmPanel extends StatelessWidget {
             child: CustomIconButton(
               icon: Icons.remove,
               size: 24,
-              activeColor: Colors.grey,
-              color: Theme.of(context).colorScheme.primary,
               onTap: () => notifier.setBpm(notifier.bpm - 1),
             ),
           ),
@@ -45,8 +43,6 @@ class BpmPanel extends StatelessWidget {
             child: CustomIconButton(
               icon: Icons.add,
               size: 24,
-              activeColor: Colors.grey,
-              color: Theme.of(context).colorScheme.primary,
               onTap: () => notifier.setBpm(notifier.bpm + 1),
             ),
           ),

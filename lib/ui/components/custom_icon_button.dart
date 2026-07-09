@@ -7,18 +7,14 @@ class CustomIconButton extends StatefulWidget {
     super.key,
     this.onTap,
     this.size = 24.0,
-    this.color = Colors.black,
-    this.activeColor = Colors.red,
     required this.icon,
-    this.alwaysShowBackground = false,
+    this.shouldShowBackground = true,
   });
 
   final void Function()? onTap;
   final double size;
-  final Color color;
-  final Color activeColor;
   final IconData icon;
-  final bool alwaysShowBackground;
+  final bool shouldShowBackground;
 
   static Size layoutSize({
     required double iconSize,
@@ -32,12 +28,16 @@ class CustomIconButton extends StatefulWidget {
   State<CustomIconButton> createState() => _CustomIconButtonState();
 }
 
-class _CustomIconButtonState extends State<CustomIconButton> {
+class _CustomIconButtonState extends State<CustomIconButton>
+    with TickerProviderStateMixin {
   bool _isTapping = false;
   bool _isLongPressing = false;
 
   Timer? _timer;
   DateTime? _startTime;
+
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
 
   final Duration initialInterval = const Duration(milliseconds: 300);
   final Duration minInterval = const Duration(milliseconds: 50);
@@ -45,41 +45,87 @@ class _CustomIconButtonState extends State<CustomIconButton> {
   @override
   void initState() {
     super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 150),
+    );
+
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOut,
+      reverseCurve: Curves.easeOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => widget.onTap?.call(),
-      onTapDown: (_) => setState(() => _isTapping = true),
-      onTapCancel: () => setState(() => _isTapping = false),
-      onTapUp: (_) => setState(() => _isTapping = false),
+      onTapDown: (_) => _setIsTapping(true),
+      onTapCancel: () => _setIsTapping(false),
+      onTapUp: (_) => _setIsTapping(false),
       onLongPress: () => _startRepeat(),
       onLongPressUp: () => _stopRepeat(),
-      child: Container(
-        decoration: BoxDecoration(
-          color: (_isTapping || _isLongPressing)
-              ? Colors.grey[100]
-              : Theme.of(context).colorScheme.secondary,
-        ),
-        child: Center(
-          child: Icon(
-            widget.icon,
-            size: widget.size,
-            color: (_isTapping || _isLongPressing)
-                ? widget.activeColor
-                : widget.color,
-          ),
-        ),
+      child: AnimatedBuilder(
+        animation: _animation,
+        builder: (context, child) {
+          return Container(
+            decoration: BoxDecoration(
+              color: widget.shouldShowBackground
+                  ? Color.lerp(
+                      colorScheme.secondary,
+                      colorScheme.primary,
+                      _animation.value,
+                    )
+                  : colorScheme.secondary,
+            ),
+            child: Center(
+              child: Icon(
+                widget.icon,
+                size: widget.size,
+                color: widget.shouldShowBackground
+                    ? Color.lerp(
+                        colorScheme.primary,
+                        colorScheme.secondary,
+                        _animation.value,
+                      )
+                    : colorScheme.primary,
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 
+  void _setIsTapping(bool value) {
+    _isTapping = value;
+    _updatePressedAnimation();
+  }
+
+  void _updatePressedAnimation() {
+    if (_isTapping || _isLongPressing) {
+      _controller.forward();
+    } else {
+      _controller.reverse();
+    }
+  }
+
   void _startRepeat() {
     _startTime = DateTime.now();
-    setState(() => _isLongPressing = true);
-
+    _isLongPressing = true;
+    _updatePressedAnimation();
     void tick() {
       widget.onTap?.call();
 
@@ -93,15 +139,10 @@ class _CustomIconButtonState extends State<CustomIconButton> {
   }
 
   void _stopRepeat() {
-    setState(() => _isLongPressing = false);
+    _isLongPressing = false;
+    _updatePressedAnimation();
     _timer?.cancel();
     _timer = null;
     _startTime = null;
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
   }
 }

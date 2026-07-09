@@ -52,8 +52,6 @@ class PatternPanel extends StatelessWidget {
       children: [
         CustomIconButton(
           icon: Icons.remove,
-          activeColor: Colors.grey,
-          color: Theme.of(context).colorScheme.primary,
           size: metrics.iconSize,
           onTap: () => {notifier.removeBeat()},
         ),
@@ -99,8 +97,6 @@ class PatternPanel extends StatelessWidget {
                             children: [
                               CustomIconButton(
                                 icon: Icons.remove,
-                                activeColor: Colors.grey,
-                                color: Theme.of(context).colorScheme.primary,
                                 size: metrics.iconSize,
                                 onTap: () => {notifier.removeNoteForBeatAt(i)},
                               ),
@@ -114,8 +110,6 @@ class PatternPanel extends StatelessWidget {
                               ),
                               CustomIconButton(
                                 icon: Icons.add,
-                                activeColor: Colors.grey,
-                                color: Theme.of(context).colorScheme.primary,
                                 size: metrics.iconSize,
                                 onTap: () => {notifier.addNoteForBeatAt(i)},
                               ),
@@ -131,8 +125,6 @@ class PatternPanel extends StatelessWidget {
         ),
         CustomIconButton(
           icon: Icons.add,
-          activeColor: Colors.grey,
-          color: Theme.of(context).colorScheme.primary,
           size: metrics.iconSize,
           onTap: () => {notifier.addBeat()},
         ),
