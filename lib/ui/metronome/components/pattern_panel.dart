@@ -16,25 +16,20 @@ class PatternPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     LayoutHelper.getNoteSize(context);
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          Expanded(
-            child: LayoutBuilder(
-              builder: (_, constraints) => Container(
-                constraints: BoxConstraints(
-                  minWidth: constraints.maxWidth * 0.6,
-                ),
-                child: LayoutBuilder(
-                  builder: (_, constraints) =>
-                      _buildBeatPanel(notifier, constraints, context),
-                ),
+    return Column(
+      children: [
+        Expanded(
+          child: LayoutBuilder(
+            builder: (_, constraints) => Container(
+              constraints: BoxConstraints(minWidth: constraints.maxWidth * 0.6),
+              child: LayoutBuilder(
+                builder: (_, constraints) =>
+                    _buildBeatPanel(notifier, constraints, context),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -50,83 +45,105 @@ class PatternPanel extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        CustomIconButton(
-          icon: Icons.remove,
-          size: metrics.iconSize,
-          onTap: () => {notifier.removeBeat()},
-        ),
-        Expanded(
-          child: LayoutBuilder(
-            builder: (context, viewportConstraints) {
-              final viewportWidth = viewportConstraints.maxWidth;
-              final viewportHeight = viewportConstraints.maxHeight;
-
-              final noteAreaHeight = max(
-                viewportHeight - metrics.beatColumnChromeHeight,
-                metrics.notesMinHeight(pattern),
-              );
-              final scrollContentWidth = max(
-                viewportWidth,
-                metrics.beatsMinWidth(pattern),
-              );
-              final scrollContentHeight = max(
-                viewportHeight,
-                metrics.beatColumnChromeHeight + noteAreaHeight,
-              );
-              final canScroll =
-                  scrollContentWidth > viewportWidth ||
-                  scrollContentHeight > viewportHeight;
-
-              return _PatternScrollArea(
-                scrollContentWidth: scrollContentWidth,
-                scrollContentHeight: scrollContentHeight,
-                viewportWidth: viewportWidth,
-                viewportHeight: viewportHeight,
-                canScroll: canScroll,
-                child: SizedBox(
-                  width: scrollContentWidth,
-                  height: scrollContentHeight,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      for (int i = 0; i < pattern.beats.length; i++)
-                        SizedBox(
-                          width: metrics.beatColumnWidth,
-                          child: Column(
-                            children: [
-                              CustomIconButton(
-                                icon: Icons.remove,
-                                size: metrics.iconSize,
-                                onTap: () => {notifier.removeNoteForBeatAt(i)},
-                              ),
-                              SizedBox(
-                                height: noteAreaHeight,
-                                child: _buildBeat(
-                                  pattern.beats[i],
-                                  i,
-                                  notifier,
-                                ),
-                              ),
-                              CustomIconButton(
-                                icon: Icons.add,
-                                size: metrics.iconSize,
-                                onTap: () => {notifier.addNoteForBeatAt(i)},
-                              ),
-                            ],
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              );
-            },
+        SizedBox(
+          width: 64,
+          child: Center(
+            child: CustomIconButton(
+              icon: Icons.remove,
+              size: metrics.iconSize,
+              onTap: () => {notifier.removeBeat()},
+            ),
           ),
         ),
-        CustomIconButton(
-          icon: Icons.add,
-          size: metrics.iconSize,
-          onTap: () => {notifier.addBeat()},
+        Expanded(
+          child: Column(
+            children: [
+              const SizedBox(height: 32),
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, viewportConstraints) {
+                    final viewportWidth = viewportConstraints.maxWidth;
+                    final viewportHeight = viewportConstraints.maxHeight;
+
+                    final noteAreaHeight = max(
+                      viewportHeight - metrics.beatColumnChromeHeight,
+                      metrics.notesMinHeight(pattern),
+                    );
+                    final scrollContentWidth = max(
+                      viewportWidth,
+                      metrics.beatsMinWidth(pattern),
+                    );
+                    final scrollContentHeight = max(
+                      viewportHeight,
+                      metrics.beatColumnChromeHeight + noteAreaHeight,
+                    );
+                    final canScroll =
+                        scrollContentWidth > viewportWidth ||
+                        scrollContentHeight > viewportHeight;
+
+                    return _PatternScrollArea(
+                      scrollContentWidth: scrollContentWidth,
+                      scrollContentHeight: scrollContentHeight,
+                      viewportWidth: viewportWidth,
+                      viewportHeight: viewportHeight,
+                      canScroll: canScroll,
+                      child: SizedBox(
+                        width: scrollContentWidth,
+                        height: scrollContentHeight,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            for (int i = 0; i < pattern.beats.length; i++)
+                              SizedBox(
+                                width: metrics.beatColumnWidth,
+                                child: Column(
+                                  children: [
+                                    CustomIconButton(
+                                      icon: Icons.remove,
+                                      size: metrics.iconSize,
+                                      onTap: () => {
+                                        notifier.removeNoteForBeatAt(i),
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height: noteAreaHeight,
+                                      child: _buildBeat(
+                                        pattern.beats[i],
+                                        i,
+                                        notifier,
+                                      ),
+                                    ),
+                                    CustomIconButton(
+                                      icon: Icons.add,
+                                      size: metrics.iconSize,
+                                      onTap: () => {
+                                        notifier.addNoteForBeatAt(i),
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 32),
+            ],
+          ),
+        ),
+        SizedBox(
+          width: 64,
+          child: Center(
+            child: CustomIconButton(
+              icon: Icons.add,
+              size: metrics.iconSize,
+              onTap: () => {notifier.addBeat()},
+            ),
+          ),
         ),
       ],
     );

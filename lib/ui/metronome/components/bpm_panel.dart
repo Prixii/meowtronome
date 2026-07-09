@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:meowtronome/gen/fonts.gen.dart';
 import 'package:meowtronome/ui/components/custom_divider.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
 import 'package:meowtronome/ui/layout_helper.dart';
@@ -56,6 +57,7 @@ class _BpmPanelState extends State<BpmPanel> {
     fontWeight: FontWeight.bold,
     color: Theme.of(context).colorScheme.primary,
     height: 1,
+    fontFamily: FontFamily.doHyeon,
   );
 
   @override
@@ -90,36 +92,33 @@ class _BpmPanelState extends State<BpmPanel> {
             color: Theme.of(context).colorScheme.primaryFixed,
           ),
           Expanded(
-            child: Container(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: _isEditing
-                  ? TextField(
-                      controller: _controller,
-                      focusNode: _focusNode,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      textAlign: TextAlign.center,
-                      style: _textStyle(context),
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        isDense: true,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                      onSubmitted: (_) {
-                        _commitBpm();
-                        setState(() => _isEditing = false);
-                      },
-                    )
-                  : GestureDetector(
-                      onTap: _startEditing,
-                      behavior: HitTestBehavior.opaque,
-                      child: Text(
-                        notifier.bpm.toString(),
-                        style: _textStyle(context),
-                        textAlign: TextAlign.center,
-                      ),
+            child: _isEditing
+                ? TextField(
+                    controller: _controller,
+                    focusNode: _focusNode,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    textAlign: TextAlign.center,
+                    style: _textStyle(context),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
                     ),
-            ),
+                    onSubmitted: (_) {
+                      _commitBpm();
+                      setState(() => _isEditing = false);
+                    },
+                  )
+                : GestureDetector(
+                    onTap: _startEditing,
+                    behavior: HitTestBehavior.opaque,
+                    child: Text(
+                      notifier.bpm.toString(),
+                      style: _textStyle(context),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
           ),
           CustomDivider(
             vertical: true,
