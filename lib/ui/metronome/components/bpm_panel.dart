@@ -85,7 +85,10 @@ class _BpmPanelState extends State<BpmPanel> {
               onTap: () => notifier.setBpm(notifier.bpm - 1),
             ),
           ),
-          CustomDivider(indent: 12, endIndent: 12, vertical: true),
+          CustomDivider(
+            vertical: true,
+            color: Theme.of(context).colorScheme.primaryFixed,
+          ),
           Expanded(
             child: Container(
               padding: const EdgeInsets.only(bottom: 8),
@@ -118,7 +121,10 @@ class _BpmPanelState extends State<BpmPanel> {
                     ),
             ),
           ),
-          CustomDivider(indent: 12, endIndent: 12, vertical: true),
+          CustomDivider(
+            vertical: true,
+            color: Theme.of(context).colorScheme.primaryFixed,
+          ),
           SizedBox(
             width: 64,
             child: CustomIconButton(

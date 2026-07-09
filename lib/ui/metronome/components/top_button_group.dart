@@ -40,7 +40,10 @@ class _TopButtonGroupState extends State<TopButtonGroup> {
               size: 24,
             ),
           ),
-          CustomDivider(indent: 12, endIndent: 12, vertical: true),
+          CustomDivider(
+            vertical: true,
+            color: Theme.of(context).colorScheme.primaryFixed,
+          ),
           Expanded(
             child: CustomIconButton(
               key: _musicButtonKey,
@@ -49,7 +52,10 @@ class _TopButtonGroupState extends State<TopButtonGroup> {
               size: 24,
             ),
           ),
-          CustomDivider(indent: 12, endIndent: 12, vertical: true),
+          CustomDivider(
+            vertical: true,
+            color: Theme.of(context).colorScheme.primaryFixed,
+          ),
           Expanded(
             child: CustomIconButton(
               onTap: () => widget.notifier.openConfigPage(),
