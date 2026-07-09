@@ -4,6 +4,7 @@ import 'package:meowtronome/ui/components/custom_divider.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
 import 'package:meowtronome/ui/components/expand_rrect_modal.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
+import 'package:meowtronome/ui/tone_selector/index.dart';
 
 class TopButtonGroup extends StatefulWidget {
   const TopButtonGroup({super.key, required this.notifier, this.height = 76});
@@ -83,7 +84,7 @@ class _TopButtonModalBody extends StatelessWidget {
         children: [
           Text(title, style: titleTextStyle),
           const SizedBox(height: 16),
-          Text('内容待实现', style: bodyTextStyle),
+          Expanded(child: ToneSelector()),
         ],
       ),
     );

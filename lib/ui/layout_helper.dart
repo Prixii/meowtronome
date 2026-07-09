@@ -28,6 +28,9 @@ class LayoutHelper {
   static double getCommonWidgetGap(BuildContext context) =>
       isSmallHeight(context) ? 8.0 : 16.0;
 
+  static double getPickerItemHeight(BuildContext context) =>
+      isSmallHeight(context) ? 16.0 : 20.0;
+
   static LayoutMode getLayoutMode(BuildContext context) {
     final screenWidth = _windowWidth(context);
     final screenHeight = _windowHeight(context);
