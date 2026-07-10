@@ -18,10 +18,12 @@ class WheeledSelector extends StatefulWidget {
     required this.options,
     required this.value,
     required this.onChange,
+    this.showCount = 7,
   });
 
   final List<SelectOption> options;
   final String value;
+  final int showCount;
   final void Function(String value) onChange;
 
   @override
@@ -57,68 +59,72 @@ class _WheeledSelectorState extends State<WheeledSelector> {
   Widget build(BuildContext context) {
     final preferredItemHeight = LayoutHelper.getPickerItemHeight(context);
 
-    return LayoutBuilder(
-      builder: (_, constraints) => Stack(
-        alignment: .center,
-        clipBehavior: .hardEdge,
-        children: [
-          NotificationListener<ScrollNotification>(
-            onNotification: (notification) =>
-                onScrollNotification(notification, context),
-            child: AnimatedBuilder(
-              animation: _controller,
-              builder: (context, _) {
-                final scrollOffset = _controller.hasClients
-                    ? _controller.offset
-                    : 0.0;
-                final viewportCenter = scrollOffset + constraints.maxHeight / 2;
-                final topPadding =
-                    max(0, constraints.maxHeight - preferredItemHeight) / 2;
+    return SizedBox(
+      height: preferredItemHeight * widget.showCount,
+      child: LayoutBuilder(
+        builder: (_, constraints) => Stack(
+          alignment: .center,
+          clipBehavior: .hardEdge,
+          children: [
+            NotificationListener<ScrollNotification>(
+              onNotification: (notification) =>
+                  onScrollNotification(notification, context),
+              child: AnimatedBuilder(
+                animation: _controller,
+                builder: (context, _) {
+                  final scrollOffset = _controller.hasClients
+                      ? _controller.offset
+                      : 0.0;
+                  final viewportCenter =
+                      scrollOffset + constraints.maxHeight / 2;
+                  final topPadding =
+                      max(0, constraints.maxHeight - preferredItemHeight) / 2;
 
-                return ScrollConfiguration(
-                  behavior: const _WheeledSelectorScrollBehavior().copyWith(
-                    scrollbars: false,
-                  ),
-                  child: SingleChildScrollView(
-                    controller: _controller,
-                    scrollDirection: Axis.vertical,
-
-                    physics: const ClampingScrollPhysics(),
-                    child: Column(
-                      children: [
-                        SizedBox(height: topPadding),
-                        for (var i = 0; i < widget.options.length; i++)
-                          _buildWheelItem(
-                            context,
-                            option: widget.options[i],
-                            itemHeight: preferredItemHeight,
-                            distanceFromCenter:
-                                (topPadding +
-                                        i * preferredItemHeight +
-                                        preferredItemHeight / 2 -
-                                        viewportCenter)
-                                    .abs(),
-                            index: i,
-                          ),
-                        SizedBox(height: topPadding),
-                      ],
+                  return ScrollConfiguration(
+                    behavior: const _WheeledSelectorScrollBehavior().copyWith(
+                      scrollbars: false,
                     ),
-                  ),
-                );
-              },
+                    child: SingleChildScrollView(
+                      controller: _controller,
+                      scrollDirection: Axis.vertical,
+
+                      physics: const ClampingScrollPhysics(),
+                      child: Column(
+                        children: [
+                          SizedBox(height: topPadding),
+                          for (var i = 0; i < widget.options.length; i++)
+                            _buildWheelItem(
+                              context,
+                              option: widget.options[i],
+                              itemHeight: preferredItemHeight,
+                              distanceFromCenter:
+                                  (topPadding +
+                                          i * preferredItemHeight +
+                                          preferredItemHeight / 2 -
+                                          viewportCenter)
+                                      .abs(),
+                              index: i,
+                            ),
+                          SizedBox(height: topPadding),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-          Positioned.fill(
-            child: IgnorePointer(
-              child: Center(
-                child: SizedBox(
-                  height: preferredItemHeight,
-                  width: constraints.maxWidth * 0.8,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      border: .symmetric(
-                        horizontal: BorderSide(
-                          color: Theme.of(context).colorScheme.primaryFixed,
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Center(
+                  child: SizedBox(
+                    height: preferredItemHeight,
+                    width: constraints.maxWidth * 0.8,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        border: .symmetric(
+                          horizontal: BorderSide(
+                            color: Theme.of(context).colorScheme.primaryFixed,
+                          ),
                         ),
                       ),
                     ),
@@ -126,8 +132,8 @@ class _WheeledSelectorState extends State<WheeledSelector> {
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

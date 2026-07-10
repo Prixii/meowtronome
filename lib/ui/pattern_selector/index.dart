@@ -7,20 +7,37 @@ class PatternSelector extends StatelessWidget {
   final MetronomeNotifier notifier;
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondary,
-        border: Border.all(
-          color: Theme.of(context).colorScheme.primary,
-          width: 1,
+    return Padding(
+      padding: const EdgeInsets.all(48.0),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondary,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.primary,
+            width: 1,
+          ),
         ),
+        child: _buildContent(context),
       ),
-      child: Text(
-        'PatternSelector',
-        style: titleTextStyle.copyWith(
-          color: Theme.of(context).colorScheme.primary,
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
+    return Column(
+      crossAxisAlignment: .start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            '节奏',
+            style: titleTextStyle.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            textAlign: .left,
+          ),
         ),
-      ),
+        Expanded(child: Placeholder()),
+      ],
     );
   }
 }

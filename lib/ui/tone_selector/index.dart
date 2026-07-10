@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:meowtronome/core/enums.dart';
 import 'package:meowtronome/core/soloud/soloud_helper.dart';
 import 'package:meowtronome/gen/assets.gen.dart';
 import 'package:meowtronome/global.dart';
+import 'package:meowtronome/ui/components/custom_divider.dart';
+import 'package:meowtronome/ui/metronome/components/animated_note.dart';
 import 'package:meowtronome/ui/metronome/components/wheeled_selector.dart';
+import 'package:meowtronome/ui/metronome/model.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
 
 class ToneSelector extends StatelessWidget {
@@ -11,50 +13,99 @@ class ToneSelector extends StatelessWidget {
   final MetronomeNotifier notifier;
   @override
   Widget build(BuildContext context) {
-    final list = [
+    final toneList = [
       for (final value in Assets.audio.values)
-        SelectOption(label: getLabel(value), value: value),
+        SelectOption(label: _getLabel(value), value: value),
     ];
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondary,
-        border: Border.all(
-          color: Theme.of(context).colorScheme.primary,
-          width: 1,
+    return Padding(
+      padding: const EdgeInsets.all(48.0),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondary,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.primary,
+            width: 1,
+          ),
         ),
+        child: _buildContent(context, toneList),
       ),
-      child: Column(
-        crossAxisAlignment: .start,
-        children: [
-          Text(
-            'PatternSelector',
+    );
+  }
+
+  Widget _buildContent(BuildContext context, List<SelectOption> toneList) {
+    return Column(
+      crossAxisAlignment: .start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            '音色',
             style: titleTextStyle.copyWith(
               color: Theme.of(context).colorScheme.primary,
             ),
             textAlign: .left,
           ),
-          Expanded(
+        ),
+        CustomDivider(),
+        Expanded(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
             child: Row(
-              children: [
-                for (final type in SoundType.values)
-                  Expanded(
-                    child: WheeledSelector(
-                      options: list,
-                      value: soloudHelper.getSoundAssetOf(type),
-                      onChange: (value) {
-                        notifier.setToneForSoundType(type, value);
-                      },
-                    ),
-                  ),
-              ],
+              mainAxisSize: .min,
+              children: _buildNoteTonePickers(toneList, context),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  String getLabel(String value) {
+  List<Widget> _buildNoteTonePickers(
+    List<SelectOption> toneList,
+    BuildContext context,
+  ) {
+    final List<Widget> widgets = [];
+    for (int i = 0; i < noteStyles.length; i++) {
+      final style = noteStyles[i];
+      widgets.add(_buildSingleNoteTonePicker(style, toneList));
+      widgets.add(
+        CustomDivider(
+          vertical: true,
+          color: Theme.of(context).colorScheme.primaryFixed,
+        ),
+      );
+    }
+    return widgets;
+  }
+
+  Column _buildSingleNoteTonePicker(
+    NoteStyle style,
+    List<SelectOption> toneList,
+  ) {
+    return Column(
+      children: [
+        SizedBox(
+          height: 100,
+          child: Center(
+            child: AnimatedNote(soundType: style.soundType, isPlaying: false),
+          ),
+        ),
+        CustomDivider(),
+        SizedBox(
+          width: 200,
+          child: WheeledSelector(
+            options: toneList,
+            value: soloudHelper.getSoundAssetOf(style.soundType),
+            onChange: (value) {
+              notifier.setToneForSoundType(style.soundType, value);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _getLabel(String value) {
     final parts = value.split('/').last.split('.');
     return parts[parts.length - 2].replaceAll('_', ' ');
   }
