@@ -73,7 +73,7 @@ class _SelectableButtonState extends State<SelectableButton>
         child: Stack(
           children: [
             Container(
-              color: Theme.of(context).colorScheme.secondary,
+              color: Theme.of(context).colorScheme.primaryContainer,
               child: Center(
                 child: (widget.icon != null)
                     ? Icon(
@@ -102,12 +102,14 @@ class _SelectableButtonState extends State<SelectableButton>
                       ? Icon(
                           widget.icon,
                           size: widget.size,
-                          color: Theme.of(context).colorScheme.secondary,
+                          color: Theme.of(context).colorScheme.primaryContainer,
                         )
                       : Text(
                           widget.text ?? '',
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primaryContainer,
                           ),
                         ),
                 ),

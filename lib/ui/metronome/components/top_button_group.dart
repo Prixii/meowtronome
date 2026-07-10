@@ -7,71 +7,59 @@ import 'package:meowtronome/ui/pattern_selector/index.dart';
 import 'package:meowtronome/ui/tone_selector/index.dart';
 
 class _TabConfig {
-  final Widget child;
+  final Widget Function(MetronomeNotifier) child;
   final IconData? icon;
   const _TabConfig({required this.child, required this.icon});
 }
 
-class TopButtonGroup extends StatefulWidget {
-  const TopButtonGroup({super.key, required this.notifier, this.height = 76});
+class TopButtonGroup extends StatelessWidget {
+  TopButtonGroup({super.key, required this.notifier, this.height = 76});
   final MetronomeNotifier notifier;
   final double height;
-  @override
-  State<TopButtonGroup> createState() => _TopButtonGroupState();
-}
-
-class _TopButtonGroupState extends State<TopButtonGroup> {
-  late final List<_TabConfig> configs;
-
-  int selectedIndex = -1;
-
-  @override
-  void initState() {
-    super.initState();
-    configs = [
-      _TabConfig(
-        child: PatternSelector(notifier: widget.notifier),
-        icon: Icons.list,
-      ),
-      _TabConfig(
-        child: ToneSelector(notifier: widget.notifier),
-        icon: Icons.music_note,
-      ),
-      _TabConfig(
-        child: ConfigPage(notifier: widget.notifier),
-        icon: Icons.settings,
-      ),
-    ];
-  }
+  final List<_TabConfig> _configs = [
+    _TabConfig(
+      child: (notifier) => PatternSelector(notifier: notifier),
+      icon: Icons.list,
+    ),
+    _TabConfig(
+      child: (notifier) => ToneSelector(notifier: notifier),
+      icon: Icons.music_note,
+    ),
+    _TabConfig(child: (notifier) => ConfigPage(), icon: Icons.settings),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: widget.height,
+      height: height,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: _buildTabs(),
+        children: _buildTabs(context),
       ),
     );
   }
 
-  List<Widget> _buildTabs() {
+  List<Widget> _buildTabs(BuildContext context) {
     final List<Widget> widgets = [];
-    for (int i = 0; i < configs.length; i++) {
+    for (int i = 0; i < _configs.length; i++) {
       widgets.add(
         Expanded(
           child: SelectableButton(
-            selected: i == selectedIndex,
+            selected: i == notifier.runtimeState.selectedTopTabIndex,
             onTap: () {
-              setState(() => selectedIndex = i);
-              _openModal(configs[i].child);
+              notifier.setSelectedTopTabIndex(i);
+              _openModal(
+                child: _configs[i].child(notifier),
+                context: context,
+                notifier: notifier,
+              );
             },
-            icon: configs[i].icon,
+            icon: _configs[i].icon,
             size: 24,
           ),
         ),
       );
-      if (i != configs.length - 1) {
+      if (i != _configs.length - 1) {
         widgets.add(
           CustomDivider(
             vertical: true,
@@ -83,11 +71,14 @@ class _TopButtonGroupState extends State<TopButtonGroup> {
     return widgets;
   }
 
-  void _openModal(Widget child) {
-    showDialog(context: context, builder: (context) => child).then(
-      (value) => setState(() {
-        selectedIndex = -1;
-      }),
-    );
+  void _openModal({
+    required Widget child,
+    required BuildContext context,
+    required MetronomeNotifier notifier,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) => child,
+    ).then((value) => notifier.setSelectedTopTabIndex(-1));
   }
 }

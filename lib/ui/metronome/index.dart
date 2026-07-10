@@ -14,7 +14,7 @@ class MetronomePage extends StatelessWidget {
     final notifier = context.watch<MetronomeNotifier>();
     final layoutMode = LayoutHelper.getLayoutMode(context);
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.secondary,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       body: SafeArea(
         child: Center(
           child: layoutMode == LayoutMode.square

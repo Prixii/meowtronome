@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:meowtronome/core/enums.dart';
 import 'package:meowtronome/core/metronome.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
+import 'package:meowtronome/ui/metronome/provider/metronome_runtime_state.dart';
 
 class MetronomeNotifier extends ChangeNotifier {
-  final Metronome _metronome = Metronome();
+  final _metronome = Metronome();
+  var _runtimeState = MetronomeRuntimeState();
 
   void Function(int beatIndex, int noteIndex)? onPlayNote;
 
@@ -14,6 +16,7 @@ class MetronomeNotifier extends ChangeNotifier {
   bool _isConfigPageOpen = false;
 
   MetronomeState get state => _metronome.state;
+  MetronomeRuntimeState get runtimeState => _runtimeState;
   RhythmPattern get pattern => _metronome.state.pattern;
   int get bpm => _metronome.bpm;
   bool get isRunning => _metronome.isRunning;
@@ -103,6 +106,11 @@ class MetronomeNotifier extends ChangeNotifier {
 
   void setToneForSoundType(SoundType soundType, String tone) {
     _metronome.setToneForSoundType(soundType, tone);
+    notifyListeners();
+  }
+
+  void setSelectedTopTabIndex(int index) {
+    _runtimeState = _runtimeState.copyWith(selectedTopTabIndex: index);
     notifyListeners();
   }
 

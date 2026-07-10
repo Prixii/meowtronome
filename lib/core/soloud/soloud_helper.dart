@@ -54,4 +54,7 @@ class SoloudHelper {
     final audioSource = await _soloud.loadAsset(asset);
     _soloudAudioSourceMap[asset] = audioSource;
   }
+
+  double getGlobalVolume() => _soloud.getGlobalVolume();
+  void setGlobalVolume(double volume) => _soloud.setGlobalVolume(volume);
 }

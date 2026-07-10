@@ -24,7 +24,10 @@ final subtitleTextStyle = const TextStyle(
   fontFamily: FontFamily.alimamaShuhei,
 );
 
-final bodyTextStyle = const TextStyle(fontSize: 20);
+final bodyTextStyle = const TextStyle(
+  fontSize: 16,
+  fontFamily: FontFamily.alimamaShuhei,
+);
 
 const defaultSoundMap = {
   SoundType.type1: 'assets/audio/drum_0.wav',

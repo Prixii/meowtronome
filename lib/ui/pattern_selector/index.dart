@@ -11,7 +11,7 @@ class PatternSelector extends StatelessWidget {
       padding: const EdgeInsets.all(48.0),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondary,
+          color: Theme.of(context).colorScheme.primaryContainer,
           border: Border.all(
             color: Theme.of(context).colorScheme.primary,
             width: 1,

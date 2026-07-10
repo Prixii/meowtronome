@@ -84,11 +84,11 @@ class _CustomIconButtonState extends State<CustomIconButton>
             decoration: BoxDecoration(
               color: widget.shouldShowBackground
                   ? Color.lerp(
-                      colorScheme.secondary,
+                      colorScheme.primaryContainer,
                       colorScheme.primary,
                       _animation.value,
                     )
-                  : colorScheme.secondary,
+                  : colorScheme.primaryContainer,
             ),
             child: Center(
               child: Icon(
@@ -97,7 +97,7 @@ class _CustomIconButtonState extends State<CustomIconButton>
                 color: widget.shouldShowBackground
                     ? Color.lerp(
                         colorScheme.primary,
-                        colorScheme.secondary,
+                        colorScheme.primaryContainer,
                         _animation.value,
                       )
                     : colorScheme.primary,

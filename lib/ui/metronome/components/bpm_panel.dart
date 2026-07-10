@@ -73,7 +73,9 @@ class _BpmPanelState extends State<BpmPanel> {
     final notifier = widget.notifier;
 
     return Container(
-      decoration: BoxDecoration(color: Theme.of(context).colorScheme.secondary),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primaryContainer,
+      ),
       height: 128,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,

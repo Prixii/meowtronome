@@ -62,12 +62,12 @@ class _PlayButtonState extends State<PlayButton>
   @override
   Widget build(BuildContext context) {
     _backgroundColorTween = ColorTween(
-      begin: Theme.of(context).colorScheme.secondary,
+      begin: Theme.of(context).colorScheme.primaryContainer,
       end: Theme.of(context).colorScheme.primary,
     );
     _foregroundColorTween = ColorTween(
       begin: Theme.of(context).colorScheme.primary,
-      end: Theme.of(context).colorScheme.secondary,
+      end: Theme.of(context).colorScheme.primaryContainer,
     );
 
     return GestureDetector(
