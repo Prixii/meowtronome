@@ -101,6 +101,11 @@ class MetronomeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setToneForSoundType(SoundType soundType, String tone) {
+    _metronome.setToneForSoundType(soundType, tone);
+    notifyListeners();
+  }
+
   bool get isConfigPageOpen => _isConfigPageOpen;
 
   @override

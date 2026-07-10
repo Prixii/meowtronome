@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:meowtronome/global.dart';
 import 'package:meowtronome/ui/components/custom_divider.dart';
-import 'package:meowtronome/ui/components/custom_icon_button.dart';
+import 'package:meowtronome/ui/components/selectable_button.dart';
+import 'package:meowtronome/ui/config/index.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
+import 'package:meowtronome/ui/pattern_selector/index.dart';
 import 'package:meowtronome/ui/tone_selector/index.dart';
+
+class _TabConfig {
+  final Widget child;
+  final IconData? icon;
+  const _TabConfig({required this.child, required this.icon});
+}
 
 class TopButtonGroup extends StatefulWidget {
   const TopButtonGroup({super.key, required this.notifier, this.height = 76});
@@ -14,18 +21,27 @@ class TopButtonGroup extends StatefulWidget {
 }
 
 class _TopButtonGroupState extends State<TopButtonGroup> {
-  void _openModal(Widget child) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        final size = MediaQuery.sizeOf(context);
-        return SizedBox(
-          width: size.width * 0.85,
-          height: size.height * 0.5,
-          child: child,
-        );
-      },
-    );
+  late final List<_TabConfig> configs;
+
+  int selectedIndex = -1;
+
+  @override
+  void initState() {
+    super.initState();
+    configs = [
+      _TabConfig(
+        child: PatternSelector(notifier: widget.notifier),
+        icon: Icons.list,
+      ),
+      _TabConfig(
+        child: ToneSelector(notifier: widget.notifier),
+        icon: Icons.music_note,
+      ),
+      _TabConfig(
+        child: ConfigPage(notifier: widget.notifier),
+        icon: Icons.settings,
+      ),
+    ];
   }
 
   @override
@@ -34,75 +50,44 @@ class _TopButtonGroupState extends State<TopButtonGroup> {
       height: widget.height,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Expanded(
-            child: CustomIconButton(
-              onTap: () => _openModal(
-                _TopButtonModalBody(title: '节奏列表', notifier: widget.notifier),
-              ),
-              icon: Icons.list,
-              size: 24,
-            ),
-          ),
-          CustomDivider(
-            vertical: true,
-            color: Theme.of(context).colorScheme.primaryFixed,
-          ),
-          Expanded(
-            child: CustomIconButton(
-              onTap: () => _openModal(
-                _TopButtonModalBody(title: '音色选择', notifier: widget.notifier),
-              ),
-              icon: Icons.music_note,
-              size: 24,
-            ),
-          ),
-          CustomDivider(
-            vertical: true,
-            color: Theme.of(context).colorScheme.primaryFixed,
-          ),
-          Expanded(
-            child: CustomIconButton(
-              onTap: () => widget.notifier.openConfigPage(),
-              icon: Icons.settings,
-              size: 24,
-            ),
-          ),
-        ],
+        children: _buildTabs(),
       ),
     );
   }
-}
 
-class _TopButtonModalBody extends StatelessWidget {
-  const _TopButtonModalBody({required this.title, required this.notifier});
-  final MetronomeNotifier notifier;
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondary,
-          border: Border.all(
-            color: Theme.of(context).colorScheme.primary,
-            width: 1,
+  List<Widget> _buildTabs() {
+    final List<Widget> widgets = [];
+    for (int i = 0; i < configs.length; i++) {
+      widgets.add(
+        Expanded(
+          child: SelectableButton(
+            selected: i == selectedIndex,
+            onTap: () {
+              setState(() => selectedIndex = i);
+              _openModal(configs[i].child);
+            },
+            icon: configs[i].icon,
+            size: 24,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: titleTextStyle),
-              const SizedBox(height: 16),
-              Expanded(child: ToneSelector(notifier: notifier)),
-            ],
+      );
+      if (i != configs.length - 1) {
+        widgets.add(
+          CustomDivider(
+            vertical: true,
+            color: Theme.of(context).colorScheme.primaryFixed,
           ),
-        ),
-      ),
+        );
+      }
+    }
+    return widgets;
+  }
+
+  void _openModal(Widget child) {
+    showDialog(context: context, builder: (context) => child).then(
+      (value) => setState(() {
+        selectedIndex = -1;
+      }),
     );
   }
 }

@@ -221,6 +221,7 @@ class _WheeledSelectorState extends State<WheeledSelector> {
             if (mounted) {
               _isSnapping = false;
             }
+            widget.onChange(widget.options[nearestItemIndex].value);
           });
       return;
     }
@@ -240,6 +241,7 @@ class _WheeledSelectorState extends State<WheeledSelector> {
             if (mounted) {
               _isSnapping = false;
             }
+            widget.onChange(widget.options[nearestItemIndex].value);
           });
     });
   }

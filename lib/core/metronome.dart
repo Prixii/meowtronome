@@ -5,6 +5,7 @@ import 'package:meowtronome/core/rhythm_pattern.dart';
 import 'package:meowtronome/core/scheduler/scheduler.dart';
 import 'package:meowtronome/core/scheduler/model.dart';
 import 'package:meowtronome/core/soloud/soloud_helper.dart';
+import 'package:meowtronome/gen/assets.gen.dart';
 import 'package:meowtronome/global.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -188,6 +189,16 @@ class Metronome {
 
   void stop() {
     _scheduler.stop();
+  }
+
+  void setToneForSoundType(SoundType soundType, String tone) {
+    if (Assets.audio.values.contains(tone)) {
+      _state = _state.copyWith(
+        soundTypeMap: {..._state.soundTypeMap, soundType: tone},
+      );
+      soloudHelper.setSoundTypeMap(_state.soundTypeMap);
+      saveState();
+    }
   }
 
   void saveState() {

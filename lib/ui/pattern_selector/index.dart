@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:meowtronome/global.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
 
-class ConfigPage extends StatelessWidget {
-  const ConfigPage({super.key, required this.notifier});
+class PatternSelector extends StatelessWidget {
+  const PatternSelector({super.key, required this.notifier});
   final MetronomeNotifier notifier;
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class ConfigPage extends StatelessWidget {
         ),
       ),
       child: Text(
-        'ConfigPage',
+        'PatternSelector',
         style: titleTextStyle.copyWith(
           color: Theme.of(context).colorScheme.primary,
         ),
