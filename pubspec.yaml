@@ -35,3 +35,6 @@ flutter:
     - family: DoHyeon
       fonts:
         - asset: assets/font/DoHyeon-Regular.otf
+    - family: AlimamaShuhei
+      fonts:
+        - asset: assets/font/alimama-shuhei.ttf

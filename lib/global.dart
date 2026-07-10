@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meowtronome/core/enums.dart';
+import 'package:meowtronome/gen/fonts.gen.dart';
 import 'package:meowtronome/ui/metronome/model.dart';
 
 final noteStyles = [
@@ -14,11 +15,13 @@ final noteStyleMap = {for (final style in noteStyles) style.soundType: style};
 final titleTextStyle = const TextStyle(
   fontSize: 32,
   fontWeight: FontWeight.bold,
+  fontFamily: FontFamily.alimamaShuhei,
 );
 
 final subtitleTextStyle = const TextStyle(
   fontSize: 24,
   fontWeight: FontWeight.bold,
+  fontFamily: FontFamily.alimamaShuhei,
 );
 
 final bodyTextStyle = const TextStyle(fontSize: 20);

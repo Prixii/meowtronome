@@ -1,6 +1,8 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:meowtronome/gen/fonts.gen.dart';
 import 'package:meowtronome/ui/layout_helper.dart';
 
 class SelectOption {
@@ -30,9 +32,19 @@ class _WheeledSelectorState extends State<WheeledSelector> {
   late final ScrollController _controller;
   var _isSnapping = false;
   @override
-  initState() {
+  void initState() {
     super.initState();
     _controller = ScrollController();
+
+    final index = widget.options.indexWhere(
+      (option) => option.value == widget.value,
+    );
+    if (index < 0) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_controller.hasClients) return;
+      _controller.jumpTo(index * LayoutHelper.getPickerItemHeight(context));
+    });
   }
 
   @override
@@ -43,7 +55,7 @@ class _WheeledSelectorState extends State<WheeledSelector> {
 
   @override
   Widget build(BuildContext context) {
-    final preferredItemHeight = LayoutHelper.getPickerItemHeight(context) + 3;
+    final preferredItemHeight = LayoutHelper.getPickerItemHeight(context);
 
     return LayoutBuilder(
       builder: (_, constraints) => Stack(
@@ -53,30 +65,47 @@ class _WheeledSelectorState extends State<WheeledSelector> {
           NotificationListener<ScrollNotification>(
             onNotification: (notification) =>
                 onScrollNotification(notification, context),
-            child: SingleChildScrollView(
-              controller: _controller,
-              scrollDirection: Axis.vertical,
-              physics: const ClampingScrollPhysics(),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height:
-                        max(0, constraints.maxHeight - preferredItemHeight) / 2,
+            child: AnimatedBuilder(
+              animation: _controller,
+              builder: (context, _) {
+                final scrollOffset = _controller.hasClients
+                    ? _controller.offset
+                    : 0.0;
+                final viewportCenter = scrollOffset + constraints.maxHeight / 2;
+                final topPadding =
+                    max(0, constraints.maxHeight - preferredItemHeight) / 2;
+
+                return ScrollConfiguration(
+                  behavior: const _WheeledSelectorScrollBehavior().copyWith(
+                    scrollbars: false,
                   ),
-                  for (final option in widget.options)
-                    GestureDetector(
-                      child: SizedBox(
-                        height: preferredItemHeight,
-                        child: Text(option.label),
-                      ),
-                      onTap: () => debugPrint('click ${option.value}'),
+                  child: SingleChildScrollView(
+                    controller: _controller,
+                    scrollDirection: Axis.vertical,
+
+                    physics: const ClampingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        SizedBox(height: topPadding),
+                        for (var i = 0; i < widget.options.length; i++)
+                          _buildWheelItem(
+                            context,
+                            option: widget.options[i],
+                            itemHeight: preferredItemHeight,
+                            distanceFromCenter:
+                                (topPadding +
+                                        i * preferredItemHeight +
+                                        preferredItemHeight / 2 -
+                                        viewportCenter)
+                                    .abs(),
+                            index: i,
+                          ),
+                        SizedBox(height: topPadding),
+                      ],
                     ),
-                  SizedBox(
-                    height:
-                        max(0, constraints.maxHeight - preferredItemHeight) / 2,
                   ),
-                ],
-              ),
+                );
+              },
             ),
           ),
           Positioned.fill(
@@ -84,7 +113,7 @@ class _WheeledSelectorState extends State<WheeledSelector> {
               child: Center(
                 child: SizedBox(
                   height: preferredItemHeight,
-                  width: double.infinity,
+                  width: constraints.maxWidth * 0.8,
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       border: .symmetric(
@@ -103,6 +132,49 @@ class _WheeledSelectorState extends State<WheeledSelector> {
     );
   }
 
+  Widget _buildWheelItem(
+    BuildContext context, {
+    required SelectOption option,
+    required double itemHeight,
+    required double distanceFromCenter,
+    required int index,
+  }) {
+    final opacity = _opacityForDistance(distanceFromCenter, itemHeight);
+    final color = Theme.of(
+      context,
+    ).colorScheme.primary.withValues(alpha: opacity);
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () => _scrollToItemAt(index, itemHeight, true),
+        child: SizedBox(
+          height: itemHeight,
+          child: Container(
+            padding: .only(top: 4),
+            child: Text(
+              option.label,
+              style: TextStyle(
+                color: color,
+                fontSize: LayoutHelper.getPickerItemHeight(context) - 10,
+                height: 1,
+                fontFamily: FontFamily.doHyeon,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  double _opacityForDistance(double distance, double itemHeight) {
+    const minOpacity = 0.25;
+    const fadeSpan = 2.5;
+    final t = (distance / (itemHeight * fadeSpan)).clamp(0.0, 1.0);
+    return 1.0 - t * (1.0 - minOpacity);
+  }
+
   bool onScrollNotification(
     ScrollNotification notification,
     BuildContext context,
@@ -111,7 +183,7 @@ class _WheeledSelectorState extends State<WheeledSelector> {
       return false;
     }
 
-    final itemHeight = LayoutHelper.getPickerItemHeight(context) + 3;
+    final itemHeight = LayoutHelper.getPickerItemHeight(context);
     final currentOffset = _controller.hasClients
         ? _controller.offset
         : notification.metrics.pixels;
@@ -119,13 +191,40 @@ class _WheeledSelectorState extends State<WheeledSelector> {
       currentOffset,
       itemHeight,
     ).clamp(0, widget.options.length - 1);
+
+    _scrollToItemAt(nearestItemIndex, itemHeight);
+
+    return false;
+  }
+
+  void _scrollToItemAt(
+    int nearestItemIndex,
+    double itemHeight, [
+    bool instant = false,
+  ]) {
     final target = nearestItemIndex * itemHeight;
 
-    if ((currentOffset - target).abs() < 0.5) {
-      return false;
+    _isSnapping = true;
+
+    if (instant) {
+      if (!mounted || !_controller.hasClients) {
+        _isSnapping = false;
+        return;
+      }
+      _controller
+          .animateTo(
+            target,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+          )
+          .whenComplete(() {
+            if (mounted) {
+              _isSnapping = false;
+            }
+          });
+      return;
     }
 
-    _isSnapping = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_controller.hasClients) {
         _isSnapping = false;
@@ -143,11 +242,21 @@ class _WheeledSelectorState extends State<WheeledSelector> {
             }
           });
     });
-
-    return false;
   }
 
   int findNearestItemIndex(double currentY, double itemHeight) {
     return (currentY / itemHeight).round();
   }
+}
+
+class _WheeledSelectorScrollBehavior extends MaterialScrollBehavior {
+  const _WheeledSelectorScrollBehavior();
+
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+    PointerDeviceKind.stylus,
+    PointerDeviceKind.trackpad,
+  };
 }

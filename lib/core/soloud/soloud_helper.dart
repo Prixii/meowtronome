@@ -12,6 +12,8 @@ class SoloudHelper {
 
   bool get isInitialized => _initialized;
 
+  String getSoundAssetOf(SoundType type) => _soundTypeMap[type]!;
+
   Future<void> initialize() async {
     if (_initialized) return;
 

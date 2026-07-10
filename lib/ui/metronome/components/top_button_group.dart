@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:meowtronome/global.dart';
 import 'package:meowtronome/ui/components/custom_divider.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
-import 'package:meowtronome/ui/components/expand_rrect_modal.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
 import 'package:meowtronome/ui/tone_selector/index.dart';
 
@@ -15,14 +14,17 @@ class TopButtonGroup extends StatefulWidget {
 }
 
 class _TopButtonGroupState extends State<TopButtonGroup> {
-  final _listButtonKey = GlobalKey();
-  final _musicButtonKey = GlobalKey();
-
-  void _openModal(GlobalKey anchorKey, String title) {
-    showExpandRRectModal(
+  void _openModal(Widget child) {
+    showDialog(
       context: context,
-      anchorKey: anchorKey,
-      builder: (context) => _TopButtonModalBody(title: title),
+      builder: (context) {
+        final size = MediaQuery.sizeOf(context);
+        return SizedBox(
+          width: size.width * 0.85,
+          height: size.height * 0.5,
+          child: child,
+        );
+      },
     );
   }
 
@@ -35,8 +37,9 @@ class _TopButtonGroupState extends State<TopButtonGroup> {
         children: [
           Expanded(
             child: CustomIconButton(
-              key: _listButtonKey,
-              onTap: () => _openModal(_listButtonKey, '节奏列表'),
+              onTap: () => _openModal(
+                _TopButtonModalBody(title: '节奏列表', notifier: widget.notifier),
+              ),
               icon: Icons.list,
               size: 24,
             ),
@@ -47,8 +50,9 @@ class _TopButtonGroupState extends State<TopButtonGroup> {
           ),
           Expanded(
             child: CustomIconButton(
-              key: _musicButtonKey,
-              onTap: () => _openModal(_musicButtonKey, '音色选择'),
+              onTap: () => _openModal(
+                _TopButtonModalBody(title: '音色选择', notifier: widget.notifier),
+              ),
               icon: Icons.music_note,
               size: 24,
             ),
@@ -71,21 +75,33 @@ class _TopButtonGroupState extends State<TopButtonGroup> {
 }
 
 class _TopButtonModalBody extends StatelessWidget {
-  const _TopButtonModalBody({required this.title});
-
+  const _TopButtonModalBody({required this.title, required this.notifier});
+  final MetronomeNotifier notifier;
   final String title;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: titleTextStyle),
-          const SizedBox(height: 16),
-          Expanded(child: ToneSelector()),
-        ],
+      padding: const EdgeInsets.all(24.0),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondary,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.primary,
+            width: 1,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: titleTextStyle),
+              const SizedBox(height: 16),
+              Expanded(child: ToneSelector(notifier: notifier)),
+            ],
+          ),
+        ),
       ),
     );
   }

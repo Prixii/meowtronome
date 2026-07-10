@@ -29,7 +29,7 @@ class LayoutHelper {
       isSmallHeight(context) ? 8.0 : 16.0;
 
   static double getPickerItemHeight(BuildContext context) =>
-      isSmallHeight(context) ? 16.0 : 20.0;
+      isSmallHeight(context) ? 20.0 : 24.0;
 
   static LayoutMode getLayoutMode(BuildContext context) {
     final screenWidth = _windowWidth(context);
