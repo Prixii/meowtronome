@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meowtronome/global.dart';
+import 'package:meowtronome/ui/components/modal_container.dart';
+import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
 
 class PatternSelector extends StatelessWidget {
@@ -7,19 +9,7 @@ class PatternSelector extends StatelessWidget {
   final MetronomeNotifier notifier;
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(48.0),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primaryContainer,
-          border: Border.all(
-            color: Theme.of(context).colorScheme.primary,
-            width: 1,
-          ),
-        ),
-        child: _buildContent(context),
-      ),
-    );
+    return ModalContainer(child: _buildContent(context));
   }
 
   Widget _buildContent(BuildContext context) {
@@ -27,7 +17,7 @@ class PatternSelector extends StatelessWidget {
       crossAxisAlignment: .start,
       children: [
         Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: LayoutHelper.getModalContainerTitlePadding(context),
           child: Text(
             '节奏',
             style: titleTextStyle.copyWith(

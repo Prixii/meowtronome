@@ -5,6 +5,7 @@ import 'package:meowtronome/ui/config/components/config_item.dart';
 import 'package:meowtronome/ui/config/components/custom_slider.dart';
 import 'package:meowtronome/ui/config/components/custom_switch.dart';
 import 'package:meowtronome/ui/config/provider/config_notifier.dart';
+import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:provider/provider.dart';
 
 class ConfigHorizontalLayout extends StatelessWidget {
@@ -13,27 +14,11 @@ class ConfigHorizontalLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final notifier = context.watch<ConfigNotifier>();
-    return Padding(
-      padding: const EdgeInsets.all(48.0),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primaryContainer,
-          border: Border.all(
-            color: Theme.of(context).colorScheme.primary,
-            width: 1,
-          ),
-        ),
-        child: _buildContent(context, notifier),
-      ),
-    );
-  }
-
-  Widget _buildContent(BuildContext context, ConfigNotifier notifier) {
     return Column(
       crossAxisAlignment: .start,
       children: [
         Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: LayoutHelper.getModalContainerTitlePadding(context),
           child: Text(
             '设置',
             style: titleTextStyle.copyWith(
@@ -61,7 +46,10 @@ class ConfigHorizontalLayout extends StatelessWidget {
                       value: notifier.soloudGlobalVolume,
                       min: 0,
                       max: 1,
-                      width: 300,
+                      width: LayoutHelper.getConfigSliderWidth(context),
+                    ),
+                    padding: LayoutHelper.getModalContainerTitlePadding(
+                      context,
                     ),
                   ),
                   CustomDivider(
@@ -75,6 +63,9 @@ class ConfigHorizontalLayout extends StatelessWidget {
                       value: notifier.autoCheckForUpdates,
                       onChanged: (value) =>
                           notifier.setAutoCheckForUpdates(value),
+                    ),
+                    padding: LayoutHelper.getModalContainerTitlePadding(
+                      context,
                     ),
                   ),
                   CustomDivider(

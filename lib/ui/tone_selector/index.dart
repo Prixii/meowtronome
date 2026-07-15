@@ -3,6 +3,8 @@ import 'package:meowtronome/core/soloud/soloud_helper.dart';
 import 'package:meowtronome/gen/assets.gen.dart';
 import 'package:meowtronome/global.dart';
 import 'package:meowtronome/ui/components/custom_divider.dart';
+import 'package:meowtronome/ui/components/modal_container.dart';
+import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/metronome/components/animated_note.dart';
 import 'package:meowtronome/ui/metronome/components/wheeled_selector.dart';
 import 'package:meowtronome/ui/metronome/model.dart';
@@ -17,19 +19,7 @@ class ToneSelector extends StatelessWidget {
       for (final value in Assets.audio.values)
         SelectOption(label: _getLabel(value), value: value),
     ];
-    return Padding(
-      padding: const EdgeInsets.all(48.0),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primaryContainer,
-          border: Border.all(
-            color: Theme.of(context).colorScheme.primary,
-            width: 1,
-          ),
-        ),
-        child: _buildContent(context, toneList),
-      ),
-    );
+    return ModalContainer(child: _buildContent(context, toneList));
   }
 
   Widget _buildContent(BuildContext context, List<SelectOption> toneList) {
@@ -37,7 +27,7 @@ class ToneSelector extends StatelessWidget {
       crossAxisAlignment: .start,
       children: [
         Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: LayoutHelper.getModalContainerTitlePadding(context),
           child: Text(
             '音色',
             style: titleTextStyle.copyWith(
@@ -67,7 +57,7 @@ class ToneSelector extends StatelessWidget {
     final List<Widget> widgets = [];
     for (int i = 0; i < noteStyles.length; i++) {
       final style = noteStyles[i];
-      widgets.add(_buildSingleNoteTonePicker(style, toneList));
+      widgets.add(_buildSingleNoteTonePicker(context, style, toneList));
       widgets.add(
         CustomDivider(
           vertical: true,
@@ -78,30 +68,37 @@ class ToneSelector extends StatelessWidget {
     return widgets;
   }
 
-  Column _buildSingleNoteTonePicker(
+  Widget _buildSingleNoteTonePicker(
+    BuildContext context,
     NoteStyle style,
     List<SelectOption> toneList,
   ) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 100,
-          child: Center(
-            child: AnimatedNote(soundType: style.soundType, isPlaying: false),
+    return SizedBox(
+      width: LayoutHelper.getToneSelectorItemWidth(context),
+      child: Column(
+        mainAxisAlignment: .start,
+        crossAxisAlignment: .stretch,
+        children: [
+          SizedBox(
+            height: LayoutHelper.getToneSelectorItemHeight(context),
+            child: Center(
+              child: AnimatedNote(soundType: style.soundType, isPlaying: false),
+            ),
           ),
-        ),
-        CustomDivider(),
-        SizedBox(
-          width: 200,
-          child: WheeledSelector(
+          CustomDivider(
+            color: Theme.of(context).colorScheme.primaryFixed,
+            indent: 4,
+            endIndent: 4,
+          ),
+          WheeledSelector(
             options: toneList,
             value: soloudHelper.getSoundAssetOf(style.soundType),
             onChange: (value) {
               notifier.setToneForSoundType(style.soundType, value);
             },
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

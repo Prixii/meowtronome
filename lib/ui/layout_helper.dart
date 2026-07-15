@@ -8,6 +8,7 @@ class LayoutHelper {
   LayoutHelper._();
 
   static const double smallSizeHeight = 450.0;
+  static const double smallSizeWidth = 400.0;
 
   static EdgeInsets getAppPadding(BuildContext context) =>
       isSmallHeight(context)
@@ -31,6 +32,24 @@ class LayoutHelper {
   static double getPickerItemHeight(BuildContext context) =>
       isSmallHeight(context) ? 20.0 : 24.0;
 
+  static double getConfigSliderWidth(BuildContext context) =>
+      isSmallWidth(context) ? 100.0 : 300.0;
+
+  static EdgeInsets getModalContainerPadding(BuildContext context) =>
+      isSmallWidth(context)
+      ? const EdgeInsets.all(16.0)
+      : const EdgeInsets.all(48.0);
+
+  static EdgeInsets getModalContainerTitlePadding(BuildContext context) =>
+      isSmallHeight(context)
+      ? const EdgeInsets.all(8.0)
+      : const EdgeInsets.all(16.0);
+
+  static double getToneSelectorItemWidth(BuildContext context) =>
+      isSmallWidth(context) ? 120.0 : 160.0;
+  static double getToneSelectorItemHeight(BuildContext context) =>
+      isSmallHeight(context) ? 40.0 : 100.0;
+
   static LayoutMode getLayoutMode(BuildContext context) {
     final screenWidth = _windowWidth(context);
     final screenHeight = _windowHeight(context);
@@ -48,6 +67,9 @@ class LayoutHelper {
 
   static double _windowWidth(BuildContext context) =>
       MediaQuery.of(context).size.width;
+
+  static bool isSmallWidth(BuildContext context) =>
+      (_windowWidth(context) < smallSizeWidth);
 
   static bool isSmallHeight(BuildContext context) =>
       (_windowHeight(context) < smallSizeHeight);
