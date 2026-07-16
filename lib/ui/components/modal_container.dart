@@ -19,9 +19,29 @@ class ModalContainer extends StatelessWidget {
   Widget _buildNormal(BuildContext context) {
     return Padding(
       padding: LayoutHelper.getModalContainerPadding(context),
+      child: _buildModalContent(context),
+    );
+  }
+
+  Widget _buildWide(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Padding(
+            padding: LayoutHelper.getModalContainerPadding(context),
+            child: _buildModalContent(context),
+          ),
+        ),
+        Expanded(child: Container()),
+      ],
+    );
+  }
+
+  Widget _buildModalContent(BuildContext context) {
+    return Material(
+      color: Theme.of(context).colorScheme.primaryContainer,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primaryContainer,
           border: Border.all(
             color: Theme.of(context).colorScheme.primary,
             width: 1,
@@ -29,29 +49,6 @@ class ModalContainer extends StatelessWidget {
         ),
         child: child,
       ),
-    );
-  }
-
-  Widget _buildWide(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(child: Container()),
-        Expanded(
-          child: Padding(
-            padding: LayoutHelper.getModalContainerPadding(context),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.primary,
-                  width: 1,
-                ),
-              ),
-              child: child,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

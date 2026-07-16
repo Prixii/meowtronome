@@ -3,6 +3,9 @@ import 'package:meowtronome/core/enums.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
 import 'package:meowtronome/gen/fonts.gen.dart';
 import 'package:meowtronome/ui/metronome/model.dart';
+import 'package:uuid/uuid.dart';
+
+final uuid = Uuid();
 
 final noteStyles = [
   NoteStyle(shape: NoteShape.circle, soundType: SoundType.type1),

@@ -4,15 +4,23 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final sharedPreferencesHelper = SharedPreferencesHelper();
 
+enum SharedPreferencesKeys { metronomeState, userPatterns }
+
 class SharedPreferencesHelper {
   late final SharedPreferences prefs;
+
+  static const keys = {};
 
   Future<void> init() async {
     prefs = await SharedPreferences.getInstance();
   }
 
-  dynamic getJsonAndDecode(String key) =>
-      jsonDecode(prefs.getString(key) ?? '{}');
+  T? getJsonAndDecode<T>(SharedPreferencesKeys key) {
+    final rawJson = prefs.getString(key.name);
+    if (rawJson == null || rawJson.isEmpty) return null;
+    return jsonDecode(rawJson) as T;
+  }
 
-  void setString(String key, String value) => prefs.setString(key, value);
+  void setString(SharedPreferencesKeys key, String value) =>
+      prefs.setString(key.name, value);
 }

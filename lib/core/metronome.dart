@@ -16,9 +16,10 @@ class Metronome {
   Metronome() : _state = MetronomeState(), _scheduler = Scheduler();
 
   Future<void> init() async {
-    _state = MetronomeState.fromJson(
-      sharedPreferencesHelper.getJsonAndDecode('metronomeState'),
+    final json = sharedPreferencesHelper.getJsonAndDecode<Map<String, dynamic>>(
+      .metronomeState,
     );
+    _state = json == null ? MetronomeState() : MetronomeState.fromJson(json);
 
     if (_state.soundTypeMap.isEmpty) {
       _state = _state.copyWith(soundTypeMap: defaultSoundMap);
@@ -199,7 +200,7 @@ class Metronome {
 
   void saveState() {
     sharedPreferencesHelper.setString(
-      'metronomeState',
+      .metronomeState,
       jsonEncode(_state.toJson()),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meowtronome/global.dart';
 import 'package:meowtronome/ui/components/custom_divider.dart';
+import 'package:meowtronome/ui/components/custom_icon_button.dart';
 import 'package:meowtronome/ui/components/modal_container.dart';
 import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
@@ -35,15 +36,29 @@ class PatternSelectorBody extends StatelessWidget {
     return Column(
       crossAxisAlignment: .start,
       children: [
-        Padding(
-          padding: LayoutHelper.getModalContainerTitlePadding(context),
-          child: Text(
-            '节奏',
-            style: titleTextStyle.copyWith(
-              color: Theme.of(context).colorScheme.primary,
+        Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: LayoutHelper.getModalContainerTitlePadding(context),
+                child: Text(
+                  '节奏',
+                  style: titleTextStyle.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  textAlign: .left,
+                ),
+              ),
             ),
-            textAlign: .left,
-          ),
+            Padding(
+              padding: LayoutHelper.getModalContainerTitlePadding(context),
+              child: CustomIconButton(
+                icon: Icons.add,
+                size: 32,
+                onTap: () => notifier.addPattern(metronomeNotifier.pattern),
+              ),
+            ),
+          ],
         ),
         CustomDivider(),
         Expanded(
@@ -51,15 +66,29 @@ class PatternSelectorBody extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                for (final patternEntry in notifier.getPatterns().entries)
+                for (final pattern in notifier.systemPatterns)
                   RhythmPatternItem(
-                    pattern: patternEntry.value,
-                    uuid: patternEntry.key,
+                    pattern: pattern,
+                    uuid: pattern.name,
+                    isSystemPattern: true,
                     onSelect: () {
-                      metronomeNotifier.setPattern(patternEntry.value);
+                      metronomeNotifier.setPattern(pattern);
                       Navigator.pop(context);
                     },
                   ),
+                ...[
+                  for (final patternEntry in notifier.userPatterns.entries)
+                    RhythmPatternItem(
+                      pattern: patternEntry.value,
+                      uuid: patternEntry.key,
+                      onSelect: () {
+                        metronomeNotifier.setPattern(patternEntry.value);
+                        Navigator.pop(context);
+                      },
+                      onRename: (newName) =>
+                          notifier.renamePattern(patternEntry.key, newName),
+                    ),
+                ],
               ],
             ),
           ),
