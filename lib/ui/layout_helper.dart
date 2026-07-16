@@ -19,6 +19,9 @@ class LayoutHelper {
       isSmallHeight(context) ? 14.0 : 16.0;
   static double getNoteStrokeWidth(BuildContext context) =>
       isSmallHeight(context) ? 2.0 : 3.0;
+  static double getPreviewNoteSize(BuildContext context) =>
+      isSmallHeight(context) ? 6.0 : 8.0;
+  static double getPreviewNoteStrokeWidth(BuildContext context) => 2.0;
 
   static double getBpmTextSize(BuildContext context) =>
       isSmallHeight(context) ? 98.0 : 128.0;
@@ -33,7 +36,7 @@ class LayoutHelper {
       isSmallHeight(context) ? 20.0 : 24.0;
 
   static double getConfigSliderWidth(BuildContext context) =>
-      isSmallWidth(context) ? 100.0 : 300.0;
+      isSmallWidth(context) ? 100.0 : 250.0;
 
   static EdgeInsets getModalContainerPadding(BuildContext context) =>
       isSmallWidth(context)

@@ -112,6 +112,7 @@ class PatternPanel extends StatelessWidget {
                                         pattern.beats[i],
                                         i,
                                         notifier,
+                                        context,
                                       ),
                                     ),
                                     CustomIconButton(
@@ -149,13 +150,19 @@ class PatternPanel extends StatelessWidget {
     );
   }
 
-  Widget _buildBeat(Beat beat, int beatIndex, MetronomeNotifier notifier) {
+  Widget _buildBeat(
+    Beat beat,
+    int beatIndex,
+    MetronomeNotifier notifier,
+    BuildContext context,
+  ) {
     final noteWidgets = [
       for (int i = 0; i < beat.notes.length; i++)
         GestureDetector(
           child: AnimatedNote(
             soundType: beat.notes[i].soundType,
             isPlaying: notifier.isCurrentNote(beatIndex, i),
+            size: LayoutHelper.getNoteSize(context),
           ),
           onTap: () => {
             notifier.setNoteSoundType(

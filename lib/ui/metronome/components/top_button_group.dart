@@ -18,7 +18,7 @@ class TopButtonGroup extends StatelessWidget {
   final double height;
   final List<_TabConfig> _configs = [
     _TabConfig(
-      child: (notifier) => PatternSelector(notifier: notifier),
+      child: (notifier) => PatternSelector(metronomeNotifier: notifier),
       icon: Icons.list,
     ),
     _TabConfig(

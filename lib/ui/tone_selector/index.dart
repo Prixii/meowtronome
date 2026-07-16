@@ -82,7 +82,11 @@ class ToneSelector extends StatelessWidget {
           SizedBox(
             height: LayoutHelper.getToneSelectorItemHeight(context),
             child: Center(
-              child: AnimatedNote(soundType: style.soundType, isPlaying: false),
+              child: AnimatedNote(
+                soundType: style.soundType,
+                isPlaying: false,
+                size: LayoutHelper.getNoteSize(context),
+              ),
             ),
           ),
           CustomDivider(

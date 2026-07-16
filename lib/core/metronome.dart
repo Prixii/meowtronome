@@ -7,22 +7,18 @@ import 'package:meowtronome/core/scheduler/model.dart';
 import 'package:meowtronome/core/soloud/soloud_helper.dart';
 import 'package:meowtronome/gen/assets.gen.dart';
 import 'package:meowtronome/global.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:meowtronome/ui/shared_preferences_helper.dart';
 
 class Metronome {
   MetronomeState _state;
   final Scheduler _scheduler;
-  late final SharedPreferences prefs;
 
   Metronome() : _state = MetronomeState(), _scheduler = Scheduler();
 
   Future<void> init() async {
-    prefs = await SharedPreferences.getInstance();
-
-    final metronomeState = prefs.getString('metronomeState');
-    if (metronomeState != null) {
-      _state = MetronomeState.fromJson(jsonDecode(metronomeState));
-    }
+    _state = MetronomeState.fromJson(
+      sharedPreferencesHelper.getJsonAndDecode('metronomeState'),
+    );
 
     if (_state.soundTypeMap.isEmpty) {
       _state = _state.copyWith(soundTypeMap: defaultSoundMap);
@@ -202,7 +198,10 @@ class Metronome {
   }
 
   void saveState() {
-    prefs.setString('metronomeState', jsonEncode(_state.toJson()));
+    sharedPreferencesHelper.setString(
+      'metronomeState',
+      jsonEncode(_state.toJson()),
+    );
   }
 
   MetronomeState get state => _state;

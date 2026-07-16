@@ -14,7 +14,7 @@ class SoloudHelper {
 
   String getSoundAssetOf(SoundType type) => _soundTypeMap[type]!;
 
-  Future<void> initialize() async {
+  Future<void> init() async {
     if (_initialized) return;
 
     await _soloud.init(sampleRate: 48000, bufferSize: 256);

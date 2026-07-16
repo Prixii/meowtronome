@@ -114,6 +114,8 @@ class MetronomeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setPattern(RhythmPattern pattern) => _metronome.setPattern(pattern);
+
   bool get isConfigPageOpen => _isConfigPageOpen;
 
   @override

@@ -11,18 +11,22 @@ class AnimatedNote extends StatefulWidget {
     super.key,
     required this.soundType,
     required this.isPlaying,
+    required this.size,
+    this.strokeWidth,
   });
 
   final SoundType soundType;
   final bool isPlaying;
+  final double size;
+  final double? strokeWidth;
 
   static const double paddingSize = 4;
   static const maxSizeScale = 1.4;
   static const minSizeScale = 0.9;
 
-  static Size layoutSize(BuildContext context) {
-    final size = LayoutHelper.getNoteSize(context);
-    final dimension = size + paddingSize * 2;
+  static Size layoutSize(BuildContext context, {double? size}) {
+    final noteSize = size ?? LayoutHelper.getNoteSize(context);
+    final dimension = noteSize + paddingSize * 2;
     return Size(dimension, dimension);
   }
 
@@ -81,9 +85,10 @@ class _AnimatedNoteState extends State<AnimatedNote>
   @override
   Widget build(BuildContext context) {
     final style = noteStyleMap[widget.soundType]!;
-    final layoutSize = AnimatedNote.layoutSize(context);
-    final size = LayoutHelper.getNoteSize(context);
-    final strokeWidth = LayoutHelper.getNoteStrokeWidth(context);
+    final layoutSize = AnimatedNote.layoutSize(context, size: widget.size);
+    final size = widget.size;
+    final strokeWidth =
+        widget.strokeWidth ?? LayoutHelper.getNoteStrokeWidth(context);
 
     return SizedBox(
       width: layoutSize.width,

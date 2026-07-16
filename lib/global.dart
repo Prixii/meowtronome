@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:meowtronome/core/enums.dart';
+import 'package:meowtronome/core/rhythm_pattern.dart';
 import 'package:meowtronome/gen/fonts.gen.dart';
 import 'package:meowtronome/ui/metronome/model.dart';
 
 final noteStyles = [
-  NoteStyle(shape: NoteShape.square, soundType: SoundType.type4),
   NoteStyle(shape: NoteShape.circle, soundType: SoundType.type1),
   NoteStyle(shape: NoteShape.diamond, soundType: SoundType.type2),
   NoteStyle(shape: NoteShape.triangle, soundType: SoundType.type3),
+  NoteStyle(shape: NoteShape.square, soundType: SoundType.type4),
 ];
 
 final noteStyleMap = {for (final style in noteStyles) style.soundType: style};
@@ -35,3 +36,69 @@ const defaultSoundMap = {
   SoundType.type3: 'assets/audio/drum_2.wav',
   SoundType.type4: 'assets/audio/drum_3.wav',
 };
+
+const systemRhythmPatterns = [
+  RhythmPattern(
+    name: '4/4',
+    beats: [
+      Beat(
+        notes: [
+          Note(soundType: SoundType.type1),
+          Note(soundType: SoundType.type3),
+          Note(soundType: SoundType.type3),
+          Note(soundType: SoundType.type3),
+        ],
+      ),
+      Beat(
+        notes: [
+          Note(soundType: SoundType.type2),
+          Note(soundType: SoundType.type3),
+          Note(soundType: SoundType.type3),
+          Note(soundType: SoundType.type3),
+        ],
+      ),
+      Beat(
+        notes: [
+          Note(soundType: SoundType.type2),
+          Note(soundType: SoundType.type3),
+          Note(soundType: SoundType.type3),
+          Note(soundType: SoundType.type3),
+        ],
+      ),
+      Beat(
+        notes: [
+          Note(soundType: SoundType.type2),
+          Note(soundType: SoundType.type3),
+          Note(soundType: SoundType.type3),
+          Note(soundType: SoundType.type3),
+        ],
+      ),
+    ],
+  ),
+  RhythmPattern(
+    name: '3/4',
+    beats: [
+      Beat(
+        notes: [
+          Note(soundType: SoundType.type1),
+          Note(soundType: SoundType.type3),
+          Note(soundType: SoundType.type3),
+        ],
+      ),
+      Beat(
+        notes: [
+          Note(soundType: SoundType.type2),
+          Note(soundType: SoundType.type3),
+          Note(soundType: SoundType.type3),
+        ],
+      ),
+      Beat(
+        notes: [
+          Note(soundType: SoundType.type2),
+          Note(soundType: SoundType.type3),
+          Note(soundType: SoundType.type3),
+        ],
+      ),
+    ],
+  ),
+];
