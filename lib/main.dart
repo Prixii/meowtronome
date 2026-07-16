@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:meowtronome/core/audio/audio_background.dart';
 import 'package:meowtronome/ui/color_helper.dart';
 import 'package:meowtronome/ui/splash/index.dart';
 import 'package:window_manager/window_manager.dart';
@@ -10,6 +11,7 @@ import 'package:window_manager/window_manager.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isWindows) await initializeDesktop();
+  await initAudioBackground();
   runApp(kDebugMode ? const StatefulMainApp() : const MainApp());
 }
 

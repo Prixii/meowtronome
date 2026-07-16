@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:meowtronome/core/audio/audio_background.dart';
 import 'package:meowtronome/core/enums.dart';
 import 'package:meowtronome/core/metronome.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
@@ -33,6 +36,11 @@ class MetronomeNotifier extends ChangeNotifier {
       onPlayNote?.call(currentBeatIndex, currentNoteIndex);
       notifyListeners();
     });
+
+    attachMetronomeToAudioBackground(
+      _metronome,
+      onChanged: notifyListeners,
+    );
   }
 
   void setOnPlayNoteCallback(
@@ -86,6 +94,20 @@ class MetronomeNotifier extends ChangeNotifier {
   }
 
   void toggleRunning() {
+    unawaited(_toggleRunning());
+  }
+
+  Future<void> _toggleRunning() async {
+    final handler = metronomeAudioHandler;
+    if (handler != null) {
+      if (isRunning) {
+        await handler.stop();
+      } else {
+        await handler.play();
+      }
+      return;
+    }
+
     if (isRunning) {
       _metronome.stop();
     } else {
@@ -120,6 +142,7 @@ class MetronomeNotifier extends ChangeNotifier {
 
   @override
   void dispose() {
+    detachMetronomeFromAudioBackground();
     _metronome.dispose();
     super.dispose();
   }
