@@ -11,14 +11,16 @@ class RhythmPatternItem extends StatelessWidget {
     super.key,
     required this.pattern,
     required this.uuid,
-    this.onSelect,
-    this.onRename,
+    required this.onSelect,
+    required this.onDelete,
+    required this.onRename,
     this.isSystemPattern = false,
   });
   final RhythmPattern pattern;
   final String uuid;
-  final void Function()? onSelect;
-  final void Function(String newName)? onRename;
+  final void Function() onSelect;
+  final void Function() onDelete;
+  final void Function(String newName) onRename;
   final bool isSystemPattern;
   @override
   Widget build(BuildContext context) {
@@ -34,6 +36,7 @@ class RhythmPatternItem extends StatelessWidget {
               isSystemPattern: isSystemPattern,
               pattern: pattern,
               onRename: onRename,
+              onDelete: onDelete,
             ),
           ),
           CustomDivider(
@@ -44,7 +47,7 @@ class RhythmPatternItem extends StatelessWidget {
           const SizedBox(height: 8),
           GestureDetector(
             behavior: .opaque,
-            onTap: () => onSelect?.call(),
+            onTap: () => onSelect.call(),
             child: RhythmPatternPreview(pattern: pattern),
           ),
           const SizedBox(height: 8),
@@ -60,12 +63,14 @@ class RhythmPatternItemTitle extends StatefulWidget {
     super.key,
     required this.isSystemPattern,
     required this.pattern,
-    this.onRename,
+    required this.onRename,
+    required this.onDelete,
   });
 
   final bool isSystemPattern;
   final RhythmPattern pattern;
-  final void Function(String newName)? onRename;
+  final void Function(String newName) onRename;
+  final void Function() onDelete;
 
   @override
   State<RhythmPatternItemTitle> createState() => _RhythmPatternItemTitleState();
@@ -84,7 +89,7 @@ class _RhythmPatternItemTitleState extends State<RhythmPatternItemTitle> {
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus && isEditing) {
         setState(() => isEditing = false);
-        widget.onRename?.call(_controller.text);
+        widget.onRename.call(_controller.text);
       }
     });
   }
@@ -125,7 +130,7 @@ class _RhythmPatternItemTitleState extends State<RhythmPatternItemTitle> {
                   focusNode: _focusNode,
                   onSubmitted: (value) {
                     setState(() => isEditing = false);
-                    widget.onRename?.call(value);
+                    widget.onRename.call(value);
                   },
                   decoration: const InputDecoration(
                     border: InputBorder.none,
@@ -163,7 +168,10 @@ class _RhythmPatternItemTitleState extends State<RhythmPatternItemTitle> {
           width: 48,
           child: widget.isSystemPattern
               ? null
-              : CustomIconButton(icon: Icons.delete, onTap: () => {}),
+              : CustomIconButton(
+                  icon: Icons.delete,
+                  onTap: () => widget.onDelete.call(),
+                ),
         ),
       ],
     );

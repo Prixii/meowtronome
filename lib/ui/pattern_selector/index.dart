@@ -75,6 +75,8 @@ class PatternSelectorBody extends StatelessWidget {
                       metronomeNotifier.setPattern(pattern);
                       Navigator.pop(context);
                     },
+                    onRename: (newName) => {},
+                    onDelete: () => {},
                   ),
                 ...[
                   for (final patternEntry in notifier.userPatterns.entries)
@@ -87,6 +89,7 @@ class PatternSelectorBody extends StatelessWidget {
                       },
                       onRename: (newName) =>
                           notifier.renamePattern(patternEntry.key, newName),
+                      onDelete: () => notifier.deletePattern(patternEntry.key),
                     ),
                 ],
               ],

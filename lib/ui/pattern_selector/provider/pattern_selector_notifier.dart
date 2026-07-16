@@ -52,6 +52,16 @@ class PatternSelectorNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
+  void deletePattern(String patternUuid) {
+    var newMap = {..._state.userPatterns};
+    newMap.remove(patternUuid);
+
+    _state = _state.copyWith(userPatterns: newMap);
+
+    _saveUserPatterns();
+    notifyListeners();
+  }
+
   void _saveUserPatterns() {
     sharedPreferencesHelper.setString(
       .userPatterns,
