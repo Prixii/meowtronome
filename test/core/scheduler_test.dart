@@ -261,6 +261,30 @@ void main() {
       expect(scheduler.bpm, 140);
       scheduler.dispose();
     });
+
+    test('setBpm while running keeps current note timing', () {
+      final scheduler = Scheduler();
+      scheduler.setPattern(RhythmPattern.defaultPattern());
+      scheduler.start();
+
+      final beatIndex = scheduler.runtimeState.currentBeatIndex;
+      final noteIndex = scheduler.runtimeState.currentNoteIndex;
+      final cumulative = scheduler.runtimeState.expectedCumulativeTimeMs;
+      expect(cumulative, greaterThan(0));
+
+      scheduler.setBpm(180);
+
+      // Current position and cumulative clock must stay put.
+      expect(scheduler.runtimeState.currentBeatIndex, beatIndex);
+      expect(scheduler.runtimeState.currentNoteIndex, noteIndex);
+      expect(scheduler.runtimeState.expectedCumulativeTimeMs, cumulative);
+      // Queue regenerates for subsequent notes (120→180 BPM, 4 notes/beat).
+      expect(
+        scheduler.state.noteQueue[0][0].timeValueMs,
+        closeTo(60_000 / 180 / 4, 0.001),
+      );
+      scheduler.dispose();
+    });
   });
 
   group('pattern change during playback', () {

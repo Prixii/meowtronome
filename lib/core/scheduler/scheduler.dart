@@ -56,12 +56,6 @@ class Scheduler {
     if (bpm != _state.bpm) {
       _state = _state.copyWith(bpm: bpm);
       _generateNoteQueue();
-      if (_state.isRunning) {
-        _stopwatch
-          ..reset()
-          ..start();
-        _runtimeState = _runtimeState.copyWith(expectedCumulativeTimeMs: 0);
-      }
     }
   }
 
