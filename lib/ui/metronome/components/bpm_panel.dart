@@ -3,54 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:meowtronome/gen/fonts.gen.dart';
 import 'package:meowtronome/ui/components/custom_divider.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
+import 'package:meowtronome/ui/components/inline_editable_text.dart';
 import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
 
-class BpmPanel extends StatefulWidget {
+class BpmPanel extends StatelessWidget {
   const BpmPanel({super.key, required this.notifier});
   final MetronomeNotifier notifier;
-
-  @override
-  State<BpmPanel> createState() => _BpmPanelState();
-}
-
-class _BpmPanelState extends State<BpmPanel> {
-  late final TextEditingController _controller;
-  late final FocusNode _focusNode;
-  bool _isEditing = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController(text: widget.notifier.bpm.toString());
-    _focusNode = FocusNode();
-    _focusNode.addListener(_onFocusChange);
-  }
-
-  void _onFocusChange() {
-    if (!_focusNode.hasFocus && _isEditing) {
-      _commitBpm();
-      setState(() => _isEditing = false);
-    }
-  }
-
-  void _commitBpm() {
-    final value = int.tryParse(_controller.text);
-    if (value != null && value > 0) {
-      widget.notifier.setBpm(value);
-    }
-    _controller.text = widget.notifier.bpm.toString();
-  }
-
-  void _startEditing() {
-    setState(() => _isEditing = true);
-    _controller.text = widget.notifier.bpm.toString();
-    _controller.selection = TextSelection(
-      baseOffset: 0,
-      extentOffset: _controller.text.length,
-    );
-    _focusNode.requestFocus();
-  }
 
   TextStyle _textStyle(BuildContext context) => TextStyle(
     fontSize: LayoutHelper.getBpmTextSize(context),
@@ -60,18 +19,15 @@ class _BpmPanelState extends State<BpmPanel> {
     fontFamily: FontFamily.doHyeon,
   );
 
-  @override
-  void dispose() {
-    _focusNode.removeListener(_onFocusChange);
-    _focusNode.dispose();
-    _controller.dispose();
-    super.dispose();
+  void _commitBpm(String text) {
+    final value = int.tryParse(text);
+    if (value != null && value > 0) {
+      notifier.setBpm(value);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final notifier = widget.notifier;
-
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primaryContainer,
@@ -79,13 +35,15 @@ class _BpmPanelState extends State<BpmPanel> {
       height: 128,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           SizedBox(
             width: 64,
             child: CustomIconButton(
               icon: Icons.remove,
               size: 24,
+              enableLongPressRepeat: true,
+              expand: true,
               onTap: () => notifier.setBpm(notifier.bpm - 1),
             ),
           ),
@@ -94,33 +52,13 @@ class _BpmPanelState extends State<BpmPanel> {
             color: Theme.of(context).colorScheme.primaryFixed,
           ),
           Expanded(
-            child: _isEditing
-                ? TextField(
-                    controller: _controller,
-                    focusNode: _focusNode,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    textAlign: TextAlign.center,
-                    style: _textStyle(context),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      isDense: true,
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                    onSubmitted: (_) {
-                      _commitBpm();
-                      setState(() => _isEditing = false);
-                    },
-                  )
-                : GestureDetector(
-                    onTap: _startEditing,
-                    behavior: HitTestBehavior.opaque,
-                    child: Text(
-                      notifier.bpm.toString(),
-                      style: _textStyle(context),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+            child: InlineEditableText(
+              value: notifier.bpm.toString(),
+              onSubmit: _commitBpm,
+              style: _textStyle(context),
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            ),
           ),
           CustomDivider(
             vertical: true,
@@ -131,6 +69,8 @@ class _BpmPanelState extends State<BpmPanel> {
             child: CustomIconButton(
               icon: Icons.add,
               size: 24,
+              enableLongPressRepeat: true,
+              expand: true,
               onTap: () => notifier.setBpm(notifier.bpm + 1),
             ),
           ),

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
+import 'package:meowtronome/ui/components/animated_list.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
 import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/metronome/components/animated_note.dart';
@@ -10,7 +11,7 @@ import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
 class PatternPanel extends StatelessWidget {
   const PatternPanel({super.key, required this.notifier});
 
-  static const double minSpacing = 12.0;
+  static const double minSpacing = 8.0;
 
   final MetronomeNotifier notifier;
   @override
@@ -38,171 +39,274 @@ class PatternPanel extends StatelessWidget {
     BoxConstraints constraints,
     BuildContext context,
   ) {
-    final pattern = notifier.state.pattern;
     final metrics = _PatternMetrics(context);
 
-    return Row(
+    return Column(
+      children: [
+        const SizedBox(height: 32),
+        Expanded(
+          child: _PatternGrid(notifier: notifier, metrics: metrics),
+        ),
+        const SizedBox(height: 32),
+      ],
+    );
+  }
+}
+
+class _PatternGrid extends StatefulWidget {
+  const _PatternGrid({required this.notifier, required this.metrics});
+
+  final MetronomeNotifier notifier;
+  final _PatternMetrics metrics;
+
+  @override
+  State<_PatternGrid> createState() => _PatternGridState();
+}
+
+class _PatternGridState extends State<_PatternGrid> {
+  late int _hostBeatCount;
+
+  RhythmPattern get _pattern => widget.notifier.state.pattern;
+
+  @override
+  void initState() {
+    super.initState();
+    _hostBeatCount = _pattern.beats.length;
+  }
+
+  @override
+  void didUpdateWidget(covariant _PatternGrid oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final beatCount = _pattern.beats.length;
+    if (beatCount > _hostBeatCount) {
+      _hostBeatCount = beatCount;
+    }
+  }
+
+  void _onBeatAnimationDone(int count) {
+    if (count >= _hostBeatCount) {
+      return;
+    }
+    setState(() => _hostBeatCount = count);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final pattern = _pattern;
+    final metrics = widget.metrics;
+    final notifier = widget.notifier;
+
+    return LayoutBuilder(
+      builder: (context, viewportConstraints) {
+        final viewportWidth = viewportConstraints.maxWidth;
+        final viewportHeight = viewportConstraints.maxHeight;
+        final gridMinSize = LayoutHelper.getPatternGridMinSize(
+          context,
+          parentSize: Size(viewportWidth, viewportHeight),
+        );
+
+        final maxNoteCount = _maxNoteCount(pattern);
+        final tallestBeatHeight = metrics.stackedExtent(
+          maxNoteCount,
+          metrics.noteSize.height,
+        );
+        final gridHeight = max(gridMinSize.height, tallestBeatHeight);
+
+        final hostGridWidth = max(
+          gridMinSize.width,
+          metrics.stackedExtent(_hostBeatCount, metrics.beatColumnWidth),
+        );
+        final beatControlsWidth =
+            metrics.beatButtonSize.width * 2 + PatternPanel.minSpacing * 2;
+        final patternBodyWidth = hostGridWidth + beatControlsWidth;
+
+        final patternHeight = metrics.beatColumnChromeHeight + gridHeight;
+        final scrollContentWidth = max(viewportWidth, patternBodyWidth);
+        final scrollContentHeight = max(viewportHeight, patternHeight);
+        final canScroll =
+            scrollContentWidth > viewportWidth ||
+            scrollContentHeight > viewportHeight;
+
+        return _PatternScrollArea(
+          scrollContentWidth: scrollContentWidth,
+          scrollContentHeight: scrollContentHeight,
+          viewportWidth: viewportWidth,
+          viewportHeight: viewportHeight,
+          canScroll: canScroll,
+          child: SizedBox(
+            width: scrollContentWidth,
+            height: scrollContentHeight,
+            child: Center(
+              child: AnimatedContainer(
+                duration: kAnimatedListDuration,
+                curve: kAnimatedListCurve,
+                height: patternHeight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CustomIconButton(
+                      icon: Icons.remove,
+                      size: metrics.iconSize,
+                      enableLongPressRepeat: true,
+                      onTap: () => notifier.removeBeat(),
+                    ),
+                    SizedBox(width: PatternPanel.minSpacing),
+                    AnimatedColumn(
+                      axis: Axis.horizontal,
+                      itemExtent: metrics.beatColumnWidth,
+                      minMainExtent: gridMinSize.width,
+                      spacing: PatternPanel.minSpacing,
+                      shrinkWrapMain: true,
+                      onDisplayedCountChanged: _onBeatAnimationDone,
+                      children: [
+                        for (int i = 0; i < pattern.beats.length; i++)
+                          _BeatColumn(
+                            width: metrics.beatColumnWidth,
+                            buttonHeight: metrics.beatButtonHeight,
+                            iconSize: metrics.iconSize,
+                            gridHeight: gridHeight,
+                            beat: pattern.beats[i],
+                            beatIndex: i,
+                            notifier: notifier,
+                            noteExtent: metrics.noteSize.height,
+                          ),
+                      ],
+                    ),
+                    SizedBox(width: PatternPanel.minSpacing),
+                    CustomIconButton(
+                      icon: Icons.add,
+                      size: metrics.iconSize,
+                      enableLongPressRepeat: true,
+                      onTap: () => notifier.addBeat(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  int _maxNoteCount(RhythmPattern pattern) {
+    var count = 0;
+    for (final beat in pattern.beats) {
+      count = max(count, beat.notes.length);
+    }
+    return count;
+  }
+}
+
+class _BeatColumn extends StatelessWidget {
+  const _BeatColumn({
+    required this.width,
+    required this.buttonHeight,
+    required this.iconSize,
+    required this.gridHeight,
+    required this.beat,
+    required this.beatIndex,
+    required this.notifier,
+    required this.noteExtent,
+  });
+
+  final double width;
+  final double buttonHeight;
+  final double iconSize;
+  final double gridHeight;
+  final Beat beat;
+  final int beatIndex;
+  final MetronomeNotifier notifier;
+  final double noteExtent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         SizedBox(
-          width: 64,
+          width: width,
+          height: buttonHeight,
           child: Center(
             child: CustomIconButton(
               icon: Icons.remove,
-              size: metrics.iconSize,
-              onTap: () => {notifier.removeBeat()},
+              size: iconSize,
+              enableLongPressRepeat: true,
+              onTap: () => notifier.removeNoteForBeatAt(beatIndex),
             ),
           ),
         ),
         Expanded(
-          child: Column(
+          child: AnimatedColumn(
+            axis: Axis.vertical,
+            itemExtent: noteExtent,
+            targetMainExtent: gridHeight,
             children: [
-              const SizedBox(height: 32),
-              Expanded(
-                child: LayoutBuilder(
-                  builder: (context, viewportConstraints) {
-                    final viewportWidth = viewportConstraints.maxWidth;
-                    final viewportHeight = viewportConstraints.maxHeight;
-
-                    final noteAreaHeight = max(
-                      viewportHeight - metrics.beatColumnChromeHeight,
-                      metrics.notesMinHeight(pattern),
-                    );
-                    final scrollContentWidth = max(
-                      viewportWidth,
-                      metrics.beatsMinWidth(pattern),
-                    );
-                    final scrollContentHeight = max(
-                      viewportHeight,
-                      metrics.beatColumnChromeHeight + noteAreaHeight,
-                    );
-                    final canScroll =
-                        scrollContentWidth > viewportWidth ||
-                        scrollContentHeight > viewportHeight;
-
-                    return _PatternScrollArea(
-                      scrollContentWidth: scrollContentWidth,
-                      scrollContentHeight: scrollContentHeight,
-                      viewportWidth: viewportWidth,
-                      viewportHeight: viewportHeight,
-                      canScroll: canScroll,
-                      child: SizedBox(
-                        width: scrollContentWidth,
-                        height: scrollContentHeight,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            for (int i = 0; i < pattern.beats.length; i++)
-                              SizedBox(
-                                width: metrics.beatColumnWidth,
-                                child: Column(
-                                  children: [
-                                    CustomIconButton(
-                                      icon: Icons.remove,
-                                      size: metrics.iconSize,
-                                      onTap: () => {
-                                        notifier.removeNoteForBeatAt(i),
-                                      },
-                                    ),
-                                    SizedBox(
-                                      height: noteAreaHeight,
-                                      child: _buildBeat(
-                                        pattern.beats[i],
-                                        i,
-                                        notifier,
-                                        context,
-                                      ),
-                                    ),
-                                    CustomIconButton(
-                                      icon: Icons.add,
-                                      size: metrics.iconSize,
-                                      onTap: () => {
-                                        notifier.addNoteForBeatAt(i),
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                          ],
-                        ),
+              for (int i = 0; i < beat.notes.length; i++)
+                SizedBox(
+                  width: width,
+                  height: noteExtent,
+                  child: Center(
+                    child: GestureDetector(
+                      child: AnimatedNote(
+                        soundType: beat.notes[i].soundType,
+                        isPlaying: notifier.isCurrentNote(beatIndex, i),
+                        size: LayoutHelper.getNoteSize(context),
                       ),
-                    );
-                  },
+                      onTap: () => {
+                        notifier.setNoteSoundType(
+                          beatIndex,
+                          i,
+                          beat.notes[i].soundType.getNext(),
+                        ),
+                      },
+                      onSecondaryTap: () => {
+                        notifier.setNoteSoundType(
+                          beatIndex,
+                          i,
+                          beat.notes[i].soundType.getPrevious(),
+                        ),
+                      },
+                      onLongPress: () => {
+                        notifier.setNoteSoundType(
+                          beatIndex,
+                          i,
+                          beat.notes[i].soundType.getPrevious(),
+                        ),
+                      },
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 32),
             ],
           ),
         ),
         SizedBox(
-          width: 64,
+          width: width,
+          height: buttonHeight,
           child: Center(
             child: CustomIconButton(
               icon: Icons.add,
-              size: metrics.iconSize,
-              onTap: () => {notifier.addBeat()},
+              size: iconSize,
+              enableLongPressRepeat: true,
+              onTap: () => notifier.addNoteForBeatAt(beatIndex),
             ),
           ),
         ),
       ],
     );
   }
-
-  Widget _buildBeat(
-    Beat beat,
-    int beatIndex,
-    MetronomeNotifier notifier,
-    BuildContext context,
-  ) {
-    final noteWidgets = [
-      for (int i = 0; i < beat.notes.length; i++)
-        GestureDetector(
-          child: AnimatedNote(
-            soundType: beat.notes[i].soundType,
-            isPlaying: notifier.isCurrentNote(beatIndex, i),
-            size: LayoutHelper.getNoteSize(context),
-          ),
-          onTap: () => {
-            notifier.setNoteSoundType(
-              beatIndex,
-              i,
-              beat.notes[i].soundType.getNext(),
-            ),
-          },
-          onSecondaryTap: () => {
-            notifier.setNoteSoundType(
-              beatIndex,
-              i,
-              beat.notes[i].soundType.getPrevious(),
-            ),
-          },
-          onLongPress: () => {
-            notifier.setNoteSoundType(
-              beatIndex,
-              i,
-              beat.notes[i].soundType.getPrevious(),
-            ),
-          },
-        ),
-    ];
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: noteWidgets,
-    );
-  }
 }
 
 class _PatternMetrics {
   factory _PatternMetrics(BuildContext context) {
-    final iconSize = LayoutHelper.getNoteSize(context) * 2;
-    const beatButtonPadding = EdgeInsets.all(4);
+    final noteSize = AnimatedNote.layoutSize(context);
+    const beatButtonPadding = EdgeInsets.zero;
+    final iconSize = LayoutHelper.getNoteSize(context) * 1.5;
     return _PatternMetrics._(
       iconSize: iconSize,
       beatButtonPadding: beatButtonPadding,
-      noteSize: AnimatedNote.layoutSize(context),
+      noteSize: noteSize,
       beatButtonSize: CustomIconButton.layoutSize(
         iconSize: iconSize,
         padding: beatButtonPadding,
@@ -224,30 +328,18 @@ class _PatternMetrics {
   final Size noteSize;
   final Size beatButtonSize;
 
-  double get beatColumnWidth => beatButtonSize.width;
+  /// Column width follows the note; control icons may be wider visually.
+  double get beatColumnWidth => noteSize.width;
   double get beatButtonHeight => beatButtonSize.height;
   double get beatColumnChromeHeight => beatButtonHeight * 2;
 
-  int _maxNoteCount(RhythmPattern pattern) {
-    var count = 0;
-    for (final beat in pattern.beats) {
-      count = max(count, beat.notes.length);
-    }
-    return count;
-  }
-
-  double _stackedExtent(int count, double itemExtent) {
+  /// Content extent so spaceEvenly gaps equal [itemSpacing] on all sides.
+  double stackedExtent(int count, double itemExtent) {
     if (count <= 0) {
       return 0;
     }
-    return count * itemExtent + (count - 1) * itemSpacing;
+    return count * itemExtent + (count + 1) * itemSpacing;
   }
-
-  double notesMinHeight(RhythmPattern pattern) =>
-      _stackedExtent(_maxNoteCount(pattern), noteSize.height);
-
-  double beatsMinWidth(RhythmPattern pattern) =>
-      _stackedExtent(pattern.beats.length, beatColumnWidth);
 }
 
 class _PatternScrollArea extends StatefulWidget {

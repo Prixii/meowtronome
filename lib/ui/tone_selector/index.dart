@@ -61,7 +61,7 @@ class ToneSelector extends StatelessWidget {
       widgets.add(
         CustomDivider(
           vertical: true,
-          color: Theme.of(context).colorScheme.primaryFixed,
+          color: Theme.of(context).colorScheme.primary,
         ),
       );
     }

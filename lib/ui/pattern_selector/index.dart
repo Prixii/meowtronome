@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meowtronome/global.dart';
 import 'package:meowtronome/ui/components/custom_divider.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
+import 'package:meowtronome/ui/components/inline_editable_text.dart';
 import 'package:meowtronome/ui/components/modal_container.dart';
 import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
@@ -18,7 +19,9 @@ class PatternSelector extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => PatternSelectorNotifier(),
       child: ModalContainer(
-        child: PatternSelectorBody(metronomeNotifier: metronomeNotifier),
+        child: UnfocusOnPointerOutside(
+          child: PatternSelectorBody(metronomeNotifier: metronomeNotifier),
+        ),
       ),
     );
   }

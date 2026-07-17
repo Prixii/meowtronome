@@ -36,12 +36,48 @@ class LayoutHelper {
       isSmallHeight(context) ? 20.0 : 24.0;
 
   static double getConfigSliderWidth(BuildContext context) =>
-      isSmallWidth(context) ? 100.0 : 250.0;
+      getLayoutMode(context) == LayoutMode.horizontal
+      ? 150.0
+      : (isSmallWidth(context) ? 100.0 : 250.0);
 
-  static EdgeInsets getModalContainerPadding(BuildContext context) =>
-      isSmallWidth(context)
-      ? const EdgeInsets.all(16.0)
-      : const EdgeInsets.all(48.0);
+  static EdgeInsets getModalContainerPadding(BuildContext context) {
+    final mode = getLayoutMode(context);
+    switch (mode) {
+      case LayoutMode.square:
+        return isSmallHeight(context)
+            ? const EdgeInsets.all(16.0)
+            : const EdgeInsets.all(48.0);
+      case LayoutMode.horizontal:
+        return isSmallHeight(context)
+            ? const EdgeInsets.all(16.0)
+            : const EdgeInsets.all(48.0);
+      case LayoutMode.vertical:
+        return isSmallWidth(context)
+            ? const EdgeInsets.fromLTRB(32.0, 32, 32.0, 64.0)
+            : const EdgeInsets.fromLTRB(48.0, 48, 48.0, 96.0);
+    }
+  }
+
+  static const double patternGridMinFraction = 0.6;
+
+  static Size getPatternGridMinSize(BuildContext context, {Size? parentSize}) {
+    final parent = parentSize ?? MediaQuery.sizeOf(context);
+    final fraction = patternGridMinFraction;
+    final note = getNoteSize(context);
+    final floor = isSmallHeight(context) ? note * 8 : note * 10;
+
+    switch (getLayoutMode(context)) {
+      case LayoutMode.square:
+        final side = max(floor, min(parent.width, parent.height) * fraction);
+        return Size(side, side);
+      case LayoutMode.horizontal:
+      case LayoutMode.vertical:
+        return Size(
+          max(floor, parent.width * fraction),
+          max(floor, parent.height * fraction),
+        );
+    }
+  }
 
   static EdgeInsets getModalContainerTitlePadding(BuildContext context) =>
       isSmallHeight(context)

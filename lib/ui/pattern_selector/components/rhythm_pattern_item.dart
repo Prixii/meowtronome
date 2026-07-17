@@ -4,6 +4,7 @@ import 'package:meowtronome/core/rhythm_pattern.dart';
 import 'package:meowtronome/global.dart';
 import 'package:meowtronome/ui/components/custom_divider.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
+import 'package:meowtronome/ui/components/inline_editable_text.dart';
 import 'package:meowtronome/ui/pattern_selector/components/rhythm_pattern_preview.dart';
 
 class RhythmPatternItem extends StatelessWidget {
@@ -58,7 +59,7 @@ class RhythmPatternItem extends StatelessWidget {
   }
 }
 
-class RhythmPatternItemTitle extends StatefulWidget {
+class RhythmPatternItemTitle extends StatelessWidget {
   const RhythmPatternItemTitle({
     super.key,
     required this.isSystemPattern,
@@ -73,92 +74,35 @@ class RhythmPatternItemTitle extends StatefulWidget {
   final void Function() onDelete;
 
   @override
-  State<RhythmPatternItemTitle> createState() => _RhythmPatternItemTitleState();
-}
-
-class _RhythmPatternItemTitleState extends State<RhythmPatternItemTitle> {
-  late final TextEditingController _controller;
-  var isEditing = false;
-  late final FocusNode _focusNode;
-
-  @override
-  initState() {
-    super.initState();
-    _controller = TextEditingController(text: widget.pattern.name);
-    _focusNode = FocusNode();
-    _focusNode.addListener(() {
-      if (!_focusNode.hasFocus && isEditing) {
-        setState(() => isEditing = false);
-        widget.onRename.call(_controller.text);
-      }
-    });
-  }
-
-  @override
-  dispose() {
-    _controller.dispose();
-    _focusNode.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final textStyle = subtitleTextStyle.copyWith(
+      color: Theme.of(context).colorScheme.primary,
+    );
+
     return Row(
       children: [
         SizedBox(
           width: 48,
-          child: widget.isSystemPattern
+          child: isSystemPattern
               ? null
               : CustomIconButton(icon: Icons.edit, onTap: () => {}),
         ),
-        widget.isSystemPattern
+        isSystemPattern
             ? Container()
             : CustomDivider(
                 vertical: true,
                 color: Theme.of(context).colorScheme.primaryFixed,
               ),
         Expanded(
-          child: isEditing
-              ? TextField(
-                  controller: _controller,
-                  autofocus: false,
-                  textAlign: .center,
-                  style: subtitleTextStyle.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  inputFormatters: [LengthLimitingTextInputFormatter(8)],
-                  focusNode: _focusNode,
-                  onSubmitted: (value) {
-                    setState(() => isEditing = false);
-                    widget.onRename.call(value);
-                  },
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                )
-              : GestureDetector(
-                  behavior: .opaque,
-                  onTap: () {
-                    setState(() => isEditing = true);
-                    _controller.text = widget.pattern.name;
-                    _controller.selection = TextSelection(
-                      baseOffset: 0,
-                      extentOffset: _controller.text.length,
-                    );
-                    _focusNode.requestFocus();
-                  },
-                  child: Text(
-                    widget.pattern.name,
-                    style: subtitleTextStyle.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    textAlign: .center,
-                  ),
-                ),
+          child: InlineEditableText(
+            value: pattern.name,
+            onSubmit: onRename,
+            style: textStyle,
+            enabled: !isSystemPattern,
+            inputFormatters: [LengthLimitingTextInputFormatter(8)],
+          ),
         ),
-        widget.isSystemPattern
+        isSystemPattern
             ? Container()
             : CustomDivider(
                 vertical: true,
@@ -166,11 +110,11 @@ class _RhythmPatternItemTitleState extends State<RhythmPatternItemTitle> {
               ),
         SizedBox(
           width: 48,
-          child: widget.isSystemPattern
+          child: isSystemPattern
               ? null
               : CustomIconButton(
                   icon: Icons.delete,
-                  onTap: () => widget.onDelete.call(),
+                  onTap: () => onDelete.call(),
                 ),
         ),
       ],
