@@ -17,12 +17,14 @@ class CustomRadio extends StatefulWidget {
     required this.config,
     this.initialValue,
     this.axis = .horizontal,
+    this.onSelected,
   });
 
   final List<OptionData> options;
   final String? initialValue;
   final Axis axis;
   final RadioItemConfig config;
+  final void Function(String value)? onSelected;
 
   @override
   State<CustomRadio> createState() => _CustomRadioState();
@@ -35,6 +37,15 @@ class _CustomRadioState extends State<CustomRadio> {
   void initState() {
     super.initState();
     _currentValue = widget.initialValue ?? widget.options.first.value;
+  }
+
+  @override
+  void didUpdateWidget(covariant CustomRadio oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialValue != oldWidget.initialValue &&
+        widget.initialValue != null) {
+      _currentValue = widget.initialValue!;
+    }
   }
 
   @override
@@ -82,5 +93,9 @@ class _CustomRadioState extends State<CustomRadio> {
     return widgets;
   }
 
-  void _onSelect(String value) => setState(() => _currentValue = value);
+  void _onSelect(String value) {
+    if (_currentValue == value) return;
+    setState(() => _currentValue = value);
+    widget.onSelected?.call(value);
+  }
 }

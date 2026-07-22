@@ -3,7 +3,6 @@ import 'package:meowtronome/global.dart';
 import 'package:meowtronome/ui/color_helper.dart';
 import 'package:meowtronome/ui/components/animated_list.dart';
 import 'package:meowtronome/ui/components/custom_divider.dart';
-import 'package:meowtronome/ui/components/selectable_button.dart';
 
 class CustomMenu extends StatefulWidget {
   const CustomMenu({
@@ -11,6 +10,7 @@ class CustomMenu extends StatefulWidget {
     required this.options,
     this.initialValue,
     this.width = 128,
+    this.maxHeight = 256,
     this.onSelected,
   });
 
@@ -18,6 +18,7 @@ class CustomMenu extends StatefulWidget {
   final String? initialValue;
   final double width;
   final void Function(String value)? onSelected;
+  final double maxHeight;
 
   @override
   State<CustomMenu> createState() => _CustomMenuState();
@@ -26,28 +27,48 @@ class CustomMenu extends StatefulWidget {
 class _CustomMenuState extends State<CustomMenu> {
   final FocusNode _buttonFocusNode = FocusNode();
   final MenuController _menuController = MenuController();
-  AnimationStatus _animationStatus = .dismissed;
+  final ValueNotifier<int> _hoverIndex = ValueNotifier<int>(-1);
+
   late String _currentValue;
-  late String _currentHoverValue;
+  String? _pendingSelection;
 
   @override
   void initState() {
     super.initState();
     _currentValue = widget.initialValue ?? widget.options.first.value;
-    _currentHoverValue = '';
   }
 
   @override
   void didUpdateWidget(covariant CustomMenu oldWidget) {
     super.didUpdateWidget(oldWidget);
+
+    final optionsChanged =
+        widget.options.length != oldWidget.options.length ||
+        !_sameOptionValues(widget.options, oldWidget.options);
+    if (optionsChanged && _menuController.isOpen) {
+      _pendingSelection = null;
+      _menuController.close();
+    }
+
     if (widget.initialValue != oldWidget.initialValue &&
         widget.initialValue != null) {
       _currentValue = widget.initialValue!;
+    } else if (!widget.options.any((option) => option.value == _currentValue)) {
+      _currentValue = widget.initialValue ?? widget.options.first.value;
     }
+  }
+
+  bool _sameOptionValues(List<OptionData> a, List<OptionData> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i].value != b[i].value) return false;
+    }
+    return true;
   }
 
   @override
   void dispose() {
+    _hoverIndex.dispose();
     _buttonFocusNode.dispose();
     super.dispose();
   }
@@ -58,28 +79,40 @@ class _CustomMenuState extends State<CustomMenu> {
       controller: _menuController,
       menuChildren: _buildMenuChildren(context),
       animated: true,
-      onAnimationStatusChanged: (AnimationStatus status) {
-        _animationStatus = status;
-        if (status == AnimationStatus.dismissed &&
-            _currentHoverValue.isNotEmpty) {
-          setState(() => _currentHoverValue = '');
-        }
-      },
+      onAnimationStatusChanged: _onAnimationStatusChanged,
       style: _createMenuStyle(context),
       childFocusNode: _buttonFocusNode,
       builder: (context, controller, child) => _buildEntry(
         () {
-          if (_animationStatus.isForwardOrCompleted) {
+          if (controller.isOpen) {
             controller.close();
           } else {
             controller.open();
           }
         },
         _labelForValue(_currentValue),
-        _animationStatus.isForwardOrCompleted,
+        controller.isOpen,
         context,
       ),
     );
+  }
+
+  void _onAnimationStatusChanged(AnimationStatus status) {
+    if (status != AnimationStatus.dismissed) {
+      return;
+    }
+
+    _hoverIndex.value = -1;
+    final pending = _pendingSelection;
+    _pendingSelection = null;
+
+    // Safe: menu overlay is gone, rebuilding children won't hit Interval asserts.
+    if (pending != null) {
+      widget.onSelected?.call(pending);
+    }
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   MenuStyle _createMenuStyle(BuildContext context) {
@@ -103,6 +136,12 @@ class _CustomMenuState extends State<CustomMenu> {
       padding: WidgetStateProperty.resolveWith(
         (Set<WidgetState> states) => EdgeInsets.zero,
       ),
+      minimumSize: WidgetStateProperty.resolveWith(
+        (Set<WidgetState> states) => Size(widget.width, 0),
+      ),
+      maximumSize: WidgetStateProperty.resolveWith(
+        (Set<WidgetState> states) => Size(widget.width, widget.maxHeight),
+      ),
     );
   }
 
@@ -114,7 +153,7 @@ class _CustomMenuState extends State<CustomMenu> {
   ) {
     return Container(
       height: 32,
-      width: 128,
+      width: widget.width,
       decoration: BoxDecoration(
         border: Border.all(
           color: Theme.of(context).colorScheme.primary,
@@ -144,63 +183,90 @@ class _CustomMenuState extends State<CustomMenu> {
   }
 
   List<Widget> _buildMenuChildren(BuildContext context) {
-    List<Widget> children = [];
-    for (int i = 0; i < widget.options.length; i++) {
+    final children = <Widget>[];
+    for (var i = 0; i < widget.options.length; i++) {
       children.add(_buildMenuChild(i, context));
       if (i != widget.options.length - 1) {
+        final dividerIndex = i;
         children.add(
-          AnimatedCustomDivider(
-            thickness: 1,
-            color: resolveInteractiveColor(
-              context,
-              active:
-                  (_currentHoverIndex() == i) ||
-                  (_currentHoverIndex() - 1 == i),
-              inactive: Theme.of(context).colorScheme.primaryFixed,
-            ),
+          ValueListenableBuilder<int>(
+            valueListenable: _hoverIndex,
+            builder: (context, hoverIndex, _) {
+              return AnimatedCustomDivider(
+                thickness: 1,
+                color: resolveInteractiveColor(
+                  context,
+                  active:
+                      hoverIndex == dividerIndex ||
+                      hoverIndex - 1 == dividerIndex,
+                  inactive: Theme.of(context).colorScheme.primaryFixed,
+                ),
+              );
+            },
           ),
         );
       }
     }
-    return children;
+
+    return [
+      SizedBox(
+        width: widget.width,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: widget.maxHeight),
+          child: ScrollConfiguration(
+            behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: .min,
+                crossAxisAlignment: .stretch,
+                children: children,
+              ),
+            ),
+          ),
+        ),
+      ),
+    ];
   }
 
   Widget _buildMenuChild(int index, BuildContext context) {
     final option = widget.options[index];
-    final selected = _currentValue == option.value;
-    final hovered = _currentHoverIndex() == index;
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (_) {
-        if (_currentHoverValue == option.value) return;
-        setState(() => _currentHoverValue = option.value);
+        if (_hoverIndex.value == index) return;
+        _hoverIndex.value = index;
       },
       onExit: (_) {
-        // Only clear if we haven't already entered another item.
-        if (_currentHoverValue != option.value) return;
-        setState(() => _currentHoverValue = '');
+        if (_hoverIndex.value != index) return;
+        _hoverIndex.value = -1;
       },
       child: GestureDetector(
         behavior: .opaque,
         onTap: () => _select(option.value),
         child: SizedBox(
-          width: widget.width,
           height: 32,
           child: Padding(
             padding: const EdgeInsets.only(left: 8.0),
-            child: AnimatedDefaultTextStyle(
-              duration: kAnimatedListDuration,
-              curve: kAnimatedListCurve,
-              style: bodyTextStyle.copyWith(
-                color: resolveInteractiveColor(
-                  context,
-                  active: hovered || selected,
-                ),
-                height: 1.5,
-              ),
-              textAlign: .left,
-              child: Text(option.label),
+            child: ValueListenableBuilder<int>(
+              valueListenable: _hoverIndex,
+              builder: (context, hoverIndex, _) {
+                final selected = _currentValue == option.value;
+                final hovered = hoverIndex == index;
+                return AnimatedDefaultTextStyle(
+                  duration: kAnimatedListDuration,
+                  curve: kAnimatedListCurve,
+                  style: bodyTextStyle.copyWith(
+                    color: resolveInteractiveColor(
+                      context,
+                      active: hovered || selected,
+                    ),
+                    height: 1.5,
+                  ),
+                  textAlign: .left,
+                  child: Text(option.label),
+                );
+              },
             ),
           ),
         ),
@@ -209,11 +275,11 @@ class _CustomMenuState extends State<CustomMenu> {
   }
 
   void _select(String value) {
-    setState(() {
-      _currentValue = value;
-      _currentHoverValue = '';
-    });
-    widget.onSelected?.call(value);
+    // Avoid setState while the menu close animation is running — rebuilding
+    // menuChildren mid-flight trips MenuAnchor's Interval opacity curves.
+    _currentValue = value;
+    _hoverIndex.value = -1;
+    _pendingSelection = value;
     _menuController.close();
   }
 
@@ -224,14 +290,5 @@ class _CustomMenuState extends State<CustomMenu> {
       }
     }
     return widget.options.first.label;
-  }
-
-  int _currentHoverIndex() {
-    for (int i = 0; i < widget.options.length; i++) {
-      if (widget.options[i].value == _currentHoverValue) {
-        return i;
-      }
-    }
-    return -1;
   }
 }

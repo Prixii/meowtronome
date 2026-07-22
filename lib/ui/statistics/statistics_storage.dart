@@ -66,6 +66,26 @@ class StatisticsStorage {
     }
     await tmp.rename(file.path);
   }
+
+  Future<List<int>> listYears() async {
+    final dir = _directory;
+    if (dir == null) {
+      throw StateError('StatisticsStorage.init() must be called first');
+    }
+
+    final years = <int>[];
+    await for (final entity in dir.list()) {
+      if (entity is! File) continue;
+      final name = p.basename(entity.path);
+      if (!name.endsWith('.json')) continue;
+      final year = int.tryParse(p.basenameWithoutExtension(name));
+      if (year != null) {
+        years.add(year);
+      }
+    }
+    years.sort();
+    return years;
+  }
 }
 
 final statisticsStorage = StatisticsStorage();

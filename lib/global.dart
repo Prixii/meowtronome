@@ -9,7 +9,7 @@ class OptionData {
   final String label;
   final String value;
 
-  OptionData({required this.label, required this.value});
+  const OptionData({required this.label, required this.value});
 }
 
 final uuid = Uuid();

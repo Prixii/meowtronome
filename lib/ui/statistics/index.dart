@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:meowtronome/global.dart';
 import 'package:meowtronome/ui/components/custom_divider.dart';
@@ -6,6 +8,7 @@ import 'package:meowtronome/ui/components/custom_radio.dart';
 import 'package:meowtronome/ui/components/modal_container.dart';
 import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/statistics/provider/statistics_notifier.dart';
+import 'package:meowtronome/ui/statistics/statistics_period.dart';
 import 'package:provider/provider.dart';
 
 class Statistics extends StatelessWidget {
@@ -14,8 +17,12 @@ class Statistics extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => StatisticsNotifier(),
-      child: ModalContainer(child: StatisticsBody()),
+      create: (_) {
+        final notifier = StatisticsNotifier();
+        unawaited(notifier.init());
+        return notifier;
+      },
+      child: const ModalContainer(child: StatisticsBody()),
     );
   }
 }
@@ -23,8 +30,16 @@ class Statistics extends StatelessWidget {
 class StatisticsBody extends StatelessWidget {
   const StatisticsBody({super.key});
 
+  static const _unitOptions = [
+    OptionData(label: '周', value: 'week'),
+    OptionData(label: '月', value: 'month'),
+    OptionData(label: '年', value: 'year'),
+  ];
+
   @override
   Widget build(BuildContext context) {
+    final notifier = context.watch<StatisticsNotifier>();
+
     return Column(
       crossAxisAlignment: .start,
       children: [
@@ -44,11 +59,11 @@ class StatisticsBody extends StatelessWidget {
           child: Row(
             children: [
               CustomRadio(
-                options: [
-                  OptionData(label: '周', value: 'week'),
-                  OptionData(label: '月', value: 'month'),
-                  OptionData(label: '年', value: 'year'),
-                ],
+                options: _unitOptions,
+                initialValue: notifier.periodUnit.name,
+                onSelected: (value) {
+                  notifier.setPeriodUnit(_unitFromValue(value));
+                },
                 config: RadioItemConfig(
                   size: 32,
                   textStyle: bodyTextStyle.copyWith(
@@ -57,17 +72,27 @@ class StatisticsBody extends StatelessWidget {
                 ),
               ),
               Expanded(child: Container()),
-              CustomMenu(
-                options: [
-                  OptionData(label: '菜单', value: 'menu'),
-                  OptionData(label: '菜单2', value: 'menu2'),
-                ],
-              ),
+              if (notifier.periodOptions.isNotEmpty)
+                CustomMenu(
+                  key: ValueKey(notifier.periodUnit.name),
+                  width: 140,
+                  options: notifier.periodOptions,
+                  initialValue: notifier.selectedPeriodKey,
+                  onSelected: notifier.setSelectedPeriod,
+                ),
             ],
           ),
         ),
         Expanded(child: Placeholder()),
       ],
     );
+  }
+
+  StatisticsPeriodUnit _unitFromValue(String value) {
+    return switch (value) {
+      'month' => StatisticsPeriodUnit.month,
+      'year' => StatisticsPeriodUnit.year,
+      _ => StatisticsPeriodUnit.week,
+    };
   }
 }

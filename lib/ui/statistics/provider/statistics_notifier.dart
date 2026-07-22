@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:meowtronome/global.dart';
 import 'package:meowtronome/ui/statistics/provider/statistics_state.dart';
+import 'package:meowtronome/ui/statistics/statistics_period.dart';
 import 'package:meowtronome/ui/statistics/statistics_storage.dart';
 
 class StatisticsNotifier extends ChangeNotifier {
@@ -11,18 +13,62 @@ class StatisticsNotifier extends ChangeNotifier {
   int? _activeBpm;
   int? _activeStartTimestamp;
 
+  StatisticsPeriodUnit _periodUnit = StatisticsPeriodUnit.week;
+  String _selectedPeriodKey = '';
+  List<int> _availableYears = [];
+  List<OptionData> _periodOptions = [];
+
   /// Ignore accidental taps that start/stop within this window.
   static const minRecordDurationMs = 1000;
 
   StatisticsState get state => _state;
   bool get hasActiveSession => _activeBpm != null;
+  StatisticsPeriodUnit get periodUnit => _periodUnit;
+  String get selectedPeriodKey => _selectedPeriodKey;
+  List<OptionData> get periodOptions => _periodOptions;
+  int get earliestYear =>
+      _availableYears.isEmpty ? getYear() : _availableYears.first;
 
   Future<void> init() async {
     await statisticsStorage.init();
     _currentYear = getYear();
     final current = await getYearlyStatistics(_currentYear);
+    _availableYears = await statisticsStorage.listYears();
+    if (_availableYears.isEmpty) {
+      _availableYears = [_currentYear];
+    }
     _state = _state.copyWith(currentStatistics: current);
+    _rebuildPeriodOptions(selectFirst: true);
     notifyListeners();
+  }
+
+  void setPeriodUnit(StatisticsPeriodUnit unit) {
+    if (_periodUnit == unit) return;
+    _periodUnit = unit;
+    _rebuildPeriodOptions(selectFirst: true);
+    notifyListeners();
+  }
+
+  void setSelectedPeriod(String key) {
+    if (_selectedPeriodKey == key) return;
+    if (!_periodOptions.any((option) => option.value == key)) return;
+    _selectedPeriodKey = key;
+    notifyListeners();
+  }
+
+  void _rebuildPeriodOptions({required bool selectFirst}) {
+    _periodOptions = buildPeriodOptions(
+      unit: _periodUnit,
+      earliestYear: earliestYear,
+    );
+    if (_periodOptions.isEmpty) {
+      _selectedPeriodKey = '';
+      return;
+    }
+    if (selectFirst ||
+        !_periodOptions.any((option) => option.value == _selectedPeriodKey)) {
+      _selectedPeriodKey = _periodOptions.first.value;
+    }
   }
 
   Future<YearlyStatistics> getYearlyStatistics(int year) {
