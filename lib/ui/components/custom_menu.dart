@@ -24,6 +24,7 @@ class CustomMenu extends StatefulWidget {
 
 class _CustomMenuState extends State<CustomMenu> {
   final FocusNode _buttonFocusNode = FocusNode();
+  final MenuController _menuController = MenuController();
   AnimationStatus _animationStatus = .dismissed;
   late String _currentValue;
   late String _currentHoverValue;
@@ -36,6 +37,15 @@ class _CustomMenuState extends State<CustomMenu> {
   }
 
   @override
+  void didUpdateWidget(covariant CustomMenu oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialValue != oldWidget.initialValue &&
+        widget.initialValue != null) {
+      _currentValue = widget.initialValue!;
+    }
+  }
+
+  @override
   void dispose() {
     _buttonFocusNode.dispose();
     super.dispose();
@@ -44,6 +54,7 @@ class _CustomMenuState extends State<CustomMenu> {
   @override
   Widget build(BuildContext context) {
     return MenuAnchor(
+      controller: _menuController,
       menuChildren: _buildMenuChildren(context),
       animated: true,
       onAnimationStatusChanged: (AnimationStatus status) {
@@ -63,7 +74,7 @@ class _CustomMenuState extends State<CustomMenu> {
             controller.open();
           }
         },
-        widget.initialValue ?? widget.options.first.label,
+        _labelForValue(_currentValue),
         _animationStatus.isForwardOrCompleted,
         context,
       ),
@@ -152,6 +163,9 @@ class _CustomMenuState extends State<CustomMenu> {
 
   Widget _buildMenuChild(int index, BuildContext context) {
     final option = widget.options[index];
+    final selected = _currentValue == option.value;
+    final hovered = _currentHoverIndex() == index;
+
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (_) {
@@ -165,10 +179,7 @@ class _CustomMenuState extends State<CustomMenu> {
       },
       child: GestureDetector(
         behavior: .opaque,
-        onTap: () {
-          setState(() => _currentValue = option.value);
-          widget.onSelected?.call(option.value);
-        },
+        onTap: () => _select(option.value),
         child: SizedBox(
           width: widget.width,
           height: 32,
@@ -178,7 +189,7 @@ class _CustomMenuState extends State<CustomMenu> {
               duration: kAnimatedListDuration,
               curve: kAnimatedListCurve,
               style: bodyTextStyle.copyWith(
-                color: (_currentHoverIndex() == index)
+                color: (hovered || selected)
                     ? Theme.of(context).colorScheme.primary
                     : Theme.of(context).colorScheme.secondary,
                 height: 1.5,
@@ -190,6 +201,24 @@ class _CustomMenuState extends State<CustomMenu> {
         ),
       ),
     );
+  }
+
+  void _select(String value) {
+    setState(() {
+      _currentValue = value;
+      _currentHoverValue = '';
+    });
+    widget.onSelected?.call(value);
+    _menuController.close();
+  }
+
+  String _labelForValue(String value) {
+    for (final option in widget.options) {
+      if (option.value == value) {
+        return option.label;
+      }
+    }
+    return widget.options.first.label;
   }
 
   int _currentHoverIndex() {
