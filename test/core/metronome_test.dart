@@ -1,8 +1,16 @@
+import 'package:meowtronome/core/accelerando.dart';
 import 'package:meowtronome/core/enums.dart';
 import 'package:meowtronome/core/metronome.dart';
+import 'package:meowtronome/ui/shared_preferences_helper.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  setUpAll(() async {
+    SharedPreferences.setMockInitialValues({});
+    await sharedPreferencesHelper.init();
+  });
+
   group('Metronome', () {
     late Metronome metronome;
 
@@ -199,6 +207,91 @@ void main() {
       test('setBpm throws for invalid values', () {
         expect(() => metronome.setBpm(0), throwsArgumentError);
         expect(() => metronome.setBpm(-10), throwsArgumentError);
+      });
+    });
+
+    group('accelerando', () {
+      test('nextAccelerandoBpm increases toward end', () {
+        const config = AccelerandoConfig(
+          startBpm: 80,
+          endBpm: 100,
+          bpmStep: 10,
+        );
+        expect(Metronome.nextAccelerandoBpm(80, config), 90);
+        expect(Metronome.nextAccelerandoBpm(95, config), 100);
+        expect(Metronome.nextAccelerandoBpm(100, config), 100);
+      });
+
+      test('nextAccelerandoBpm decreases when end is below start', () {
+        const config = AccelerandoConfig(
+          startBpm: 120,
+          endBpm: 90,
+          bpmStep: 15,
+        );
+        expect(Metronome.nextAccelerandoBpm(120, config), 105);
+        expect(Metronome.nextAccelerandoBpm(95, config), 90);
+        expect(Metronome.nextAccelerandoBpm(90, config), 90);
+      });
+
+      test('start applies startBpm when enabled', () {
+        metronome.setBpm(120);
+        metronome.setAccelerando(
+          const AccelerandoConfig(
+            enabled: true,
+            startBpm: 70,
+            endBpm: 140,
+            barsPerStep: 1,
+            bpmStep: 5,
+          ),
+        );
+
+        metronome.prepareStartForTest();
+        expect(metronome.bpm, 70);
+      });
+
+      test('bar completion increases BPM every barsPerStep', () {
+        metronome.setAccelerando(
+          const AccelerandoConfig(
+            enabled: true,
+            startBpm: 80,
+            endBpm: 100,
+            barsPerStep: 2,
+            bpmStep: 10,
+          ),
+        );
+        metronome.prepareStartForTest();
+        expect(metronome.bpm, 80);
+
+        metronome.handleBarCompletedForTest();
+        expect(metronome.bpm, 80);
+
+        metronome.handleBarCompletedForTest();
+        expect(metronome.bpm, 90);
+
+        metronome.handleBarCompletedForTest();
+        expect(metronome.bpm, 90);
+
+        metronome.handleBarCompletedForTest();
+        expect(metronome.bpm, 100);
+
+        metronome.handleBarCompletedForTest();
+        metronome.handleBarCompletedForTest();
+        expect(metronome.bpm, 100);
+      });
+
+      test('normalizes invalid accelerando values', () {
+        metronome.setAccelerando(
+          const AccelerandoConfig(
+            startBpm: 0,
+            endBpm: -5,
+            barsPerStep: 0,
+            bpmStep: -3,
+          ),
+        );
+        expect(metronome.accelerando.startBpm, 1);
+        expect(metronome.accelerando.endBpm, 1);
+        expect(metronome.accelerando.barsPerStep, 1);
+        expect(metronome.accelerando.bpmStep, 1);
       });
     });
 

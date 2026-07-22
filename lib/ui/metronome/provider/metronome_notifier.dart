@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:meowtronome/core/accelerando.dart';
 import 'package:meowtronome/core/audio/audio_background.dart';
 import 'package:meowtronome/core/enums.dart';
 import 'package:meowtronome/core/metronome.dart';
@@ -22,6 +23,7 @@ class MetronomeNotifier extends ChangeNotifier {
   MetronomeRuntimeState get runtimeState => _runtimeState;
   RhythmPattern get pattern => _metronome.state.pattern;
   int get bpm => _metronome.bpm;
+  AccelerandoConfig get accelerando => _metronome.accelerando;
   bool get isRunning => _metronome.isRunning;
 
   MetronomeNotifier();
@@ -55,6 +57,11 @@ class MetronomeNotifier extends ChangeNotifier {
 
   void setBpm(int value) {
     _metronome.setBpm(value);
+    notifyListeners();
+  }
+
+  void setAccelerando(AccelerandoConfig config) {
+    _metronome.setAccelerando(config);
     notifyListeners();
   }
 

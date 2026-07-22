@@ -9,6 +9,7 @@ class Scheduler {
   SchedulerRuntimeState _runtimeState;
   final Stopwatch _stopwatch;
   void Function(Scheduler)? _onPlayNote;
+  void Function()? _onBarCompleted;
 
   Timer? _timer;
 
@@ -44,6 +45,10 @@ class Scheduler {
 
   void setOnPlayNote(void Function(Scheduler) onPlayNote) {
     _onPlayNote = onPlayNote;
+  }
+
+  void setOnBarCompleted(void Function()? onBarCompleted) {
+    _onBarCompleted = onBarCompleted;
   }
 
   SchedulerState get state => _state;
@@ -121,6 +126,7 @@ class Scheduler {
 
     var beatIndex = _runtimeState.currentBeatIndex;
     var noteIndex = _runtimeState.currentNoteIndex + 1;
+    var barCompleted = false;
 
     // If the current beat index is out of range (e.g., after pattern change), wrap around.
     if (beatIndex >= noteQueueSnapshot.length) {
@@ -129,8 +135,13 @@ class Scheduler {
     }
     // If we've exhausted the notes in the current beat, move to the next beat.
     else if (noteIndex >= noteQueueSnapshot[beatIndex].length) {
+      final previousBeat = beatIndex;
       beatIndex = (beatIndex + 1) % noteQueueSnapshot.length;
       noteIndex = 0;
+      // Finishing the last beat of the pattern completes one bar.
+      if (previousBeat == noteQueueSnapshot.length - 1) {
+        barCompleted = true;
+      }
     }
 
     _runtimeState = _runtimeState.copyWith(
@@ -138,6 +149,27 @@ class Scheduler {
       currentNoteIndex: noteIndex,
     );
 
-    return noteQueueSnapshot[beatIndex][noteIndex];
+    if (barCompleted) {
+      _onBarCompleted?.call();
+    }
+
+    // Re-read queue in case a bar callback changed BPM / regenerated timings.
+    final queue = _state.noteQueue;
+    if (queue.isEmpty) {
+      throw StateError('Cannot fetch note from empty queue');
+    }
+    if (beatIndex >= queue.length) {
+      beatIndex = 0;
+      noteIndex = 0;
+      _runtimeState = _runtimeState.copyWith(
+        currentBeatIndex: beatIndex,
+        currentNoteIndex: noteIndex,
+      );
+    } else if (noteIndex >= queue[beatIndex].length) {
+      noteIndex = 0;
+      _runtimeState = _runtimeState.copyWith(currentNoteIndex: noteIndex);
+    }
+
+    return queue[beatIndex][noteIndex];
   }
 }

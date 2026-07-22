@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meowtronome/ui/accelerando/index.dart';
 import 'package:meowtronome/ui/components/custom_divider.dart';
 import 'package:meowtronome/ui/components/selectable_button.dart';
 import 'package:meowtronome/ui/config/index.dart';
@@ -24,6 +25,10 @@ class TopButtonGroup extends StatelessWidget {
     _TabConfig(
       child: (notifier) => ToneSelector(notifier: notifier),
       icon: Icons.music_note,
+    ),
+    _TabConfig(
+      child: (notifier) => AccelerandoPage(notifier: notifier),
+      icon: Icons.trending_up,
     ),
     _TabConfig(child: (notifier) => ConfigPage(), icon: Icons.settings),
   ];

@@ -221,6 +221,41 @@ void main() {
       expect(() => emptyScheduler.fetchNextNote(), throwsStateError);
       emptyScheduler.dispose();
     });
+
+    test('onBarCompleted fires after finishing a full pattern', () {
+      var bars = 0;
+      scheduler.setOnBarCompleted(() => bars++);
+
+      // 2 beats × 2 notes = 4 notes per bar
+      for (var i = 0; i < 4; i++) {
+        scheduler.fetchNextNote();
+        expect(bars, 0);
+      }
+
+      // First note of the next bar completes the previous bar.
+      scheduler.fetchNextNote();
+      expect(bars, 1);
+      expect(scheduler.runtimeState.currentBeatIndex, 0);
+      expect(scheduler.runtimeState.currentNoteIndex, 0);
+    });
+
+    test('onBarCompleted can change BPM before returning next note', () {
+      scheduler.setOnBarCompleted(() {
+        scheduler.setBpm(60);
+      });
+
+      // Finish one bar (4 notes), then fetch first note of next bar.
+      for (var i = 0; i < 5; i++) {
+        scheduler.fetchNextNote();
+      }
+
+      expect(scheduler.bpm, 60);
+      // 60 BPM, 2 notes/beat → 500ms per note
+      expect(
+        scheduler.state.noteQueue[0][0].timeValueMs,
+        closeTo(500, 0.001),
+      );
+    });
   });
 
   group('start / stop', () {

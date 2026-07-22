@@ -1,3 +1,4 @@
+import 'package:meowtronome/core/accelerando.dart';
 import 'package:meowtronome/core/enums.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meowtronome/global.dart';
@@ -43,6 +44,7 @@ sealed class MetronomeState with _$MetronomeState {
     @Default(120) int bpm,
     @Default(RhythmPattern()) RhythmPattern pattern,
     @Default(defaultSoundMap) Map<SoundType, String> soundTypeMap,
+    @Default(AccelerandoConfig()) AccelerandoConfig accelerando,
   }) = _MetronomeState;
 
   factory MetronomeState.fromJson(Map<String, dynamic> json) =>
