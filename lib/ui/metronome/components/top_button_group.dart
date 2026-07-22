@@ -5,6 +5,7 @@ import 'package:meowtronome/ui/components/selectable_button.dart';
 import 'package:meowtronome/ui/config/index.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
 import 'package:meowtronome/ui/pattern_selector/index.dart';
+import 'package:meowtronome/ui/statistics/index.dart';
 import 'package:meowtronome/ui/tone_selector/index.dart';
 
 class _TabConfig {
@@ -30,6 +31,7 @@ class TopButtonGroup extends StatelessWidget {
       child: (notifier) => AccelerandoPage(notifier: notifier),
       icon: Icons.trending_up,
     ),
+    _TabConfig(child: (notifier) => Statistics(), icon: Icons.analytics),
     _TabConfig(child: (notifier) => ConfigPage(), icon: Icons.settings),
   ];
 

@@ -4,6 +4,7 @@ import 'package:meowtronome/gen/assets.gen.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
 import 'package:meowtronome/ui/metronome/index.dart';
 import 'package:meowtronome/ui/shared_preferences_helper.dart';
+import 'package:meowtronome/ui/statistics/provider/statistics_notifier.dart';
 import 'package:provider/provider.dart';
 
 class SplashPage extends StatefulWidget {
@@ -15,6 +16,7 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   late MetronomeNotifier _provider;
+  late StatisticsNotifier _statistics;
   bool _navigated = false;
 
   @override
@@ -25,6 +27,8 @@ class _SplashPageState extends State<SplashPage> {
 
   Future<void> _init() async {
     _provider = MetronomeNotifier();
+    _statistics = StatisticsNotifier();
+    _provider.attachStatistics(_statistics);
 
     await Future.wait([
       initComponents(),
@@ -36,8 +40,11 @@ class _SplashPageState extends State<SplashPage> {
     _navigated = true;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
-        builder: (_) => ChangeNotifierProvider.value(
-          value: _provider,
+        builder: (_) => MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: _provider),
+            ChangeNotifierProvider.value(value: _statistics),
+          ],
           child: const MetronomePage(),
         ),
       ),
@@ -48,6 +55,7 @@ class _SplashPageState extends State<SplashPage> {
   void dispose() {
     if (!_navigated) {
       _provider.dispose();
+      _statistics.dispose();
     }
     super.dispose();
   }
@@ -66,6 +74,10 @@ class _SplashPageState extends State<SplashPage> {
 
   Future<void> initComponents() async {
     await sharedPreferencesHelper.init();
-    await Future.wait([_provider.init(), soloudHelper.init()]);
+    await Future.wait([
+      _provider.init(),
+      _statistics.init(),
+      soloudHelper.init(),
+    ]);
   }
 }

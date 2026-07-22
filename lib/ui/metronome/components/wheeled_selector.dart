@@ -3,14 +3,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:meowtronome/gen/fonts.gen.dart';
+import 'package:meowtronome/global.dart';
 import 'package:meowtronome/ui/layout_helper.dart';
-
-class SelectOption {
-  final String label;
-  final String value;
-
-  SelectOption({required this.label, required this.value});
-}
 
 class WheeledSelector extends StatefulWidget {
   const WheeledSelector({
@@ -21,7 +15,7 @@ class WheeledSelector extends StatefulWidget {
     this.showCount = 7,
   });
 
-  final List<SelectOption> options;
+  final List<OptionData> options;
   final String value;
   final int showCount;
   final void Function(String value) onChange;
@@ -140,7 +134,7 @@ class _WheeledSelectorState extends State<WheeledSelector> {
 
   Widget _buildWheelItem(
     BuildContext context, {
-    required SelectOption option,
+    required OptionData option,
     required double itemHeight,
     required double distanceFromCenter,
     required int index,

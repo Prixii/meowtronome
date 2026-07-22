@@ -5,6 +5,13 @@ import 'package:meowtronome/gen/fonts.gen.dart';
 import 'package:meowtronome/ui/metronome/model.dart';
 import 'package:uuid/uuid.dart';
 
+class OptionData {
+  final String label;
+  final String value;
+
+  OptionData({required this.label, required this.value});
+}
+
 final uuid = Uuid();
 
 final noteStyles = [

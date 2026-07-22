@@ -17,6 +17,10 @@ class Metronome {
   final Scheduler _scheduler;
   int _barsSinceLastStep = 0;
 
+  VoidCallback? onStarted;
+  VoidCallback? onStopped;
+  void Function(int bpm)? onBpmChangedWhileRunning;
+
   Metronome() : _state = MetronomeState(), _scheduler = Scheduler() {
     _scheduler.setOnBarCompleted(_onBarCompleted);
     _scheduler.setPattern(_state.pattern);
@@ -59,9 +63,14 @@ class Metronome {
     if (bpm <= 0) {
       throw ArgumentError('BPM must be positive, got: $bpm');
     }
+    final wasRunning = isRunning;
+    final previousBpm = _state.bpm;
     _state = _state.copyWith(bpm: bpm);
     _scheduler.setBpm(bpm);
     saveState();
+    if (wasRunning && bpm != previousBpm) {
+      onBpmChangedWhileRunning?.call(bpm);
+    }
   }
 
   void setAccelerando(AccelerandoConfig config) {
@@ -197,8 +206,12 @@ class Metronome {
 
   // player methods
   void start() {
+    if (isRunning) {
+      return;
+    }
     _prepareStart();
     _scheduler.start();
+    onStarted?.call();
   }
 
   void _prepareStart() {
@@ -211,12 +224,16 @@ class Metronome {
   }
 
   void stop() {
+    if (!isRunning) {
+      return;
+    }
     final shouldPersist = _state.accelerando.enabled;
     _scheduler.stop();
     _barsSinceLastStep = 0;
     if (shouldPersist) {
       saveState();
     }
+    onStopped?.call();
   }
 
   void setToneForSoundType(SoundType soundType, String tone) {
@@ -255,6 +272,7 @@ class Metronome {
 
     _state = _state.copyWith(bpm: next);
     _scheduler.setBpm(next);
+    onBpmChangedWhileRunning?.call(next);
   }
 
   static AccelerandoConfig _normalizeAccelerando(AccelerandoConfig config) {

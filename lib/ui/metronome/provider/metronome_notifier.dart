@@ -7,10 +7,12 @@ import 'package:meowtronome/core/enums.dart';
 import 'package:meowtronome/core/metronome.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_runtime_state.dart';
+import 'package:meowtronome/ui/statistics/provider/statistics_notifier.dart';
 
 class MetronomeNotifier extends ChangeNotifier {
   final _metronome = Metronome();
   var _runtimeState = MetronomeRuntimeState();
+  StatisticsNotifier? _statistics;
 
   void Function(int beatIndex, int noteIndex)? onPlayNote;
 
@@ -27,6 +29,15 @@ class MetronomeNotifier extends ChangeNotifier {
   bool get isRunning => _metronome.isRunning;
 
   MetronomeNotifier();
+
+  void attachStatistics(StatisticsNotifier statistics) {
+    _statistics = statistics;
+    _metronome.onStarted = () => _statistics?.startSession(_metronome.bpm);
+    _metronome.onStopped = () => _statistics?.endSession();
+    _metronome.onBpmChangedWhileRunning = (bpm) {
+      _statistics?.onBpmChanged(bpm);
+    };
+  }
 
   Future<void> init() async {
     await _metronome.init();
@@ -149,6 +160,7 @@ class MetronomeNotifier extends ChangeNotifier {
 
   @override
   void dispose() {
+    _statistics?.endSession();
     detachMetronomeFromAudioBackground();
     _metronome.dispose();
     super.dispose();

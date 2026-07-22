@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meowtronome/global.dart';
 
 class SelectableButton extends StatefulWidget {
   const SelectableButton({
@@ -6,8 +7,8 @@ class SelectableButton extends StatefulWidget {
     required this.selected,
     this.text,
     this.onTap,
-    this.size = 24.0,
     this.icon,
+    this.size = 24.0,
   });
 
   final void Function()? onTap;
@@ -83,7 +84,7 @@ class _SelectableButtonState extends State<SelectableButton>
                       )
                     : Text(
                         widget.text ?? '',
-                        style: TextStyle(
+                        style: bodyTextStyle.copyWith(
                           color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
@@ -106,7 +107,7 @@ class _SelectableButtonState extends State<SelectableButton>
                         )
                       : Text(
                           widget.text ?? '',
-                          style: TextStyle(
+                          style: bodyTextStyle.copyWith(
                             color: Theme.of(
                               context,
                             ).colorScheme.primaryContainer,

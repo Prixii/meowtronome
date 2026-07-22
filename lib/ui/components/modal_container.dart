@@ -47,7 +47,7 @@ class ModalContainer extends StatelessWidget {
             width: 1,
           ),
         ),
-        child: child,
+        child: Padding(padding: const EdgeInsets.all(1.0), child: child),
       ),
     );
   }

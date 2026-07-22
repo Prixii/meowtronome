@@ -17,12 +17,12 @@ class ToneSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final toneList = [
       for (final value in Assets.audio.values)
-        SelectOption(label: _getLabel(value), value: value),
+        OptionData(label: _getLabel(value), value: value),
     ];
     return ModalContainer(child: _buildContent(context, toneList));
   }
 
-  Widget _buildContent(BuildContext context, List<SelectOption> toneList) {
+  Widget _buildContent(BuildContext context, List<OptionData> toneList) {
     return Column(
       crossAxisAlignment: .start,
       children: [
@@ -51,7 +51,7 @@ class ToneSelector extends StatelessWidget {
   }
 
   List<Widget> _buildNoteTonePickers(
-    List<SelectOption> toneList,
+    List<OptionData> toneList,
     BuildContext context,
   ) {
     final List<Widget> widgets = [];
@@ -71,7 +71,7 @@ class ToneSelector extends StatelessWidget {
   Widget _buildSingleNoteTonePicker(
     BuildContext context,
     NoteStyle style,
-    List<SelectOption> toneList,
+    List<OptionData> toneList,
   ) {
     return SizedBox(
       width: LayoutHelper.getToneSelectorItemWidth(context),
