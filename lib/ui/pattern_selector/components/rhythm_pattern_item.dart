@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
 import 'package:meowtronome/global.dart';
+import 'package:meowtronome/ui/color_helper.dart';
+import 'package:meowtronome/ui/components/animated_list.dart';
 import 'package:meowtronome/ui/components/custom_divider.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
 import 'package:meowtronome/ui/components/inline_editable_text.dart';
 import 'package:meowtronome/ui/pattern_selector/components/rhythm_pattern_preview.dart';
 
-class RhythmPatternItem extends StatelessWidget {
+class RhythmPatternItem extends StatefulWidget {
   const RhythmPatternItem({
     super.key,
     required this.pattern,
@@ -23,36 +25,77 @@ class RhythmPatternItem extends StatelessWidget {
   final void Function() onDelete;
   final void Function(String newName) onRename;
   final bool isSystemPattern;
+
+  @override
+  State<RhythmPatternItem> createState() => _RhythmPatternItemState();
+}
+
+class _RhythmPatternItemState extends State<RhythmPatternItem> {
+  bool _previewHovered = false;
+
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final previewActive = _previewHovered;
+    final dividerColor = resolveInteractiveColor(
+      context,
+      active: previewActive,
+      inactive: scheme.primaryFixed,
+    );
+    final noteColor = resolveInteractiveColor(
+      context,
+      active: previewActive,
+      inactive: scheme.primaryFixed,
+    );
+
     return Padding(
       padding: const EdgeInsets.all(1.0),
-
       child: Column(
         mainAxisAlignment: .center,
         children: [
           SizedBox(
             height: 48,
             child: RhythmPatternItemTitle(
-              isSystemPattern: isSystemPattern,
-              pattern: pattern,
-              onRename: onRename,
-              onDelete: onDelete,
+              isSystemPattern: widget.isSystemPattern,
+              pattern: widget.pattern,
+              onRename: widget.onRename,
+              onDelete: widget.onDelete,
             ),
           ),
-          CustomDivider(
+          AnimatedCustomDivider(
             indent: 0,
             endIndent: 0,
-            color: Theme.of(context).colorScheme.primaryFixed,
+            color: dividerColor,
           ),
           const SizedBox(height: 8),
-          GestureDetector(
-            behavior: .opaque,
-            onTap: () => onSelect.call(),
-            child: RhythmPatternPreview(pattern: pattern),
+          MouseRegion(
+            cursor: SystemMouseCursors.click,
+            onEnter: (_) {
+              if (_previewHovered) return;
+              setState(() => _previewHovered = true);
+            },
+            onExit: (_) {
+              if (!_previewHovered) return;
+              setState(() => _previewHovered = false);
+            },
+            child: GestureDetector(
+              behavior: .opaque,
+              onTap: widget.onSelect,
+              child: TweenAnimationBuilder<Color?>(
+                duration: kAnimatedListDuration,
+                curve: kAnimatedListCurve,
+                tween: ColorTween(end: noteColor),
+                builder: (context, color, _) {
+                  return RhythmPatternPreview(
+                    pattern: widget.pattern,
+                    color: color ?? noteColor,
+                  );
+                },
+              ),
+            ),
           ),
           const SizedBox(height: 8),
-          const CustomDivider(),
+          AnimatedCustomDivider(color: dividerColor),
         ],
       ),
     );

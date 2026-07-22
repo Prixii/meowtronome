@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meowtronome/global.dart';
+import 'package:meowtronome/ui/color_helper.dart';
 import 'package:meowtronome/ui/components/animated_list.dart';
 import 'package:meowtronome/ui/components/custom_divider.dart';
 import 'package:meowtronome/ui/components/selectable_button.dart';
@@ -150,10 +151,13 @@ class _CustomMenuState extends State<CustomMenu> {
         children.add(
           AnimatedCustomDivider(
             thickness: 1,
-            color:
-                ((_currentHoverIndex() == i) || (_currentHoverIndex() - 1 == i))
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.primaryFixed,
+            color: resolveInteractiveColor(
+              context,
+              active:
+                  (_currentHoverIndex() == i) ||
+                  (_currentHoverIndex() - 1 == i),
+              inactive: Theme.of(context).colorScheme.primaryFixed,
+            ),
           ),
         );
       }
@@ -189,9 +193,10 @@ class _CustomMenuState extends State<CustomMenu> {
               duration: kAnimatedListDuration,
               curve: kAnimatedListCurve,
               style: bodyTextStyle.copyWith(
-                color: (hovered || selected)
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.secondary,
+                color: resolveInteractiveColor(
+                  context,
+                  active: hovered || selected,
+                ),
                 height: 1.5,
               ),
               textAlign: .left,

@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 final lightTheme = ThemeData(
@@ -9,3 +12,20 @@ final lightTheme = ThemeData(
     primaryContainer: Color(0xFFE9D7Bc),
   ),
 );
+
+bool get isDesktopPlatform =>
+    !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
+
+/// Desktop: [active] → primary, otherwise [inactive] (default secondary).
+/// Mobile: always primary.
+Color resolveInteractiveColor(
+  BuildContext context, {
+  required bool active,
+  Color? inactive,
+}) {
+  final scheme = Theme.of(context).colorScheme;
+  if (!isDesktopPlatform) {
+    return scheme.primary;
+  }
+  return active ? scheme.primary : (inactive ?? scheme.secondary);
+}

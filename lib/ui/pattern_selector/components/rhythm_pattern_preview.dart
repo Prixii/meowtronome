@@ -4,8 +4,9 @@ import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/metronome/components/animated_note.dart';
 
 class RhythmPatternPreview extends StatelessWidget {
-  const RhythmPatternPreview({super.key, required this.pattern});
+  const RhythmPatternPreview({super.key, required this.pattern, this.color});
   final RhythmPattern pattern;
+  final Color? color;
 
   static final notePadding = 5.0;
 
@@ -31,6 +32,7 @@ class RhythmPatternPreview extends StatelessWidget {
         isPlaying: false,
         size: LayoutHelper.getPreviewNoteSize(context),
         strokeWidth: LayoutHelper.getPreviewNoteStrokeWidth(context),
+        color: color,
       ),
     );
   }

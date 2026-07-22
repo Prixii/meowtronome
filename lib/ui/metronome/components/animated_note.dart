@@ -13,12 +13,14 @@ class AnimatedNote extends StatefulWidget {
     required this.isPlaying,
     required this.size,
     this.strokeWidth,
+    this.color,
   });
 
   final SoundType soundType;
   final bool isPlaying;
   final double size;
   final double? strokeWidth;
+  final Color? color;
 
   static const double paddingSize = 4;
   static const maxSizeScale = 1.4;
@@ -99,7 +101,7 @@ class _AnimatedNoteState extends State<AnimatedNote>
           size: Size(size, size),
           painter: _NoteShapePainter(
             shape: style.shape,
-            color: Theme.of(context).colorScheme.primary,
+            color: widget.color ?? Theme.of(context).colorScheme.primary,
             strokeWidth: strokeWidth,
             filled: style.filled,
           ),
