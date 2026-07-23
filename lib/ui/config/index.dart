@@ -16,10 +16,7 @@ class ConfigPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ConfigNotifier(),
-      child: ModalContainer(child: const ConfigBody()),
-    );
+    return const ModalContainer(child: ConfigBody());
   }
 }
 

@@ -3,9 +3,10 @@ import 'package:meowtronome/core/update/update_checker.dart';
 import 'package:meowtronome/ui/components/app_toast.dart';
 import 'package:meowtronome/ui/config/provider/config_notifier.dart';
 import 'package:meowtronome/ui/update/update_available_dialog.dart';
+import 'package:provider/provider.dart';
 
 Future<void> maybeCheckForUpdates(BuildContext context) async {
-  if (!loadConfigState().autoCheckForUpdates) {
+  if (!context.read<ConfigNotifier>().autoCheckForUpdates) {
     return;
   }
 

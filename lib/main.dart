@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:meowtronome/core/audio/audio_background.dart';
-import 'package:meowtronome/ui/color_helper.dart';
 import 'package:meowtronome/ui/splash/index.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -27,7 +26,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: SplashPage(), theme: lightTheme);
+    return const SplashPage();
   }
 }
 
@@ -68,6 +67,6 @@ class _StatefulMainAppState extends State<StatefulMainApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: SplashPage(), theme: lightTheme);
+    return const SplashPage();
   }
 }
