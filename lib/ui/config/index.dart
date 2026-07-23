@@ -80,6 +80,8 @@ class ConfigBody extends StatelessWidget {
                   _buildRepoLink(context),
                   _buildDivider(context),
                   VersionLabel(),
+                  _buildDivider(context),
+                  _buildLicensesLink(context),
                   CustomDivider(),
                 ],
               ),
@@ -102,6 +104,24 @@ class ConfigBody extends StatelessWidget {
       onTap: () => launchUrl(Uri.parse(repoUrl)),
       child: ConfigItem(
         title: 'Github仓库',
+        trailing: Icon(
+          Icons.arrow_forward,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        padding: LayoutHelper.getModalContainerTitlePadding(context),
+      ),
+    ),
+  );
+
+  Widget _buildLicensesLink(BuildContext context) => MouseRegion(
+    cursor: SystemMouseCursors.click,
+    child: GestureDetector(
+      onTap: () => showLicensePage(
+        context: context,
+        applicationName: 'MeowTronome',
+      ),
+      child: ConfigItem(
+        title: '开源第三方许可证',
         trailing: Icon(
           Icons.arrow_forward,
           color: Theme.of(context).colorScheme.primary,
