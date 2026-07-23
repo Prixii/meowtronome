@@ -82,14 +82,14 @@ class _InlineEditableTextState extends State<InlineEditableText>
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: (!_isEditing && widget.enabled)
-          ? SystemMouseCursors.click
-          : SystemMouseCursors.basic,
-      child: GestureDetector(
-        onTap: (!_isEditing && widget.enabled) ? _startEditing : null,
-        behavior: HitTestBehavior.opaque,
-        child: Center(
+    return Center(
+      child: MouseRegion(
+        cursor: (!_isEditing && widget.enabled)
+            ? SystemMouseCursors.click
+            : SystemMouseCursors.basic,
+        child: GestureDetector(
+          onTap: (!_isEditing && widget.enabled) ? _startEditing : null,
+          behavior: HitTestBehavior.opaque,
           child: _isEditing
               ? TextField(
                   controller: _controller,

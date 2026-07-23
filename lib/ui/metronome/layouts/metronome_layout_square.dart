@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:meowtronome/ui/components/custom_divider.dart';
-import 'package:meowtronome/ui/components/custom_icon_button.dart';
 import 'package:meowtronome/ui/metronome/components/bpm_panel.dart';
 import 'package:meowtronome/ui/metronome/components/pattern_panel.dart';
 import 'package:meowtronome/ui/metronome/components/play_button.dart';
@@ -18,12 +15,19 @@ class MetronomeLayoutSquare extends StatefulWidget {
 }
 
 class _MetronomeLayoutSquareState extends State<MetronomeLayoutSquare> {
-  late PageController _pageController;
+  late final PageController _pageController;
+  int _currentPage = 0;
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: 0);
+    _pageController = PageController(initialPage: _currentPage);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -31,59 +35,81 @@ class _MetronomeLayoutSquareState extends State<MetronomeLayoutSquare> {
     return Column(
       children: [
         Expanded(
-          child: Row(
-            crossAxisAlignment: .center,
+          child: Stack(
             children: [
-              if (Platform.isWindows)
-                CustomIconButton(
-                  icon: Icons.arrow_left,
-                  onTap: () {
-                    final target = _pageController.page == 0 ? 1 : 0;
-                    _pageController.animateToPage(
-                      target,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeOut,
-                    );
-                  },
-                ),
-              Expanded(
-                child: PageView(
-                  controller: _pageController,
-                  children: [
-                    Column(
-                      children: [
-                        TopButtonGroup(notifier: widget.notifier),
-                        CustomDivider(),
-
-                        Expanded(child: BpmPanel(notifier: widget.notifier)),
-                      ],
-                    ),
-                    PatternPanel(notifier: widget.notifier),
-                  ],
-                ),
+              PageView(
+                controller: _pageController,
+                onPageChanged: (page) => setState(() => _currentPage = page),
+                children: [
+                  Column(
+                    children: [
+                      TopButtonGroup(notifier: widget.notifier),
+                      CustomDivider(),
+                      Expanded(child: BpmPanel(notifier: widget.notifier)),
+                    ],
+                  ),
+                  PatternPanel(notifier: widget.notifier),
+                ],
               ),
-              if (Platform.isWindows)
-                CustomIconButton(
-                  icon: Icons.arrow_right,
-                  onTap: () {
-                    final target = _pageController.page == 0 ? 1 : 0;
-                    _pageController.animateToPage(
-                      target,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeOut,
-                    );
-                  },
-                ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: _buildPageSwitcher(context),
+              ),
             ],
           ),
         ),
-
         CustomDivider(),
         PlayButton(
           isRunning: widget.notifier.isRunning,
           onToggle: widget.notifier.toggleRunning,
         ),
       ],
+    );
+  }
+
+  Widget _buildPageSwitcher(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildDot(context, page: 0),
+          const SizedBox(width: 8),
+          _buildDot(context, page: 1),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDot(BuildContext context, {required int page}) {
+    final selected = _currentPage == page;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () {
+          if (_currentPage == page) return;
+          _pageController.animateToPage(
+            page,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutCubic,
+          );
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: selected ? colorScheme.primary : colorScheme.primaryFixed,
+            ),
+            borderRadius: BorderRadius.zero,
+            color: selected ? colorScheme.primary : Colors.transparent,
+          ),
+        ),
+      ),
     );
   }
 }
