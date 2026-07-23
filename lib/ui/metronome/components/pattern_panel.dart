@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
 import 'package:meowtronome/ui/components/animated_list.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
+import 'package:meowtronome/ui/haptic_helper.dart';
 import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/metronome/components/animated_note.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
@@ -256,26 +257,28 @@ class _BeatColumn extends StatelessWidget {
                           isPlaying: notifier.isCurrentNote(beatIndex, i),
                           size: LayoutHelper.getNoteSize(context),
                         ),
-                        onTap: () => {
+                        onTap: () {
                           notifier.setNoteSoundType(
                             beatIndex,
                             i,
                             beat.notes[i].soundType.getNext(),
-                          ),
+                          );
+                          triggerLightHaptic();
                         },
-                        onSecondaryTap: () => {
+                        onSecondaryTap: () {
                           notifier.setNoteSoundType(
                             beatIndex,
                             i,
                             beat.notes[i].soundType.getPrevious(),
-                          ),
+                          );
                         },
-                        onLongPress: () => {
+                        onLongPress: () {
                           notifier.setNoteSoundType(
                             beatIndex,
                             i,
                             beat.notes[i].soundType.getPrevious(),
-                          ),
+                          );
+                          triggerLightHaptic();
                         },
                       ),
                     ),

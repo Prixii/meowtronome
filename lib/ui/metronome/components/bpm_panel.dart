@@ -4,6 +4,7 @@ import 'package:meowtronome/gen/fonts.gen.dart';
 import 'package:meowtronome/ui/components/custom_divider.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
 import 'package:meowtronome/ui/components/inline_editable_text.dart';
+import 'package:meowtronome/ui/haptic_helper.dart';
 import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
 
@@ -44,7 +45,10 @@ class BpmPanel extends StatelessWidget {
               size: 24,
               enableLongPressRepeat: true,
               expand: true,
-              onTap: () => notifier.setBpm(notifier.bpm - 1),
+              onTap: () {
+                notifier.setBpm(notifier.bpm - 1);
+                triggerLightHaptic();
+              },
             ),
           ),
           CustomDivider(
@@ -71,7 +75,10 @@ class BpmPanel extends StatelessWidget {
               size: 24,
               enableLongPressRepeat: true,
               expand: true,
-              onTap: () => notifier.setBpm(notifier.bpm + 1),
+              onTap: () {
+                notifier.setBpm(notifier.bpm + 1);
+                triggerLightHaptic();
+              },
             ),
           ),
         ],
