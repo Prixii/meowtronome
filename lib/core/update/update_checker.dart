@@ -72,18 +72,17 @@ class UpdateChecker {
       htmlUrl: htmlUrl,
     );
   }
+}
 
-  Version? _parseVersion(String raw) {
-    final normalized = raw.trim();
-    if (normalized.isEmpty) return null;
-    final withoutPrefix =
-        normalized.startsWith('v') || normalized.startsWith('V')
-        ? normalized.substring(1)
-        : normalized;
-    try {
-      return Version.parse(withoutPrefix);
-    } on FormatException {
-      return null;
-    }
+Version? _parseVersion(String raw) {
+  final normalized = raw.trim();
+  if (normalized.isEmpty) return null;
+  final withoutPrefix = normalized.startsWith('v') || normalized.startsWith('V')
+      ? normalized.substring(1)
+      : normalized;
+  try {
+    return Version.parse(withoutPrefix);
+  } on FormatException {
+    return null;
   }
 }

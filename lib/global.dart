@@ -5,6 +5,8 @@ import 'package:meowtronome/gen/fonts.gen.dart';
 import 'package:meowtronome/ui/metronome/model.dart';
 import 'package:uuid/uuid.dart';
 
+final repoUrl = 'https://github.com/Prixii/meowtronome';
+
 class OptionData {
   final String label;
   final String value;
