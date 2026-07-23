@@ -12,14 +12,13 @@ class StatisticsStorage {
   Future<void> init({Directory? directory}) async {
     if (directory != null) {
       _directory = directory;
-    } else if (_directory == null) {
-      _directory = Directory(await _defaultStoragePath());
+    } else {
+      _directory ??= Directory(await _defaultStoragePath());
     }
     await _directory!.create(recursive: true);
   }
 
   Future<String> _defaultStoragePath() async {
-    // Windows: %LOCALAPPDATA%/meowtronome/statistics
     if (!kIsWeb && Platform.isWindows) {
       final localAppData = Platform.environment['LOCALAPPDATA'];
       if (localAppData == null || localAppData.isEmpty) {

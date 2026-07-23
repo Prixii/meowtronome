@@ -7,3 +7,16 @@ sealed class MetronomeRuntimeState with _$MetronomeRuntimeState {
   const factory MetronomeRuntimeState({@Default(-1) int selectedTopTabIndex}) =
       _MetronomeRuntimeState;
 }
+
+@freezed
+sealed class PlayPosition with _$PlayPosition {
+  const PlayPosition._();
+
+  const factory PlayPosition({
+    @Default(-1) int beatIndex,
+    @Default(-1) int noteIndex,
+  }) = _PlayPosition;
+
+  bool matches(int beatIndex, int noteIndex) =>
+      this.beatIndex == beatIndex && this.noteIndex == noteIndex;
+}

@@ -1,19 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:meowtronome/ui/layout_helper.dart';
+import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
+import 'package:provider/provider.dart';
 
-class PlayButton extends StatefulWidget {
-  const PlayButton({
-    super.key,
-    required this.isRunning,
-    required this.onToggle,
-  });
-  final bool isRunning;
-  final void Function() onToggle;
+class PlayButton extends StatelessWidget {
+  const PlayButton({super.key});
+
   @override
-  State<PlayButton> createState() => _PlayButtonState();
+  Widget build(BuildContext context) {
+    final isRunning = context.select<MetronomeNotifier, bool>(
+      (n) => n.isRunning,
+    );
+    return _PlayButtonBody(
+      isRunning: isRunning,
+      onToggle: () => context.read<MetronomeNotifier>().toggleRunning(),
+    );
+  }
 }
 
-class _PlayButtonState extends State<PlayButton>
+class _PlayButtonBody extends StatefulWidget {
+  const _PlayButtonBody({required this.isRunning, required this.onToggle});
+
+  final bool isRunning;
+  final VoidCallback onToggle;
+
+  @override
+  State<_PlayButtonBody> createState() => _PlayButtonBodyState();
+}
+
+class _PlayButtonBodyState extends State<_PlayButtonBody>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -41,7 +56,7 @@ class _PlayButtonState extends State<PlayButton>
   }
 
   @override
-  void didUpdateWidget(covariant PlayButton oldWidget) {
+  void didUpdateWidget(covariant _PlayButtonBody oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.isRunning != widget.isRunning) {
@@ -73,7 +88,7 @@ class _PlayButtonState extends State<PlayButton>
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
-        onTap: () => widget.onToggle(),
+        onTap: widget.onToggle,
         child: Center(
           child: AnimatedBuilder(
             animation: _animation,

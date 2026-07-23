@@ -20,10 +20,7 @@ class MetronomeLayoutVertical extends StatelessWidget {
         CustomDivider(),
         Expanded(child: PatternPanel(notifier: notifier)),
         CustomDivider(),
-        PlayButton(
-          isRunning: notifier.isRunning,
-          onToggle: notifier.toggleRunning,
-        ),
+        const PlayButton(),
       ],
     );
   }

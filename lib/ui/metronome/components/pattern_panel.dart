@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:meowtronome/core/enums.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
 import 'package:meowtronome/ui/components/animated_list.dart';
 import 'package:meowtronome/ui/components/custom_icon_button.dart';
@@ -8,6 +9,7 @@ import 'package:meowtronome/ui/haptic_helper.dart';
 import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/metronome/components/animated_note.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
+import 'package:provider/provider.dart';
 
 class PatternPanel extends StatelessWidget {
   const PatternPanel({super.key, required this.notifier});
@@ -17,6 +19,8 @@ class PatternPanel extends StatelessWidget {
   final MetronomeNotifier notifier;
   @override
   Widget build(BuildContext context) {
+    // Rebuild only when the rhythm pattern changes, not on BPM / play toggles.
+    context.select<MetronomeNotifier, RhythmPattern>((n) => n.pattern);
     LayoutHelper.getNoteSize(context);
     return Column(
       children: [
@@ -252,9 +256,11 @@ class _BeatColumn extends StatelessWidget {
                     child: MouseRegion(
                       cursor: SystemMouseCursors.click,
                       child: GestureDetector(
-                        child: AnimatedNote(
+                        child: _PlayheadNote(
+                          notifier: notifier,
+                          beatIndex: beatIndex,
+                          noteIndex: i,
                           soundType: beat.notes[i].soundType,
-                          isPlaying: notifier.isCurrentNote(beatIndex, i),
                           size: LayoutHelper.getNoteSize(context),
                         ),
                         onTap: () {
@@ -300,6 +306,81 @@ class _BeatColumn extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Rebuilds only when this note's playhead match flips.
+class _PlayheadNote extends StatefulWidget {
+  const _PlayheadNote({
+    required this.notifier,
+    required this.beatIndex,
+    required this.noteIndex,
+    required this.soundType,
+    required this.size,
+  });
+
+  final MetronomeNotifier notifier;
+  final int beatIndex;
+  final int noteIndex;
+  final SoundType soundType;
+  final double size;
+
+  @override
+  State<_PlayheadNote> createState() => _PlayheadNoteState();
+}
+
+class _PlayheadNoteState extends State<_PlayheadNote> {
+  late bool _isPlaying;
+
+  @override
+  void initState() {
+    super.initState();
+    _isPlaying = widget.notifier.isCurrentNote(
+      widget.beatIndex,
+      widget.noteIndex,
+    );
+    widget.notifier.playPosition.addListener(_onPlayPosition);
+  }
+
+  @override
+  void didUpdateWidget(covariant _PlayheadNote oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.notifier.playPosition != widget.notifier.playPosition) {
+      oldWidget.notifier.playPosition.removeListener(_onPlayPosition);
+      widget.notifier.playPosition.addListener(_onPlayPosition);
+    }
+    final next = widget.notifier.isCurrentNote(
+      widget.beatIndex,
+      widget.noteIndex,
+    );
+    if (next != _isPlaying) {
+      _isPlaying = next;
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.notifier.playPosition.removeListener(_onPlayPosition);
+    super.dispose();
+  }
+
+  void _onPlayPosition() {
+    final next = widget.notifier.isCurrentNote(
+      widget.beatIndex,
+      widget.noteIndex,
+    );
+    if (next != _isPlaying) {
+      setState(() => _isPlaying = next);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedNote(
+      soundType: widget.soundType,
+      isPlaying: _isPlaying,
+      size: widget.size,
     );
   }
 }

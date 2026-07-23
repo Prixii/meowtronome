@@ -7,6 +7,7 @@ import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
 import 'package:meowtronome/ui/pattern_selector/index.dart';
 import 'package:meowtronome/ui/statistics/index.dart';
 import 'package:meowtronome/ui/tone_selector/index.dart';
+import 'package:provider/provider.dart';
 
 class _TabConfig {
   final Widget Function(MetronomeNotifier) child;
@@ -37,22 +38,26 @@ class TopButtonGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final selectedTopTabIndex = context.select<MetronomeNotifier, int>(
+      (n) => n.runtimeState.selectedTopTabIndex,
+    );
+
     return SizedBox(
       height: height,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: _buildTabs(context),
+        children: _buildTabs(context, selectedTopTabIndex),
       ),
     );
   }
 
-  List<Widget> _buildTabs(BuildContext context) {
+  List<Widget> _buildTabs(BuildContext context, int selectedTopTabIndex) {
     final List<Widget> widgets = [];
     for (int i = 0; i < _configs.length; i++) {
       widgets.add(
         Expanded(
           child: SelectableButton(
-            selected: i == notifier.runtimeState.selectedTopTabIndex,
+            selected: i == selectedTopTabIndex,
             onTap: () {
               notifier.setSelectedTopTabIndex(i);
               _openModal(

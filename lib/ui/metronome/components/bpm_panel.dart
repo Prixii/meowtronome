@@ -7,6 +7,7 @@ import 'package:meowtronome/ui/components/inline_editable_text.dart';
 import 'package:meowtronome/ui/haptic_helper.dart';
 import 'package:meowtronome/ui/layout_helper.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
+import 'package:provider/provider.dart';
 
 class BpmPanel extends StatelessWidget {
   const BpmPanel({super.key, required this.notifier});
@@ -29,6 +30,10 @@ class BpmPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bpm = context.select<MetronomeNotifier, int>(
+      (notifier) => notifier.bpm,
+    );
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primaryContainer,
@@ -46,7 +51,7 @@ class BpmPanel extends StatelessWidget {
               enableLongPressRepeat: true,
               expand: true,
               onTap: () {
-                notifier.setBpm(notifier.bpm - 1);
+                notifier.setBpm(bpm - 1);
                 triggerLightHaptic();
               },
             ),
@@ -57,7 +62,7 @@ class BpmPanel extends StatelessWidget {
           ),
           Expanded(
             child: InlineEditableText(
-              value: notifier.bpm.toString(),
+              value: bpm.toString(),
               onSubmit: _commitBpm,
               style: _textStyle(context),
               keyboardType: TextInputType.number,
@@ -76,7 +81,7 @@ class BpmPanel extends StatelessWidget {
               enableLongPressRepeat: true,
               expand: true,
               onTap: () {
-                notifier.setBpm(notifier.bpm + 1);
+                notifier.setBpm(bpm + 1);
                 triggerLightHaptic();
               },
             ),

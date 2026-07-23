@@ -20,10 +20,7 @@ class MetronomeLayoutHorizontal extends StatelessWidget {
               const CustomDivider(),
               Expanded(child: BpmPanel(notifier: notifier)),
               const CustomDivider(),
-              PlayButton(
-                isRunning: notifier.isRunning,
-                onToggle: notifier.toggleRunning,
-              ),
+              const PlayButton(),
             ],
           ),
         ),

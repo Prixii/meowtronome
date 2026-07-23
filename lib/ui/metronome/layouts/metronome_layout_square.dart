@@ -59,10 +59,7 @@ class _MetronomeLayoutSquareState extends State<MetronomeLayoutSquare> {
           ),
         ),
         CustomDivider(),
-        PlayButton(
-          isRunning: widget.notifier.isRunning,
-          onToggle: widget.notifier.toggleRunning,
-        ),
+        const PlayButton(),
       ],
     );
   }

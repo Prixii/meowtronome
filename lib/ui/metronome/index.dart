@@ -28,7 +28,7 @@ class _MetronomePageState extends State<MetronomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final notifier = context.watch<MetronomeNotifier>();
+    final notifier = context.read<MetronomeNotifier>();
     final layoutMode = LayoutHelper.getLayoutMode(context);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,

@@ -16,8 +16,9 @@ class MetronomeNotifier extends ChangeNotifier {
 
   void Function(int beatIndex, int noteIndex)? onPlayNote;
 
-  int currentBeatIndex = 0;
-  int currentNoteIndex = 0;
+  final ValueNotifier<PlayPosition> playPosition = ValueNotifier(
+    const PlayPosition(),
+  );
 
   bool _isConfigPageOpen = false;
 
@@ -28,32 +29,38 @@ class MetronomeNotifier extends ChangeNotifier {
   AccelerandoConfig get accelerando => _metronome.accelerando;
   bool get isRunning => _metronome.isRunning;
 
+  int get currentBeatIndex => playPosition.value.beatIndex;
+  int get currentNoteIndex => playPosition.value.noteIndex;
+
   MetronomeNotifier();
 
   void attachStatistics(StatisticsNotifier statistics) {
     _statistics = statistics;
-    _metronome.onStarted = () => _statistics?.startSession(_metronome.bpm);
-    _metronome.onStopped = () => _statistics?.endSession();
-    _metronome.onBpmChangedWhileRunning = (bpm) {
-      _statistics?.onBpmChanged(bpm);
-    };
   }
 
   Future<void> init() async {
     await _metronome.init();
 
+    _metronome.onStarted = () => _statistics?.startSession(_metronome.bpm);
+    _metronome.onStopped = () {
+      _clearPlayPosition();
+      _statistics?.endSession();
+    };
+    _metronome.onBpmChangedWhileRunning = (bpm) {
+      _statistics?.onBpmChanged(bpm);
+    };
+
     _metronome.setOnPlayNote((scheduler) {
       final rt = scheduler.runtimeState;
-      currentBeatIndex = rt.currentBeatIndex;
-      currentNoteIndex = rt.currentNoteIndex;
-      onPlayNote?.call(currentBeatIndex, currentNoteIndex);
-      notifyListeners();
+      final next = PlayPosition(
+        beatIndex: rt.currentBeatIndex,
+        noteIndex: rt.currentNoteIndex,
+      );
+      playPosition.value = next;
+      onPlayNote?.call(next.beatIndex, next.noteIndex);
     });
 
-    attachMetronomeToAudioBackground(
-      _metronome,
-      onChanged: notifyListeners,
-    );
+    attachMetronomeToAudioBackground(_metronome, onChanged: notifyListeners);
   }
 
   void setOnPlayNoteCallback(
@@ -63,7 +70,11 @@ class MetronomeNotifier extends ChangeNotifier {
   }
 
   bool isCurrentNote(int beatIndex, int noteIndex) {
-    return currentBeatIndex == beatIndex && currentNoteIndex == noteIndex;
+    return playPosition.value.matches(beatIndex, noteIndex);
+  }
+
+  void _clearPlayPosition() {
+    playPosition.value = const PlayPosition();
   }
 
   void setBpm(int value) {
@@ -154,7 +165,10 @@ class MetronomeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setPattern(RhythmPattern pattern) => _metronome.setPattern(pattern);
+  void setPattern(RhythmPattern pattern) {
+    _metronome.setPattern(pattern);
+    notifyListeners();
+  }
 
   bool get isConfigPageOpen => _isConfigPageOpen;
 
@@ -162,6 +176,7 @@ class MetronomeNotifier extends ChangeNotifier {
   void dispose() {
     _statistics?.endSession();
     detachMetronomeFromAudioBackground();
+    playPosition.dispose();
     _metronome.dispose();
     super.dispose();
   }
