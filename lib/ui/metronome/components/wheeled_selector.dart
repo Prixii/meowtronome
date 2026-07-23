@@ -86,24 +86,28 @@ class _WheeledSelectorState extends State<WheeledSelector> {
                       scrollDirection: Axis.vertical,
 
                       physics: const ClampingScrollPhysics(),
-                      child: Column(
-                        children: [
-                          SizedBox(height: topPadding),
-                          for (var i = 0; i < widget.options.length; i++)
-                            _buildWheelItem(
-                              context,
-                              option: widget.options[i],
-                              itemHeight: preferredItemHeight,
-                              distanceFromCenter:
-                                  (topPadding +
-                                          i * preferredItemHeight +
-                                          preferredItemHeight / 2 -
-                                          viewportCenter)
-                                      .abs(),
-                              index: i,
-                            ),
-                          SizedBox(height: topPadding),
-                        ],
+                      child: SizedBox(
+                        width: constraints.maxWidth,
+                        child: Column(
+                          crossAxisAlignment: .stretch,
+                          children: [
+                            SizedBox(height: topPadding),
+                            for (var i = 0; i < widget.options.length; i++)
+                              _buildWheelItem(
+                                context,
+                                option: widget.options[i],
+                                itemHeight: preferredItemHeight,
+                                distanceFromCenter:
+                                    (topPadding +
+                                            i * preferredItemHeight +
+                                            preferredItemHeight / 2 -
+                                            viewportCenter)
+                                        .abs(),
+                                index: i,
+                              ),
+                            SizedBox(height: topPadding),
+                          ],
+                        ),
                       ),
                     ),
                   );
@@ -154,10 +158,12 @@ class _WheeledSelectorState extends State<WheeledSelector> {
         onTap: () => _scrollToItemAt(index, itemHeight, true),
         child: SizedBox(
           height: itemHeight,
-          child: Container(
-            padding: .only(top: 4),
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 4),
             child: Text(
               option.label,
+              textAlign: .center,
               style: TextStyle(
                 color: color,
                 fontSize: LayoutHelper.getPickerItemHeight(context) - 10,
