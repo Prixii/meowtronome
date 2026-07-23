@@ -163,22 +163,25 @@ class _CustomMenuState extends State<CustomMenu> {
         ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: Row(
-          children: [
-            Text(
-              title ?? '',
-              style: bodyTextStyle.copyWith(
-                color: Theme.of(context).colorScheme.primary,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: onTap,
+          child: Row(
+            children: [
+              Text(
+                title ?? '',
+                style: bodyTextStyle.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
-            ),
-            Expanded(child: Container()),
-            Icon(
-              opened ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_left,
-            ),
-          ],
+              Expanded(child: Container()),
+              Icon(
+                opened ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_left,
+              ),
+            ],
+          ),
         ),
       ),
     );

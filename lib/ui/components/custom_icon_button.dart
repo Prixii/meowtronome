@@ -74,36 +74,39 @@ class _CustomIconButtonState extends State<CustomIconButton>
     final colorScheme = Theme.of(context).colorScheme;
     final canAnimate = widget.enableLongPressRepeat;
 
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () => widget.onTap?.call(),
-      onTapDown: canAnimate ? (_) => _setIsTapping(true) : null,
-      onTapCancel: canAnimate ? () => _setIsTapping(false) : null,
-      onTapUp: canAnimate ? (_) => _setIsTapping(false) : null,
-      onLongPress: canAnimate ? () => _startRepeat() : null,
-      onLongPressUp: canAnimate ? () => _stopRepeat() : null,
-      child: canAnimate
-          ? AnimatedBuilder(
-              animation: _animation,
-              builder: (context, child) {
-                return _buildContent(
-                  backgroundColor: Color.lerp(
-                    colorScheme.primaryContainer,
-                    colorScheme.primary,
-                    _animation.value,
-                  )!,
-                  iconColor: Color.lerp(
-                    colorScheme.primary,
-                    colorScheme.primaryContainer,
-                    _animation.value,
-                  )!,
-                );
-              },
-            )
-          : _buildContent(
-              backgroundColor: colorScheme.primaryContainer,
-              iconColor: colorScheme.primary,
-            ),
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => widget.onTap?.call(),
+        onTapDown: canAnimate ? (_) => _setIsTapping(true) : null,
+        onTapCancel: canAnimate ? () => _setIsTapping(false) : null,
+        onTapUp: canAnimate ? (_) => _setIsTapping(false) : null,
+        onLongPress: canAnimate ? () => _startRepeat() : null,
+        onLongPressUp: canAnimate ? () => _stopRepeat() : null,
+        child: canAnimate
+            ? AnimatedBuilder(
+                animation: _animation,
+                builder: (context, child) {
+                  return _buildContent(
+                    backgroundColor: Color.lerp(
+                      colorScheme.primaryContainer,
+                      colorScheme.primary,
+                      _animation.value,
+                    )!,
+                    iconColor: Color.lerp(
+                      colorScheme.primary,
+                      colorScheme.primaryContainer,
+                      _animation.value,
+                    )!,
+                  );
+                },
+              )
+            : _buildContent(
+                backgroundColor: colorScheme.primaryContainer,
+                iconColor: colorScheme.primary,
+              ),
+      ),
     );
   }
 

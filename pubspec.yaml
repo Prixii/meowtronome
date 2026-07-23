@@ -1,7 +1,7 @@
 name: meowtronome
 description: "A new Flutter project."
 publish_to: 'none'
-version: 0.9.0+1
+version: 0.9.9+1
 
 environment:
   sdk: ^3.11.0
@@ -24,6 +24,10 @@ dependencies:
   window_manager: ^0.5.2
   json_annotation: ^4.12.0
   fl_chart: ^1.2.0
+  http: ^1.6.0
+  package_info_plus: ^10.2.1
+  url_launcher: ^6.3.2
+  pub_semver: ^2.2.0
 
 dev_dependencies:
   flutter_test:

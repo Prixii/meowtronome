@@ -70,50 +70,53 @@ class _PlayButtonState extends State<PlayButton>
       end: Theme.of(context).colorScheme.primaryContainer,
     );
 
-    return GestureDetector(
-      onTap: () => widget.onToggle(),
-      child: Center(
-        child: AnimatedBuilder(
-          animation: _animation,
-          builder: (context, child) {
-            final foregroundColor = _foregroundColorTween.evaluate(_animation);
-            final backgroundColor = _backgroundColorTween.evaluate(_animation);
-            return Container(
-              width: .infinity,
-              clipBehavior: .hardEdge,
-              height: LayoutHelper.getPlayButtonHeight(context),
-              decoration: BoxDecoration(color: backgroundColor),
-              child: Stack(
-                alignment: .center,
-                children: [
-                  Transform.translate(
-                    offset: Offset(
-                      0,
-                      _animation.value *
-                          LayoutHelper.getPlayButtonHeight(context),
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () => widget.onToggle(),
+        child: Center(
+          child: AnimatedBuilder(
+            animation: _animation,
+            builder: (context, child) {
+              final foregroundColor = _foregroundColorTween.evaluate(_animation);
+              final backgroundColor = _backgroundColorTween.evaluate(_animation);
+              return Container(
+                width: .infinity,
+                clipBehavior: .hardEdge,
+                height: LayoutHelper.getPlayButtonHeight(context),
+                decoration: BoxDecoration(color: backgroundColor),
+                child: Stack(
+                  alignment: .center,
+                  children: [
+                    Transform.translate(
+                      offset: Offset(
+                        0,
+                        _animation.value *
+                            LayoutHelper.getPlayButtonHeight(context),
+                      ),
+                      child: Icon(
+                        Icons.play_arrow,
+                        size: LayoutHelper.getPlayButtonHeight(context) * 0.8,
+                        color: foregroundColor,
+                      ),
                     ),
-                    child: Icon(
-                      Icons.play_arrow,
-                      size: LayoutHelper.getPlayButtonHeight(context) * 0.8,
-                      color: foregroundColor,
+                    Transform.translate(
+                      offset: Offset(
+                        0,
+                        (1 - _animation.value) *
+                            LayoutHelper.getPlayButtonHeight(context),
+                      ),
+                      child: Icon(
+                        Icons.pause,
+                        size: LayoutHelper.getPlayButtonHeight(context) * 0.8,
+                        color: foregroundColor,
+                      ),
                     ),
-                  ),
-                  Transform.translate(
-                    offset: Offset(
-                      0,
-                      (1 - _animation.value) *
-                          LayoutHelper.getPlayButtonHeight(context),
-                    ),
-                    child: Icon(
-                      Icons.pause,
-                      size: LayoutHelper.getPlayButtonHeight(context) * 0.8,
-                      color: foregroundColor,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

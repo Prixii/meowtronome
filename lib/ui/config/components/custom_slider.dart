@@ -99,58 +99,61 @@ class _FlatSliderTrack extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final thumbOffset = normalizedValue * (trackWidth - thumbSize);
 
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onHorizontalDragStart: (details) =>
-          onDragStart(_normalizedFromDx(details.localPosition.dx)),
-      onHorizontalDragUpdate: (details) =>
-          onDragUpdate(_normalizedFromDx(details.localPosition.dx)),
-      onHorizontalDragEnd: (_) => onDragEnd(),
-      onTapDown: (details) {
-        onDragStart(_normalizedFromDx(details.localPosition.dx));
-        onDragEnd();
-      },
-      child: SizedBox(
-        height: hitHeight,
-        width: trackWidth,
-        child: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.centerLeft,
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                height: trackHeight,
-                width: trackWidth,
-                color: colorScheme.primaryFixed,
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onHorizontalDragStart: (details) =>
+            onDragStart(_normalizedFromDx(details.localPosition.dx)),
+        onHorizontalDragUpdate: (details) =>
+            onDragUpdate(_normalizedFromDx(details.localPosition.dx)),
+        onHorizontalDragEnd: (_) => onDragEnd(),
+        onTapDown: (details) {
+          onDragStart(_normalizedFromDx(details.localPosition.dx));
+          onDragEnd();
+        },
+        child: SizedBox(
+          height: hitHeight,
+          width: trackWidth,
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.centerLeft,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  height: trackHeight,
+                  width: trackWidth,
+                  color: colorScheme.primaryFixed,
+                ),
               ),
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                height: trackHeight,
-                width: thumbOffset + thumbSize / 2,
-                color: colorScheme.primary,
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  height: trackHeight,
+                  width: thumbOffset + thumbSize / 2,
+                  color: colorScheme.primary,
+                ),
               ),
-            ),
-            Positioned(
-              left: thumbOffset,
-              top: (hitHeight - thumbSize) / 2,
-              child: Container(
-                width: thumbSize,
-                height: thumbSize,
-                color: colorScheme.primary,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: colorScheme.primaryContainer,
-                      width: 2,
+              Positioned(
+                left: thumbOffset,
+                top: (hitHeight - thumbSize) / 2,
+                child: Container(
+                  width: thumbSize,
+                  height: thumbSize,
+                  color: colorScheme.primary,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: colorScheme.primaryContainer,
+                        width: 2,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

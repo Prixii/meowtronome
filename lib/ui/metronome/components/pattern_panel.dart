@@ -248,33 +248,36 @@ class _BeatColumn extends StatelessWidget {
                   width: width,
                   height: noteExtent,
                   child: Center(
-                    child: GestureDetector(
-                      child: AnimatedNote(
-                        soundType: beat.notes[i].soundType,
-                        isPlaying: notifier.isCurrentNote(beatIndex, i),
-                        size: LayoutHelper.getNoteSize(context),
+                    child: MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                        child: AnimatedNote(
+                          soundType: beat.notes[i].soundType,
+                          isPlaying: notifier.isCurrentNote(beatIndex, i),
+                          size: LayoutHelper.getNoteSize(context),
+                        ),
+                        onTap: () => {
+                          notifier.setNoteSoundType(
+                            beatIndex,
+                            i,
+                            beat.notes[i].soundType.getNext(),
+                          ),
+                        },
+                        onSecondaryTap: () => {
+                          notifier.setNoteSoundType(
+                            beatIndex,
+                            i,
+                            beat.notes[i].soundType.getPrevious(),
+                          ),
+                        },
+                        onLongPress: () => {
+                          notifier.setNoteSoundType(
+                            beatIndex,
+                            i,
+                            beat.notes[i].soundType.getPrevious(),
+                          ),
+                        },
                       ),
-                      onTap: () => {
-                        notifier.setNoteSoundType(
-                          beatIndex,
-                          i,
-                          beat.notes[i].soundType.getNext(),
-                        ),
-                      },
-                      onSecondaryTap: () => {
-                        notifier.setNoteSoundType(
-                          beatIndex,
-                          i,
-                          beat.notes[i].soundType.getPrevious(),
-                        ),
-                      },
-                      onLongPress: () => {
-                        notifier.setNoteSoundType(
-                          beatIndex,
-                          i,
-                          beat.notes[i].soundType.getPrevious(),
-                        ),
-                      },
                     ),
                   ),
                 ),

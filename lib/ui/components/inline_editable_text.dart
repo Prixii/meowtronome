@@ -82,31 +82,36 @@ class _InlineEditableTextState extends State<InlineEditableText>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: (!_isEditing && widget.enabled) ? _startEditing : null,
-      behavior: HitTestBehavior.opaque,
-      child: Center(
-        child: _isEditing
-            ? TextField(
-                controller: _controller,
-                focusNode: _focusNode,
-                keyboardType: widget.keyboardType,
-                inputFormatters: widget.inputFormatters,
-                textAlign: widget.textAlign,
-                style: widget.style,
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  isDense: true,
-                  contentPadding: EdgeInsets.zero,
+    return MouseRegion(
+      cursor: (!_isEditing && widget.enabled)
+          ? SystemMouseCursors.click
+          : SystemMouseCursors.basic,
+      child: GestureDetector(
+        onTap: (!_isEditing && widget.enabled) ? _startEditing : null,
+        behavior: HitTestBehavior.opaque,
+        child: Center(
+          child: _isEditing
+              ? TextField(
+                  controller: _controller,
+                  focusNode: _focusNode,
+                  keyboardType: widget.keyboardType,
+                  inputFormatters: widget.inputFormatters,
+                  textAlign: widget.textAlign,
+                  style: widget.style,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  onTapOutside: (_) => _focusNode.unfocus(),
+                  onSubmitted: (_) => _focusNode.unfocus(),
+                )
+              : Text(
+                  widget.value,
+                  style: widget.style,
+                  textAlign: widget.textAlign,
                 ),
-                onTapOutside: (_) => _focusNode.unfocus(),
-                onSubmitted: (_) => _focusNode.unfocus(),
-              )
-            : Text(
-                widget.value,
-                style: widget.style,
-                textAlign: widget.textAlign,
-              ),
+        ),
       ),
     );
   }

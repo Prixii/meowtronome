@@ -61,37 +61,40 @@ class _CustomSwitchState extends State<CustomSwitch>
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return GestureDetector(
-      onTap: () => widget.onChanged(!widget.value),
-      child: SizedBox(
-        width: CustomSwitch.width,
-        height: CustomSwitch.height,
-        child: AnimatedBuilder(
-          animation: _animation,
-          builder: (context, _) {
-            return Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: colorScheme.primary, width: 2),
-                color: widget.value
-                    ? colorScheme.primary
-                    : colorScheme.primaryFixed,
-              ),
-              child: Stack(
-                clipBehavior: Clip.hardEdge,
-                children: [
-                  Positioned(
-                    left: _thumbOffset(_animation.value),
-                    top: 0,
-                    bottom: 0,
-                    child: Container(
-                      width: CustomSwitch.height,
-                      color: colorScheme.primaryContainer,
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () => widget.onChanged(!widget.value),
+        child: SizedBox(
+          width: CustomSwitch.width,
+          height: CustomSwitch.height,
+          child: AnimatedBuilder(
+            animation: _animation,
+            builder: (context, _) {
+              return Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: colorScheme.primary, width: 2),
+                  color: widget.value
+                      ? colorScheme.primary
+                      : colorScheme.primaryFixed,
+                ),
+                child: Stack(
+                  clipBehavior: Clip.hardEdge,
+                  children: [
+                    Positioned(
+                      left: _thumbOffset(_animation.value),
+                      top: 0,
+                      bottom: 0,
+                      child: Container(
+                        width: CustomSwitch.height,
+                        color: colorScheme.primaryContainer,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          },
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

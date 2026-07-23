@@ -69,54 +69,57 @@ class _SelectableButtonState extends State<SelectableButton>
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (_, constraints) => GestureDetector(
-        onTap: widget.onTap,
-        child: Stack(
-          children: [
-            Container(
-              color: Theme.of(context).colorScheme.primaryContainer,
-              child: Center(
-                child: (widget.icon != null)
-                    ? Icon(
-                        widget.icon,
-                        size: widget.size,
-                        color: Theme.of(context).colorScheme.primary,
-                      )
-                    : Text(
-                        widget.text ?? '',
-                        style: bodyTextStyle.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-              ),
-            ),
-            AnimatedBuilder(
-              animation: _clipAnimation,
-              builder: (_, child) => ClipRect(
-                clipper: RevealClipper(_clipAnimation.value),
-                child: child,
-              ),
-              child: Container(
-                color: Theme.of(context).colorScheme.primary,
+      builder: (_, constraints) => MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: Stack(
+            children: [
+              Container(
+                color: Theme.of(context).colorScheme.primaryContainer,
                 child: Center(
                   child: (widget.icon != null)
                       ? Icon(
                           widget.icon,
                           size: widget.size,
-                          color: Theme.of(context).colorScheme.primaryContainer,
+                          color: Theme.of(context).colorScheme.primary,
                         )
                       : Text(
                           widget.text ?? '',
                           style: bodyTextStyle.copyWith(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.primaryContainer,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
                 ),
               ),
-            ),
-          ],
+              AnimatedBuilder(
+                animation: _clipAnimation,
+                builder: (_, child) => ClipRect(
+                  clipper: RevealClipper(_clipAnimation.value),
+                  child: child,
+                ),
+                child: Container(
+                  color: Theme.of(context).colorScheme.primary,
+                  child: Center(
+                    child: (widget.icon != null)
+                        ? Icon(
+                            widget.icon,
+                            size: widget.size,
+                            color: Theme.of(context).colorScheme.primaryContainer,
+                          )
+                        : Text(
+                            widget.text ?? '',
+                            style: bodyTextStyle.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.primaryContainer,
+                            ),
+                          ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

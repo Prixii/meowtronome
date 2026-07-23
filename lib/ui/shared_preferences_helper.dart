@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final sharedPreferencesHelper = SharedPreferencesHelper();
 
-enum SharedPreferencesKeys { metronomeState, userPatterns }
+enum SharedPreferencesKeys { metronomeState, userPatterns, configState }
 
 class SharedPreferencesHelper {
   late final SharedPreferences prefs;

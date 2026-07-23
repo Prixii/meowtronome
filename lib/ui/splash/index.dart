@@ -3,6 +3,7 @@ import 'package:meowtronome/core/soloud/soloud_helper.dart';
 import 'package:meowtronome/gen/assets.gen.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_notifier.dart';
 import 'package:meowtronome/ui/metronome/index.dart';
+import 'package:meowtronome/ui/config/provider/config_notifier.dart';
 import 'package:meowtronome/ui/shared_preferences_helper.dart';
 import 'package:meowtronome/ui/statistics/provider/statistics_notifier.dart';
 import 'package:provider/provider.dart';
@@ -79,5 +80,7 @@ class _SplashPageState extends State<SplashPage> {
       _statistics.init(),
       soloudHelper.init(),
     ]);
+    final config = loadConfigState();
+    soloudHelper.setGlobalVolume(config.soloudGlobalVolume);
   }
 }
