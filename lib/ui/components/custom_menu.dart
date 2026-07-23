@@ -27,6 +27,7 @@ class CustomMenu extends StatefulWidget {
 class _CustomMenuState extends State<CustomMenu> {
   final FocusNode _buttonFocusNode = FocusNode();
   final MenuController _menuController = MenuController();
+  final ScrollController _scrollController = ScrollController();
   final ValueNotifier<int> _hoverIndex = ValueNotifier<int>(-1);
 
   late String _currentValue;
@@ -69,6 +70,7 @@ class _CustomMenuState extends State<CustomMenu> {
   @override
   void dispose() {
     _hoverIndex.dispose();
+    _scrollController.dispose();
     _buttonFocusNode.dispose();
     super.dispose();
   }
@@ -214,8 +216,12 @@ class _CustomMenuState extends State<CustomMenu> {
         child: ConstrainedBox(
           constraints: BoxConstraints(maxHeight: widget.maxHeight),
           child: ScrollConfiguration(
-            behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+            behavior: ScrollConfiguration.of(
+              context,
+            ).copyWith(scrollbars: false),
             child: SingleChildScrollView(
+              controller: _scrollController,
+              primary: false,
               child: Column(
                 mainAxisSize: .min,
                 crossAxisAlignment: .stretch,

@@ -7,6 +7,7 @@ import 'package:meowtronome/ui/components/custom_menu.dart';
 import 'package:meowtronome/ui/components/custom_radio.dart';
 import 'package:meowtronome/ui/components/modal_container.dart';
 import 'package:meowtronome/ui/layout_helper.dart';
+import 'package:meowtronome/ui/statistics/components/statistics_chart.dart';
 import 'package:meowtronome/ui/statistics/provider/statistics_notifier.dart';
 import 'package:meowtronome/ui/statistics/statistics_period.dart';
 import 'package:provider/provider.dart';
@@ -83,7 +84,11 @@ class StatisticsBody extends StatelessWidget {
             ],
           ),
         ),
-        Expanded(child: Placeholder()),
+        Expanded(
+          child: notifier.chartLoading
+              ? const Center(child: CircularProgressIndicator())
+              : StatisticsChart(data: notifier.chartData),
+        ),
       ],
     );
   }

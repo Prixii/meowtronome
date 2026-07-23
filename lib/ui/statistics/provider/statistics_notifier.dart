@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:meowtronome/global.dart';
 import 'package:meowtronome/ui/statistics/provider/statistics_state.dart';
+import 'package:meowtronome/ui/statistics/statistics_chart_data.dart';
 import 'package:meowtronome/ui/statistics/statistics_period.dart';
 import 'package:meowtronome/ui/statistics/statistics_storage.dart';
 
@@ -17,6 +18,9 @@ class StatisticsNotifier extends ChangeNotifier {
   String _selectedPeriodKey = '';
   List<int> _availableYears = [];
   List<OptionData> _periodOptions = [];
+  StatisticsChartData _chartData = StatisticsChartData.empty;
+  bool _chartLoading = false;
+  int _chartLoadToken = 0;
 
   /// Ignore accidental taps that start/stop within this window.
   static const minRecordDurationMs = 1000;
@@ -26,6 +30,8 @@ class StatisticsNotifier extends ChangeNotifier {
   StatisticsPeriodUnit get periodUnit => _periodUnit;
   String get selectedPeriodKey => _selectedPeriodKey;
   List<OptionData> get periodOptions => _periodOptions;
+  StatisticsChartData get chartData => _chartData;
+  bool get chartLoading => _chartLoading;
   int get earliestYear =>
       _availableYears.isEmpty ? getYear() : _availableYears.first;
 
@@ -40,6 +46,7 @@ class StatisticsNotifier extends ChangeNotifier {
     _state = _state.copyWith(currentStatistics: current);
     _rebuildPeriodOptions(selectFirst: true);
     notifyListeners();
+    await _reloadChart();
   }
 
   void setPeriodUnit(StatisticsPeriodUnit unit) {
@@ -47,12 +54,44 @@ class StatisticsNotifier extends ChangeNotifier {
     _periodUnit = unit;
     _rebuildPeriodOptions(selectFirst: true);
     notifyListeners();
+    unawaited(_reloadChart());
   }
 
   void setSelectedPeriod(String key) {
     if (_selectedPeriodKey == key) return;
     if (!_periodOptions.any((option) => option.value == key)) return;
     _selectedPeriodKey = key;
+    notifyListeners();
+    unawaited(_reloadChart());
+  }
+
+  Future<void> _reloadChart() async {
+    final key = _selectedPeriodKey;
+    final period = parsePeriodKey(key);
+    if (period == null) {
+      _chartData = StatisticsChartData.empty;
+      _chartLoading = false;
+      notifyListeners();
+      return;
+    }
+
+    final token = ++_chartLoadToken;
+    _chartLoading = true;
+    notifyListeners();
+
+    final records = <StatisticsRecord>[];
+    for (final year in yearsTouchedByPeriod(period)) {
+      final yearly = await getYearlyStatistics(year);
+      records.addAll(yearly.records);
+    }
+
+    if (token != _chartLoadToken) return;
+
+    _chartData = buildStackedChartData(period: period, records: records);
+    _state = _state.copyWith(
+      statisticsDisplaying: YearlyStatistics(records: records),
+    );
+    _chartLoading = false;
     notifyListeners();
   }
 
