@@ -27,6 +27,9 @@ class WheeledSelector extends StatefulWidget {
 class _WheeledSelectorState extends State<WheeledSelector> {
   late final ScrollController _controller;
   var _isSnapping = false;
+
+  var _initialized = false; // HACK 初始化的时候也会触发onChange，所以第一次尝试播放声音应当屏蔽
+
   @override
   void initState() {
     super.initState();
@@ -221,7 +224,11 @@ class _WheeledSelectorState extends State<WheeledSelector> {
             if (mounted) {
               _isSnapping = false;
             }
-            widget.onChange(widget.options[nearestItemIndex].value);
+            if (!_initialized) {
+              _initialized = true;
+            } else {
+              widget.onChange(widget.options[nearestItemIndex].value);
+            }
           });
       return;
     }
@@ -241,7 +248,11 @@ class _WheeledSelectorState extends State<WheeledSelector> {
             if (mounted) {
               _isSnapping = false;
             }
-            widget.onChange(widget.options[nearestItemIndex].value);
+            if (!_initialized) {
+              _initialized = true;
+            } else {
+              widget.onChange(widget.options[nearestItemIndex].value);
+            }
           });
     });
   }

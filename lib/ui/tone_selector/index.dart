@@ -99,6 +99,7 @@ class ToneSelector extends StatelessWidget {
             value: soloudHelper.getSoundAssetOf(style.soundType),
             onChange: (value) {
               notifier.setToneForSoundType(style.soundType, value);
+              soloudHelper.playSource(value);
             },
           ),
         ],

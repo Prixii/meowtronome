@@ -32,11 +32,17 @@ class SoloudHelper {
       ..addAll(soundTypeMap);
   }
 
-  Future<void> playSource(SoundType type) async {
+  Future<void> playSourceBySoundType(SoundType type) async {
     if (!_initialized) return;
 
     final audioAsset = _soundTypeMap[type]!;
     _soloud.play(_soloudAudioSourceMap[audioAsset]!);
+  }
+
+  Future<void> playSource(String asset) async {
+    if (!_initialized) return;
+    if (!_soloudAudioSourceMap.containsKey(asset)) return;
+    _soloud.play(_soloudAudioSourceMap[asset]!);
   }
 
   Future<void> dispose() async {

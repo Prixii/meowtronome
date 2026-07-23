@@ -106,7 +106,7 @@ class Scheduler {
 
     _timer?.cancel();
 
-    soloudHelper.playSource(note.soundType);
+    soloudHelper.playSourceBySoundType(note.soundType);
     _onPlayNote?.call(this);
 
     _timer = Timer(Duration(milliseconds: remainingTime.toInt()), () {
