@@ -76,7 +76,7 @@ class StatisticsBody extends StatelessWidget {
               if (notifier.periodOptions.isNotEmpty)
                 CustomMenu(
                   key: ValueKey(notifier.periodUnit.name),
-                  width: 140,
+                  width: 135,
                   options: notifier.periodOptions,
                   initialValue: notifier.selectedPeriodKey,
                   onSelected: notifier.setSelectedPeriod,

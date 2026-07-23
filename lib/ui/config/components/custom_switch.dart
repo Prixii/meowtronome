@@ -74,7 +74,7 @@ class _CustomSwitchState extends State<CustomSwitch>
                 border: Border.all(color: colorScheme.primary, width: 2),
                 color: widget.value
                     ? colorScheme.primary
-                    : colorScheme.secondary,
+                    : colorScheme.primaryFixed,
               ),
               child: Stack(
                 clipBehavior: Clip.hardEdge,
