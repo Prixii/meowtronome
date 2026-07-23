@@ -1,8 +1,17 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 android {
@@ -30,41 +39,50 @@ android {
         versionName = flutter.versionName
     }
 
-    buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
-
-            getByName("debug") {
-
-            }
-
-            getByName("release") {
-
+    signingConfigs {
+        create("release") {
+            if (keystorePropertiesFile.exists()) {
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
             }
         }
+    }
 
-        flavorDimensions += "default"
+    buildTypes {
+        getByName("debug") {
+            // 使用默认 debug 证书，无需额外配置
+        }
+        getByName("release") {
+            // 仅 release 使用正式证书
+            signingConfig = if (keystorePropertiesFile.exists()) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
+        }
+    }
 
-        productFlavors {
-            create("staging") {
-                dimension = "default"
-                applicationIdSuffix = ".staging"
-                resValue(
-                    type = "string",
-                    name = "app_name",
-                    value = "MeowTronome Staging"
-                )
-            }
-            create ("production") {
-                dimension = "default"
-                resValue(
-                    type = "string",
-                    name = "app_name",
-                    value = "MeowTronome"
-                )
-            }
+    flavorDimensions += "default"
+
+    productFlavors {
+        create("staging") {
+            dimension = "default"
+            applicationIdSuffix = ".staging"
+            resValue(
+                type = "string",
+                name = "app_name",
+                value = "MeowTronome Staging"
+            )
+        }
+        create("production") {
+            dimension = "default"
+            resValue(
+                type = "string",
+                name = "app_name",
+                value = "MeowTronome"
+            )
         }
     }
 }

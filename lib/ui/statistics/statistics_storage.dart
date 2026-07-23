@@ -13,10 +13,23 @@ class StatisticsStorage {
     if (directory != null) {
       _directory = directory;
     } else if (_directory == null) {
-      final docs = await getApplicationDocumentsDirectory();
-      _directory = Directory(p.join(docs.path, 'statistics'));
+      _directory = Directory(await _defaultStoragePath());
     }
     await _directory!.create(recursive: true);
+  }
+
+  Future<String> _defaultStoragePath() async {
+    // Windows: %LOCALAPPDATA%/meowtronome/statistics
+    if (!kIsWeb && Platform.isWindows) {
+      final localAppData = Platform.environment['LOCALAPPDATA'];
+      if (localAppData == null || localAppData.isEmpty) {
+        throw StateError('LOCALAPPDATA environment variable is not set');
+      }
+      return p.join(localAppData, 'meowtronome', 'statistics');
+    }
+
+    final docs = await getApplicationDocumentsDirectory();
+    return p.join(docs.path, 'statistics');
   }
 
   @visibleForTesting

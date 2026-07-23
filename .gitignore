@@ -54,3 +54,6 @@ app.*.map.json
 *.g.dart
 *.freezed.dart
 *.gen.dart
+
+*.jks
+*.jks.old

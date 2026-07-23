@@ -53,34 +53,34 @@ const systemRhythmPatterns = [
     beats: [
       Beat(
         notes: [
+          Note(soundType: SoundType.type3),
           Note(soundType: SoundType.type1),
-          Note(soundType: SoundType.type3),
-          Note(soundType: SoundType.type3),
-          Note(soundType: SoundType.type3),
+          Note(soundType: SoundType.type1),
+          Note(soundType: SoundType.type1),
         ],
       ),
       Beat(
         notes: [
           Note(soundType: SoundType.type2),
-          Note(soundType: SoundType.type3),
-          Note(soundType: SoundType.type3),
-          Note(soundType: SoundType.type3),
+          Note(soundType: SoundType.type1),
+          Note(soundType: SoundType.type1),
+          Note(soundType: SoundType.type1),
         ],
       ),
       Beat(
         notes: [
           Note(soundType: SoundType.type2),
-          Note(soundType: SoundType.type3),
-          Note(soundType: SoundType.type3),
-          Note(soundType: SoundType.type3),
+          Note(soundType: SoundType.type1),
+          Note(soundType: SoundType.type1),
+          Note(soundType: SoundType.type1),
         ],
       ),
       Beat(
         notes: [
           Note(soundType: SoundType.type2),
-          Note(soundType: SoundType.type3),
-          Note(soundType: SoundType.type3),
-          Note(soundType: SoundType.type3),
+          Note(soundType: SoundType.type1),
+          Note(soundType: SoundType.type1),
+          Note(soundType: SoundType.type1),
         ],
       ),
     ],
@@ -90,23 +90,23 @@ const systemRhythmPatterns = [
     beats: [
       Beat(
         notes: [
+          Note(soundType: SoundType.type3),
           Note(soundType: SoundType.type1),
-          Note(soundType: SoundType.type3),
-          Note(soundType: SoundType.type3),
+          Note(soundType: SoundType.type1),
         ],
       ),
       Beat(
         notes: [
           Note(soundType: SoundType.type2),
-          Note(soundType: SoundType.type3),
-          Note(soundType: SoundType.type3),
+          Note(soundType: SoundType.type1),
+          Note(soundType: SoundType.type1),
         ],
       ),
       Beat(
         notes: [
           Note(soundType: SoundType.type2),
-          Note(soundType: SoundType.type3),
-          Note(soundType: SoundType.type3),
+          Note(soundType: SoundType.type1),
+          Note(soundType: SoundType.type1),
         ],
       ),
     ],
