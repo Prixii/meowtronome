@@ -45,7 +45,7 @@ class PatternSelectorBody extends StatelessWidget {
               child: Padding(
                 padding: LayoutHelper.getModalContainerTitlePadding(context),
                 child: Text(
-                  '节奏',
+                  '预设',
                   style: titleTextStyle.copyWith(
                     color: Theme.of(context).colorScheme.primary,
                   ),

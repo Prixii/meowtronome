@@ -48,6 +48,7 @@ class MetronomeNotifier extends ChangeNotifier {
     };
     _metronome.onBpmChangedWhileRunning = (bpm) {
       _statistics?.onBpmChanged(bpm);
+      notifyListeners();
     };
 
     _metronome.setOnPlayNote((scheduler) {

@@ -45,7 +45,7 @@ class LayoutHelper {
     switch (mode) {
       case LayoutMode.square:
         return isSmallHeight(context)
-            ? const EdgeInsets.all(16.0)
+            ? const EdgeInsets.all(32.0)
             : const EdgeInsets.all(48.0);
       case LayoutMode.horizontal:
         return isSmallHeight(context)
@@ -53,8 +53,8 @@ class LayoutHelper {
             : const EdgeInsets.all(48.0);
       case LayoutMode.vertical:
         return isSmallWidth(context)
-            ? const EdgeInsets.fromLTRB(32.0, 32, 32.0, 64.0)
-            : const EdgeInsets.fromLTRB(48.0, 48, 48.0, 96.0);
+            ? const EdgeInsets.fromLTRB(32.0, 96, 32.0, 64.0)
+            : const EdgeInsets.fromLTRB(48.0, 128.0, 48.0, 96.0);
     }
   }
 

@@ -32,13 +32,13 @@ final titleTextStyle = const TextStyle(
 );
 
 final subtitleTextStyle = const TextStyle(
-  fontSize: 24,
+  fontSize: 20,
   fontWeight: FontWeight.bold,
   fontFamily: FontFamily.alimamaShuhei,
 );
 
 final bodyTextStyle = const TextStyle(
-  fontSize: 16,
+  fontSize: 14,
   fontFamily: FontFamily.alimamaShuhei,
 );
 
