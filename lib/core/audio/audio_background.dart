@@ -7,8 +7,13 @@ import 'package:meowtronome/core/metronome.dart';
 
 MetronomeAudioHandler? metronomeAudioHandler;
 
+bool _backgroundPlaybackEnabled = false;
+
 bool get supportsAudioBackground =>
     !kIsWeb && (Platform.isAndroid || Platform.isIOS);
+
+bool get isBackgroundPlaybackEnabled =>
+    supportsAudioBackground && _backgroundPlaybackEnabled;
 
 Future<void> initAudioBackground() async {
   if (!supportsAudioBackground || metronomeAudioHandler != null) return;
@@ -34,4 +39,20 @@ void attachMetronomeToAudioBackground(
 
 void detachMetronomeFromAudioBackground() {
   metronomeAudioHandler?.detach();
+}
+
+void setBackgroundPlaybackEnabled(bool enabled) {
+  _backgroundPlaybackEnabled = enabled;
+}
+
+Future<void> applyBackgroundPlaybackEnabled(bool enabled) async {
+  _backgroundPlaybackEnabled = enabled;
+  final handler = metronomeAudioHandler;
+  if (handler == null) return;
+
+  if (enabled) {
+    await handler.promoteToBackground();
+  } else {
+    await handler.demoteFromBackground();
+  }
 }

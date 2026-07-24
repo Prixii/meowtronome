@@ -9,7 +9,7 @@ import 'package:meowtronome/core/rhythm_pattern.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_runtime_state.dart';
 import 'package:meowtronome/ui/statistics/provider/statistics_notifier.dart';
 
-class MetronomeNotifier extends ChangeNotifier {
+class MetronomeNotifier extends ChangeNotifier with WidgetsBindingObserver {
   final _metronome = Metronome();
   var _runtimeState = MetronomeRuntimeState();
   StatisticsNotifier? _statistics;
@@ -62,6 +62,22 @@ class MetronomeNotifier extends ChangeNotifier {
     });
 
     attachMetronomeToAudioBackground(_metronome, onChanged: notifyListeners);
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.detached:
+        if (!isBackgroundPlaybackEnabled && isRunning) {
+          unawaited(stopPlayback());
+        }
+      case AppLifecycleState.resumed:
+      case AppLifecycleState.inactive:
+        break;
+    }
   }
 
   void setOnPlayNoteCallback(
@@ -127,22 +143,38 @@ class MetronomeNotifier extends ChangeNotifier {
     unawaited(_toggleRunning());
   }
 
-  Future<void> _toggleRunning() async {
-    final handler = metronomeAudioHandler;
-    if (handler != null) {
-      if (isRunning) {
+  Future<void> stopPlayback() async {
+    if (!isRunning) return;
+
+    if (isBackgroundPlaybackEnabled) {
+      final handler = metronomeAudioHandler;
+      if (handler != null) {
         await handler.stop();
-      } else {
-        await handler.play();
+        return;
       }
+    }
+
+    await metronomeAudioHandler?.demoteFromBackground();
+    _metronome.stop();
+    notifyListeners();
+  }
+
+  Future<void> _toggleRunning() async {
+    if (isRunning) {
+      await stopPlayback();
       return;
     }
 
-    if (isRunning) {
-      _metronome.stop();
-    } else {
-      _metronome.start();
+    if (isBackgroundPlaybackEnabled) {
+      final handler = metronomeAudioHandler;
+      if (handler != null) {
+        await handler.play();
+        return;
+      }
     }
+
+    await metronomeAudioHandler?.demoteFromBackground();
+    _metronome.start();
     notifyListeners();
   }
 
@@ -175,6 +207,7 @@ class MetronomeNotifier extends ChangeNotifier {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _statistics?.endSession();
     detachMetronomeFromAudioBackground();
     playPosition.dispose();

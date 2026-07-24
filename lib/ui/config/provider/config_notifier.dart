@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:meowtronome/core/audio/audio_background.dart';
 import 'package:meowtronome/core/soloud/soloud_helper.dart';
 import 'package:meowtronome/ui/config/provider/config_state.dart';
 import 'package:meowtronome/ui/shared_preferences_helper.dart';
@@ -17,6 +19,7 @@ class ConfigNotifier extends ChangeNotifier {
   ConfigNotifier() : _state = loadConfigState() {
     soloudHelper.setGlobalVolume(_state.soloudGlobalVolume);
     WakelockPlus.toggle(enable: _state.wakelockEnabled);
+    setBackgroundPlaybackEnabled(_state.playInBackground);
   }
 
   ConfigState _state;
@@ -49,6 +52,7 @@ class ConfigNotifier extends ChangeNotifier {
 
   void setPlayInBackground(bool value) {
     _state = _state.copyWith(playInBackground: value);
+    unawaited(applyBackgroundPlaybackEnabled(value));
     saveConfigState(_state);
     notifyListeners();
   }

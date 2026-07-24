@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:meowtronome/core/audio/audio_background.dart';
 import 'package:meowtronome/global.dart';
 import 'package:meowtronome/ui/components/custom_divider.dart';
 import 'package:meowtronome/ui/components/modal_container.dart';
@@ -88,17 +89,20 @@ class ConfigBody extends StatelessWidget {
                       context,
                     ),
                   ),
-                  _buildDivider(context),
-                  ConfigItem(
-                    title: '后台播放',
-                    trailing: CustomSwitch(
-                      value: notifier.playInBackground,
-                      onChanged: (value) => notifier.setPlayInBackground(value),
+                  if (supportsAudioBackground) ...[
+                    _buildDivider(context),
+                    ConfigItem(
+                      title: '后台播放',
+                      trailing: CustomSwitch(
+                        value: notifier.playInBackground,
+                        onChanged: (value) =>
+                            notifier.setPlayInBackground(value),
+                      ),
+                      padding: LayoutHelper.getModalContainerTitlePadding(
+                        context,
+                      ),
                     ),
-                    padding: LayoutHelper.getModalContainerTitlePadding(
-                      context,
-                    ),
-                  ),
+                  ],
                   _buildDivider(context),
                   _buildRepoLink(context),
                   _buildDivider(context),

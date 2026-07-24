@@ -36,6 +36,19 @@ class MetronomeAudioHandler extends BaseAudioHandler {
     _onChanged = null;
   }
 
+  Future<void> promoteToBackground() async {
+    final metronome = _metronome;
+    if (metronome == null || !metronome.isRunning) return;
+
+    await _session?.setActive(true);
+    _setPlayingState();
+  }
+
+  Future<void> demoteFromBackground() async {
+    await _session?.setActive(false);
+    _setIdleState();
+  }
+
   Future<void> _configureSession() async {
     final session = await AudioSession.instance;
     await session.configure(
