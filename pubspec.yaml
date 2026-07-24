@@ -28,6 +28,7 @@ dependencies:
   package_info_plus: ^10.2.1
   url_launcher: ^6.3.2
   pub_semver: ^2.2.0
+  wakelock_plus: ^1.7.0
 
 dev_dependencies:
   flutter_test:

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:meowtronome/global.dart';
 import 'package:meowtronome/ui/components/custom_divider.dart';
@@ -77,6 +78,28 @@ class ConfigBody extends StatelessWidget {
                     ),
                   ),
                   _buildDivider(context),
+                  ConfigItem(
+                    title: '屏幕保持常亮',
+                    trailing: CustomSwitch(
+                      value: notifier.wakelockEnabled,
+                      onChanged: (value) => notifier.setWakelockEnabled(value),
+                    ),
+                    padding: LayoutHelper.getModalContainerTitlePadding(
+                      context,
+                    ),
+                  ),
+                  _buildDivider(context),
+                  ConfigItem(
+                    title: '后台播放',
+                    trailing: CustomSwitch(
+                      value: notifier.playInBackground,
+                      onChanged: (value) => notifier.setPlayInBackground(value),
+                    ),
+                    padding: LayoutHelper.getModalContainerTitlePadding(
+                      context,
+                    ),
+                  ),
+                  _buildDivider(context),
                   _buildRepoLink(context),
                   _buildDivider(context),
                   VersionLabel(),
@@ -116,10 +139,8 @@ class ConfigBody extends StatelessWidget {
   Widget _buildLicensesLink(BuildContext context) => MouseRegion(
     cursor: SystemMouseCursors.click,
     child: GestureDetector(
-      onTap: () => showLicensePage(
-        context: context,
-        applicationName: 'MeowTronome',
-      ),
+      onTap: () =>
+          showLicensePage(context: context, applicationName: 'MeowTronome'),
       child: ConfigItem(
         title: '开源第三方许可证',
         trailing: Icon(
@@ -155,7 +176,7 @@ class _VersionLabelState extends State<VersionLabel> {
     return ConfigItem(
       title: '当前版本',
       trailing: Text(
-        version,
+        version + (kDebugMode ? '-debug' : ''),
         style: bodyTextStyle.copyWith(
           color: Theme.of(context).colorScheme.primaryFixedDim,
         ),
