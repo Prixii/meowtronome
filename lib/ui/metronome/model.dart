@@ -14,3 +14,5 @@ class NoteStyle {
 }
 
 enum AntiBluetoothAutoStandbyMode { enable, disable, byBpm }
+
+enum AppThemeMode { light, dark, system }

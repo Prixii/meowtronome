@@ -72,6 +72,21 @@ class ConfigBody extends StatelessWidget {
                   ),
                   _buildDivider(context),
                   ConfigItem(
+                    title: '主题',
+                    trailing: CustomMenu(
+                      width: 120,
+                      options: _themeModeOptions,
+                      initialValue: notifier.themeMode.name,
+                      onSelected: (value) => notifier.setThemeMode(
+                        AppThemeMode.values.byName(value),
+                      ),
+                    ),
+                    padding: LayoutHelper.getModalContainerTitlePadding(
+                      context,
+                    ),
+                  ),
+                  _buildDivider(context),
+                  ConfigItem(
                     title: '自动检查更新',
                     trailing: CustomSwitch(
                       value: notifier.autoCheckForUpdates,
@@ -172,6 +187,12 @@ class ConfigBody extends StatelessWidget {
       ],
     );
   }
+
+  static const _themeModeOptions = [
+    OptionData(label: '浅色', value: 'light'),
+    OptionData(label: '深色', value: 'dark'),
+    OptionData(label: '跟随系统', value: 'system'),
+  ];
 
   static const _antiBluetoothAutoStandbyOptions = [
     OptionData(label: '开启', value: 'enable'),

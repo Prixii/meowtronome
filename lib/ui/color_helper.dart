@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:meowtronome/ui/metronome/model.dart';
 
 final lightTheme = ThemeData(
   colorScheme: ColorScheme.light(
@@ -12,6 +13,22 @@ final lightTheme = ThemeData(
     primaryContainer: Color(0xFFE9D7Bc),
   ),
 );
+
+final darkTheme = ThemeData(
+  colorScheme: ColorScheme.dark(
+    primary: Color(0xFFE9D7BC),
+    primaryFixedDim: Color(0xFFA89880),
+    secondary: Color(0xFFC4B49A),
+    primaryFixed: Color(0xFF5C4A3A),
+    primaryContainer: Color(0xFF2A1810),
+  ),
+);
+
+ThemeMode themeModeOf(AppThemeMode mode) => switch (mode) {
+  AppThemeMode.light => ThemeMode.light,
+  AppThemeMode.dark => ThemeMode.dark,
+  AppThemeMode.system => ThemeMode.system,
+};
 
 bool get isDesktopPlatform =>
     !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);

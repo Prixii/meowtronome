@@ -60,13 +60,15 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    final app = MaterialApp(
-      theme: lightTheme,
-      home: _ready ? const MetronomePage() : const _SplashBody(),
-    );
-
     final config = _config;
-    if (config == null) return app;
+    if (config == null) {
+      return MaterialApp(
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        themeMode: ThemeMode.system,
+        home: const _SplashBody(),
+      );
+    }
 
     return MultiProvider(
       providers: [
@@ -74,7 +76,17 @@ class _SplashPageState extends State<SplashPage> {
         ChangeNotifierProvider.value(value: _statistics),
         ChangeNotifierProvider.value(value: config),
       ],
-      child: app,
+      child: ListenableBuilder(
+        listenable: config,
+        builder: (context, _) {
+          return MaterialApp(
+            theme: lightTheme,
+            darkTheme: darkTheme,
+            themeMode: themeModeOf(config.themeMode),
+            home: _ready ? const MetronomePage() : const _SplashBody(),
+          );
+        },
+      ),
     );
   }
 }

@@ -79,6 +79,14 @@ class ConfigNotifier extends ChangeNotifier {
   int get antiBluetoothAutoStandbyBelowBpm =>
       _state.antiBluetoothAutoStandbyBelowBpm;
 
+  void setThemeMode(AppThemeMode value) {
+    _state = _state.copyWith(themeMode: value);
+    saveConfigState(_state);
+    notifyListeners();
+  }
+
+  AppThemeMode get themeMode => _state.themeMode;
+
   void saveConfigState(ConfigState state) {
     sharedPreferencesHelper.setString(
       SharedPreferencesKeys.configState,
