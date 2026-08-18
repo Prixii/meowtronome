@@ -14,7 +14,7 @@ sealed class ConfigState with _$ConfigState {
     @Default(AntiBluetoothAutoStandbyMode.disable)
     AntiBluetoothAutoStandbyMode antiBluetoothAutoStandby,
     @Default(60) int antiBluetoothAutoStandbyBelowBpm,
-    @Default(AppThemeMode.system) AppThemeMode themeMode,
+    @Default(AppThemeMode.light) AppThemeMode themeMode,
   }) = _ConfigState;
 
   factory ConfigState.fromJson(Map<String, dynamic> json) =>
