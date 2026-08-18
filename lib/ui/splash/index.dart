@@ -17,7 +17,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  late final MetronomeNotifier _provider = MetronomeNotifier();
+  late final MetronomeNotifier _metronomeNotifier = MetronomeNotifier();
   late final StatisticsNotifier _statistics = StatisticsNotifier();
   ConfigNotifier? _config;
   bool _ready = false;
@@ -25,7 +25,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    _provider.attachStatistics(_statistics);
+    _metronomeNotifier.attachStatistics(_statistics);
     _init();
   }
 
@@ -42,16 +42,17 @@ class _SplashPageState extends State<SplashPage> {
   Future<void> _initComponents() async {
     await sharedPreferencesHelper.init();
     await Future.wait([
-      _provider.init(),
+      _metronomeNotifier.init(),
       _statistics.init(),
       soloudHelper.init(),
     ]);
     _config = ConfigNotifier();
+    _metronomeNotifier.attachConfig(_config!);
   }
 
   @override
   void dispose() {
-    _provider.dispose();
+    _metronomeNotifier.dispose();
     _statistics.dispose();
     _config?.dispose();
     super.dispose();
@@ -69,7 +70,7 @@ class _SplashPageState extends State<SplashPage> {
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: _provider),
+        ChangeNotifierProvider.value(value: _metronomeNotifier),
         ChangeNotifierProvider.value(value: _statistics),
         ChangeNotifierProvider.value(value: config),
       ],

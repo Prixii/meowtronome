@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:meowtronome/core/audio/audio_background.dart';
 import 'package:meowtronome/core/soloud/soloud_helper.dart';
 import 'package:meowtronome/ui/config/provider/config_state.dart';
+import 'package:meowtronome/ui/metronome/model.dart';
 import 'package:meowtronome/ui/shared_preferences_helper.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
@@ -58,6 +59,25 @@ class ConfigNotifier extends ChangeNotifier {
   }
 
   bool get playInBackground => _state.playInBackground;
+
+  void setAntiBluetoothAutoStandby(AntiBluetoothAutoStandbyMode value) {
+    _state = _state.copyWith(antiBluetoothAutoStandby: value);
+    saveConfigState(_state);
+    notifyListeners();
+  }
+
+  AntiBluetoothAutoStandbyMode get antiBluetoothAutoStandby =>
+      _state.antiBluetoothAutoStandby;
+
+  void setAntiBluetoothAutoStandbyBelowBpm(int value) {
+    if (value <= 0) return;
+    _state = _state.copyWith(antiBluetoothAutoStandbyBelowBpm: value);
+    saveConfigState(_state);
+    notifyListeners();
+  }
+
+  int get antiBluetoothAutoStandbyBelowBpm =>
+      _state.antiBluetoothAutoStandbyBelowBpm;
 
   void saveConfigState(ConfigState state) {
     sharedPreferencesHelper.setString(

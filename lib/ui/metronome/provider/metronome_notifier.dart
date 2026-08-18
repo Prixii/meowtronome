@@ -6,6 +6,8 @@ import 'package:meowtronome/core/audio/audio_background.dart';
 import 'package:meowtronome/core/enums.dart';
 import 'package:meowtronome/core/metronome.dart';
 import 'package:meowtronome/core/rhythm_pattern.dart';
+import 'package:meowtronome/ui/config/provider/config_notifier.dart';
+import 'package:meowtronome/ui/metronome/model.dart';
 import 'package:meowtronome/ui/metronome/provider/metronome_runtime_state.dart';
 import 'package:meowtronome/ui/statistics/provider/statistics_notifier.dart';
 
@@ -13,6 +15,7 @@ class MetronomeNotifier extends ChangeNotifier with WidgetsBindingObserver {
   final _metronome = Metronome();
   var _runtimeState = MetronomeRuntimeState();
   StatisticsNotifier? _statistics;
+  ConfigNotifier? _config;
 
   void Function(int beatIndex, int noteIndex)? onPlayNote;
 
@@ -38,16 +41,53 @@ class MetronomeNotifier extends ChangeNotifier with WidgetsBindingObserver {
     _statistics = statistics;
   }
 
+  void attachConfig(ConfigNotifier config) {
+    _config?.removeListener(_onConfigChanged);
+    _config = config;
+    config.addListener(_onConfigChanged);
+    _syncWhiteNoise();
+  }
+
+  void _onConfigChanged() {
+    _syncWhiteNoise();
+  }
+
+  void _syncWhiteNoise() {
+    final config = _config;
+    if (!isRunning || config == null) {
+      _metronome.stopWhiteNoise();
+      return;
+    }
+
+    final shouldPlay = switch (config.antiBluetoothAutoStandby) {
+      AntiBluetoothAutoStandbyMode.enable => true,
+      AntiBluetoothAutoStandbyMode.disable => false,
+      AntiBluetoothAutoStandbyMode.byBpm =>
+        bpm < config.antiBluetoothAutoStandbyBelowBpm,
+    };
+
+    if (shouldPlay) {
+      _metronome.playWhiteNoise();
+    } else {
+      _metronome.stopWhiteNoise();
+    }
+  }
+
   Future<void> init() async {
     await _metronome.init();
 
-    _metronome.onStarted = () => _statistics?.startSession(_metronome.bpm);
+    _metronome.onStarted = () {
+      _statistics?.startSession(_metronome.bpm);
+      _syncWhiteNoise();
+    };
     _metronome.onStopped = () {
       _clearPlayPosition();
       _statistics?.endSession();
+      _syncWhiteNoise();
     };
     _metronome.onBpmChangedWhileRunning = (bpm) {
       _statistics?.onBpmChanged(bpm);
+      _syncWhiteNoise();
       notifyListeners();
     };
 
@@ -208,9 +248,12 @@ class MetronomeNotifier extends ChangeNotifier with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _config?.removeListener(_onConfigChanged);
+    _config = null;
     _statistics?.endSession();
     detachMetronomeFromAudioBackground();
     playPosition.dispose();
+    _metronome.stopWhiteNoise();
     _metronome.dispose();
     super.dispose();
   }

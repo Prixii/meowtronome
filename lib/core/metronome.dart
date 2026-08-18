@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
@@ -292,6 +293,14 @@ class Metronome {
     }
     if (current <= config.endBpm) return config.endBpm;
     return max(current - config.bpmStep, config.endBpm);
+  }
+
+  void playWhiteNoise() {
+    soloudHelper.playWhiteNoise();
+  }
+
+  void stopWhiteNoise() {
+    unawaited(soloudHelper.stopWhiteNoise());
   }
 
   MetronomeState get state => _state;

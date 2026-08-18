@@ -1,7 +1,7 @@
 name: meowtronome
 description: "A new Flutter project."
 publish_to: 'none'
-version: 1.0.1+1
+version: 1.0.0+1
 
 environment:
   sdk: ^3.11.0
@@ -49,3 +49,9 @@ flutter:
     - family: AlimamaShuhei
       fonts:
         - asset: assets/font/alimama-shuhei.ttf
+
+analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true

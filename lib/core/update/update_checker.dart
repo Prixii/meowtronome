@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -25,6 +26,8 @@ class UpdateChecker {
   final http.Client? _client;
 
   Future<AppUpdateInfo?> checkForUpdate() async {
+    if (kDebugMode) return null;
+
     final uri = Uri.https(
       'api.github.com',
       '/repos/$_owner/$_repo/releases/latest',

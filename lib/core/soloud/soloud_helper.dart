@@ -9,6 +9,7 @@ class SoloudHelper {
   final _soloud = SoLoud.instance;
   final _soundTypeMap = <SoundType, String>{};
   final _soloudAudioSourceMap = <String, AudioSource>{};
+  SoundHandle? _whiteNoiseHandle;
 
   bool get isInitialized => _initialized;
 
@@ -45,9 +46,35 @@ class SoloudHelper {
     _soloud.play(_soloudAudioSourceMap[asset]!);
   }
 
+  /// Quiet looping white noise to keep Bluetooth audio devices awake.
+  void playWhiteNoise({double volume = 0.05}) {
+    if (!_initialized) return;
+
+    final current = _whiteNoiseHandle;
+    if (current != null && _soloud.getIsValidVoiceHandle(current)) {
+      return;
+    }
+
+    final source = _soloudAudioSourceMap[Assets.audio.whiteNoise];
+    if (source == null) return;
+
+    final handle = _soloud.play(source, looping: true, volume: volume);
+    _soloud.setProtectVoice(handle, true);
+    _whiteNoiseHandle = handle;
+  }
+
+  Future<void> stopWhiteNoise() async {
+    final handle = _whiteNoiseHandle;
+    _whiteNoiseHandle = null;
+    if (!_initialized || handle == null) return;
+    if (!_soloud.getIsValidVoiceHandle(handle)) return;
+    await _soloud.stop(handle);
+  }
+
   Future<void> dispose() async {
     if (!_initialized) return;
 
+    await stopWhiteNoise();
     await _soloud.disposeAllSources();
     _soloud.deinit();
     _soundTypeMap.clear();

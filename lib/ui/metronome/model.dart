@@ -12,3 +12,5 @@ class NoteStyle {
   final bool filled;
   final SoundType soundType;
 }
+
+enum AntiBluetoothAutoStandbyMode { enable, disable, byBpm }

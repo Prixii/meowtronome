@@ -1,14 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:meowtronome/core/audio/audio_background.dart';
 import 'package:meowtronome/global.dart';
 import 'package:meowtronome/ui/components/custom_divider.dart';
+import 'package:meowtronome/ui/components/custom_menu.dart';
+import 'package:meowtronome/ui/components/inline_editable_text.dart';
 import 'package:meowtronome/ui/components/modal_container.dart';
 import 'package:meowtronome/ui/config/components/config_item.dart';
 import 'package:meowtronome/ui/config/components/custom_slider.dart';
 import 'package:meowtronome/ui/config/components/custom_switch.dart';
 import 'package:meowtronome/ui/config/provider/config_notifier.dart';
 import 'package:meowtronome/ui/layout_helper.dart';
+import 'package:meowtronome/ui/metronome/model.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -104,6 +108,56 @@ class ConfigBody extends StatelessWidget {
                     ),
                   ],
                   _buildDivider(context),
+                  ConfigItem(
+                    title: '防蓝牙自动待机',
+                    trailing: CustomMenu(
+                      width: 120,
+                      options: _antiBluetoothAutoStandbyOptions,
+                      initialValue: notifier.antiBluetoothAutoStandby.name,
+                      onSelected: (value) => notifier
+                          .setAntiBluetoothAutoStandby(
+                            AntiBluetoothAutoStandbyMode.values.byName(value),
+                          ),
+                    ),
+                    padding: LayoutHelper.getModalContainerTitlePadding(
+                      context,
+                    ),
+                  ),
+                  if (notifier.antiBluetoothAutoStandby ==
+                      AntiBluetoothAutoStandbyMode.byBpm) ...[
+                    _buildDivider(context),
+                    ConfigItem(
+                      title: 'BPM阈值',
+                      description: 'BPM 小于此值时播放白噪音',
+                      trailing: SizedBox(
+                        width: 72,
+                        child: InlineEditableText(
+                          value: notifier.antiBluetoothAutoStandbyBelowBpm
+                              .toString(),
+                          onSubmit: (text) {
+                            final value = int.tryParse(text);
+                            if (value != null) {
+                              notifier.setAntiBluetoothAutoStandbyBelowBpm(
+                                value,
+                              );
+                            }
+                          },
+                          style: subtitleTextStyle.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          textAlign: .right,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
+                        ),
+                      ),
+                      padding: LayoutHelper.getModalContainerTitlePadding(
+                        context,
+                      ),
+                    ),
+                  ],
+                  _buildDivider(context),
                   _buildRepoLink(context),
                   _buildDivider(context),
                   VersionLabel(),
@@ -118,6 +172,12 @@ class ConfigBody extends StatelessWidget {
       ],
     );
   }
+
+  static const _antiBluetoothAutoStandbyOptions = [
+    OptionData(label: '开启', value: 'enable'),
+    OptionData(label: '关闭', value: 'disable'),
+    OptionData(label: '按BPM', value: 'byBpm'),
+  ];
 
   Widget _buildDivider(BuildContext context) => CustomDivider(
     indent: 1,
