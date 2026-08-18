@@ -19,8 +19,8 @@ final darkTheme = ThemeData(
     primary: Color(0xFFE9D7BC),
     primaryFixedDim: Color(0xFFA89880),
     secondary: Color(0xFFC4B49A),
-    primaryFixed: Color(0xFF5C4A3A),
-    primaryContainer: Color(0xFF2A1810),
+    primaryFixed: Color(0xFF403e38),
+    primaryContainer: Color(0xFF10100e),
   ),
 );
 

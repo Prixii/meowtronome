@@ -129,8 +129,8 @@ class ConfigBody extends StatelessWidget {
                       width: 120,
                       options: _antiBluetoothAutoStandbyOptions,
                       initialValue: notifier.antiBluetoothAutoStandby.name,
-                      onSelected: (value) => notifier
-                          .setAntiBluetoothAutoStandby(
+                      onSelected: (value) =>
+                          notifier.setAntiBluetoothAutoStandby(
                             AntiBluetoothAutoStandbyMode.values.byName(value),
                           ),
                     ),
@@ -173,9 +173,9 @@ class ConfigBody extends StatelessWidget {
                     ),
                   ],
                   _buildDivider(context),
-                  _buildRepoLink(context),
-                  _buildDivider(context),
                   VersionLabel(),
+                  _buildDivider(context),
+                  _buildRepoLink(context),
                   _buildDivider(context),
                   _buildLicensesLink(context),
                   CustomDivider(),
