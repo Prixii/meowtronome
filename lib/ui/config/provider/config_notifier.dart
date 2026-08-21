@@ -79,6 +79,16 @@ class ConfigNotifier extends ChangeNotifier {
   int get antiBluetoothAutoStandbyBelowBpm =>
       _state.antiBluetoothAutoStandbyBelowBpm;
 
+  void setWhiteNoiseVolume(double volume) {
+    final clamped = volume.clamp(0.0, 1.0);
+    _state = _state.copyWith(whiteNoiseVolume: clamped);
+    soloudHelper.setWhiteNoiseVolume(clamped);
+    saveConfigState(_state);
+    notifyListeners();
+  }
+
+  double get whiteNoiseVolume => _state.whiteNoiseVolume;
+
   void setThemeMode(AppThemeMode value) {
     _state = _state.copyWith(themeMode: value);
     saveConfigState(_state);

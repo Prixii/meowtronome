@@ -52,6 +52,7 @@ class SoloudHelper {
 
     final current = _whiteNoiseHandle;
     if (current != null && _soloud.getIsValidVoiceHandle(current)) {
+      _soloud.setVolume(current, volume);
       return;
     }
 
@@ -61,6 +62,13 @@ class SoloudHelper {
     final handle = _soloud.play(source, looping: true, volume: volume);
     _soloud.setProtectVoice(handle, true);
     _whiteNoiseHandle = handle;
+  }
+
+  void setWhiteNoiseVolume(double volume) {
+    final handle = _whiteNoiseHandle;
+    if (!_initialized || handle == null) return;
+    if (!_soloud.getIsValidVoiceHandle(handle)) return;
+    _soloud.setVolume(handle, volume.clamp(0.0, 1.0));
   }
 
   Future<void> stopWhiteNoise() async {

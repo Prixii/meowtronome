@@ -295,8 +295,8 @@ class Metronome {
     return max(current - config.bpmStep, config.endBpm);
   }
 
-  void playWhiteNoise() {
-    soloudHelper.playWhiteNoise();
+  void playWhiteNoise({required double volume}) {
+    soloudHelper.playWhiteNoise(volume: volume);
   }
 
   void stopWhiteNoise() {

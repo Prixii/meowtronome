@@ -14,6 +14,7 @@ sealed class ConfigState with _$ConfigState {
     @Default(AntiBluetoothAutoStandbyMode.disable)
     AntiBluetoothAutoStandbyMode antiBluetoothAutoStandby,
     @Default(60) int antiBluetoothAutoStandbyBelowBpm,
+    @Default(0.3) double whiteNoiseVolume,
     @Default(AppThemeMode.light) AppThemeMode themeMode,
   }) = _ConfigState;
 

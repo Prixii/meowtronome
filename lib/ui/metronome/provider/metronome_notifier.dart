@@ -67,7 +67,7 @@ class MetronomeNotifier extends ChangeNotifier with WidgetsBindingObserver {
     };
 
     if (shouldPlay) {
-      _metronome.playWhiteNoise();
+      _metronome.playWhiteNoise(volume: config.whiteNoiseVolume);
     } else {
       _metronome.stopWhiteNoise();
     }

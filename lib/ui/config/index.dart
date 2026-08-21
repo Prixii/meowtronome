@@ -124,7 +124,7 @@ class ConfigBody extends StatelessWidget {
                   ],
                   _buildDivider(context),
                   ConfigItem(
-                    title: '防蓝牙自动待机',
+                    title: '蓝牙模式',
                     trailing: CustomMenu(
                       width: 120,
                       options: _antiBluetoothAutoStandbyOptions,
@@ -138,39 +138,57 @@ class ConfigBody extends StatelessWidget {
                       context,
                     ),
                   ),
-                  if (notifier.antiBluetoothAutoStandby ==
-                      AntiBluetoothAutoStandbyMode.byBpm) ...[
+                  if (notifier.antiBluetoothAutoStandby !=
+                      AntiBluetoothAutoStandbyMode.disable) ...[
                     _buildDivider(context),
                     ConfigItem(
-                      title: 'BPM阈值',
-                      description: 'BPM 小于此值时播放白噪音',
-                      trailing: SizedBox(
-                        width: 72,
-                        child: InlineEditableText(
-                          value: notifier.antiBluetoothAutoStandbyBelowBpm
-                              .toString(),
-                          onSubmit: (text) {
-                            final value = int.tryParse(text);
-                            if (value != null) {
-                              notifier.setAntiBluetoothAutoStandbyBelowBpm(
-                                value,
-                              );
-                            }
-                          },
-                          style: subtitleTextStyle.copyWith(
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          textAlign: .right,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
-                        ),
+                      title: '白噪音音量',
+                      trailing: CustomSlider(
+                        onChanged: (value) =>
+                            notifier.setWhiteNoiseVolume(value),
+                        value: notifier.whiteNoiseVolume,
+                        min: 0,
+                        max: 1,
+                        width: LayoutHelper.getConfigSliderWidth(context),
                       ),
                       padding: LayoutHelper.getModalContainerTitlePadding(
                         context,
                       ),
                     ),
+                    if (notifier.antiBluetoothAutoStandby ==
+                        AntiBluetoothAutoStandbyMode.byBpm) ...[
+                      _buildDivider(context),
+                      ConfigItem(
+                        title: 'BPM阈值',
+                        description: 'BPM 小于此值时播放白噪音',
+                        trailing: SizedBox(
+                          width: 72,
+                          child: InlineEditableText(
+                            value: notifier.antiBluetoothAutoStandbyBelowBpm
+                                .toString(),
+                            onSubmit: (text) {
+                              final value = int.tryParse(text);
+                              if (value != null) {
+                                notifier.setAntiBluetoothAutoStandbyBelowBpm(
+                                  value,
+                                );
+                              }
+                            },
+                            style: subtitleTextStyle.copyWith(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            textAlign: .right,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                          ),
+                        ),
+                        padding: LayoutHelper.getModalContainerTitlePadding(
+                          context,
+                        ),
+                      ),
+                    ],
                   ],
                   _buildDivider(context),
                   VersionLabel(),
