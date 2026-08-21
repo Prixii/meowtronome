@@ -7,7 +7,7 @@ enum LayoutMode { horizontal, square, vertical }
 class LayoutHelper {
   LayoutHelper._();
 
-  static const double smallSizeHeight = 450.0;
+  static const double smallSizeHeight = 600.0;
   static const double smallSizeWidth = 400.0;
 
   static EdgeInsets getAppPadding(BuildContext context) =>
@@ -38,7 +38,13 @@ class LayoutHelper {
   static double getConfigSliderWidth(BuildContext context) =>
       getLayoutMode(context) == LayoutMode.horizontal
       ? 150.0
-      : (isSmallWidth(context) ? 100.0 : 250.0);
+      : (isSmallWidth(context) ? 150.0 : 200.0);
+
+  static double getConfigItemTitleFontSize(BuildContext context) =>
+      isSmallWidth(context) ? 18.0 : 20.0;
+
+  static double getConfigItemDescriptionFontSize(BuildContext context) =>
+      isSmallWidth(context) ? 13.0 : 14.0;
 
   static EdgeInsets getModalContainerPadding(BuildContext context) {
     final mode = getLayoutMode(context);
@@ -96,7 +102,8 @@ class LayoutHelper {
     final ratio =
         min(screenHeight, screenWidth) / max(screenHeight, screenWidth);
 
-    if (ratio > 0.6) return LayoutMode.square;
+    if ((ratio > 0.6) && isSmallHeight(context)) return LayoutMode.square;
+    if (ratio > 0.7) return LayoutMode.square;
     if (isWide) return LayoutMode.horizontal;
     return LayoutMode.vertical;
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meowtronome/global.dart';
+import 'package:meowtronome/ui/layout_helper.dart';
 
 class ConfigItem extends StatelessWidget {
   const ConfigItem({
@@ -19,7 +20,6 @@ class ConfigItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: padding,
-
       child: Column(
         crossAxisAlignment: .start,
         mainAxisSize: MainAxisSize.min,
@@ -30,6 +30,7 @@ class ConfigItem extends StatelessWidget {
                 child: Text(
                   title,
                   style: subtitleTextStyle.copyWith(
+                    fontSize: LayoutHelper.getConfigItemTitleFontSize(context),
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
@@ -41,6 +42,9 @@ class ConfigItem extends StatelessWidget {
             Text(
               description!,
               style: bodyTextStyle.copyWith(
+                fontSize: LayoutHelper.getConfigItemDescriptionFontSize(
+                  context,
+                ),
                 color: Theme.of(context).colorScheme.primaryFixedDim,
               ),
             ),

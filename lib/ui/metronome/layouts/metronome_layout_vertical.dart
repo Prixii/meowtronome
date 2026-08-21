@@ -14,12 +14,13 @@ class MetronomeLayoutVertical extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        const CustomDivider(),
         TopButtonGroup(notifier: notifier),
-        CustomDivider(),
+        const CustomDivider(),
         BpmPanel(notifier: notifier),
-        CustomDivider(),
+        const CustomDivider(),
         Expanded(child: PatternPanel(notifier: notifier)),
-        CustomDivider(),
+        const CustomDivider(),
         const PlayButton(),
       ],
     );

@@ -57,7 +57,7 @@ class ConfigBody extends StatelessWidget {
                 crossAxisAlignment: .start,
                 children: [
                   ConfigItem(
-                    title: '全局音量',
+                    title: '音量',
                     trailing: CustomSlider(
                       onChanged: (value) =>
                           notifier.setSoloudGlobalVolume(value),
@@ -125,6 +125,7 @@ class ConfigBody extends StatelessWidget {
                   _buildDivider(context),
                   ConfigItem(
                     title: '蓝牙模式',
+                    description: '蓝牙模式下，节拍间隔过长会导致蓝牙自动休眠吞掉声音，开启本选项来播放白噪音以阻止蓝牙休眠',
                     trailing: CustomMenu(
                       width: 120,
                       options: _antiBluetoothAutoStandbyOptions,

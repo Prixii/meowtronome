@@ -43,12 +43,18 @@ class _MetronomeLayoutSquareState extends State<MetronomeLayoutSquare> {
                 children: [
                   Column(
                     children: [
+                      const CustomDivider(),
                       TopButtonGroup(notifier: widget.notifier),
                       CustomDivider(),
                       Expanded(child: BpmPanel(notifier: widget.notifier)),
                     ],
                   ),
-                  PatternPanel(notifier: widget.notifier),
+                  Column(
+                    children: [
+                      const CustomDivider(),
+                      Expanded(child: PatternPanel(notifier: widget.notifier)),
+                    ],
+                  ),
                 ],
               ),
               Align(

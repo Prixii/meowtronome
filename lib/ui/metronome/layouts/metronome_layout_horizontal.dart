@@ -13,9 +13,11 @@ class MetronomeLayoutHorizontal extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
+        const CustomDivider(vertical: true),
         Expanded(
           child: Column(
             children: [
+              const CustomDivider(),
               TopButtonGroup(notifier: notifier),
               const CustomDivider(),
               Expanded(child: BpmPanel(notifier: notifier)),
@@ -27,7 +29,10 @@ class MetronomeLayoutHorizontal extends StatelessWidget {
         const CustomDivider(vertical: true),
         Expanded(
           child: Column(
-            children: [Expanded(child: PatternPanel(notifier: notifier))],
+            children: [
+              const CustomDivider(),
+              Expanded(child: PatternPanel(notifier: notifier)),
+            ],
           ),
         ),
       ],
